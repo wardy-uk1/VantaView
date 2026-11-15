@@ -1,3 +1,4 @@
+- VantaView spricht jetzt Arabisch, mit einem Layout von rechts nach links. Es folgt deinem Gerät, oder wähle unter Einstellungen › Darstellung für jedes Profil Arabisch. Film- und Seriendetails kommen auch auf Arabisch.
 - Die Einstellungsseiten sind übersichtlicher: Jeder Abschnitt ist jetzt ein Dropdown, und beim Öffnen schließen sich die anderen. Der Startbildschirm zeigt Version und Build-Nummer, und VantaView sucht bei jedem Start nach Updates.
 - Ein richtiger Speedtest unter Einstellungen › Quellen: Ping, Download und Upload auf einer Live-Anzeige, dazu, was deine Verbindung abspielen kann.
 - Playlist vom Handy hinzufügen: Unter Quellen oder bei der Einrichtung „QR-Code zeigen“ wählen, mit dem Handy scannen und dort die Anbieter-Nachricht, einen M3U-Link oder eine M3U-Datei oder Xtream Codes eingeben. Alles geht direkt über dein WLAN an den Fernseher.

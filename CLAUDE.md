@@ -13,7 +13,7 @@
 
 `docs/WHATS-NEW.md` is the "What's new" shown in the app's update notice for test builds. In the same commit as any change people will notice, add a short plain-English bullet at the top (newest first) and keep the list to about 8 bullets. Write it for viewers, not developers: what they can now do, not how it was built. For a release, copy the relevant bullets into `docs/releases/v<version>.md`.
 
-The app shows these notes in its own language. In the same commit, add the same bullet, translated, at the top of every `docs/whats-new/<language>.md` (es, fr, de, it, pt, nl, pl, tr), and keep each file to the same bullets in the same order as `docs/WHATS-NEW.md` (a unit test checks the counts). For a release, also put translated notes in `docs/releases/v<version>/<language>.md`.
+The app shows these notes in its own language. In the same commit, add the same bullet, translated, at the top of every `docs/whats-new/<language>.md` (es, fr, de, it, pt, nl, pl, tr, ar), and keep each file to the same bullets in the same order as `docs/WHATS-NEW.md` (a unit test checks the counts). For a release, also put translated notes in `docs/releases/v<version>/<language>.md`.
 
 ## Releases
 

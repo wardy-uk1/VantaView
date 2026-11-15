@@ -1,3 +1,4 @@
+- VantaView now speaks Arabic, with a right-to-left layout. It follows your device, or pick it for each profile in Settings › Appearance. Film and series details come in Arabic too.
 - Settings pages are tidier: each section is now a drop-down, and opening one closes the others. The start-up screen shows the version and build number, and VantaView checks for updates every time it starts.
 - A proper speed test in Settings › Sources: ping, download and upload on a live dial, with what your connection can stream.
 - Add a playlist from your phone: on Sources or during setup, choose Show QR code, scan it with your phone and paste your provider's message, an M3U link or file, or Xtream Codes there. It goes straight to the TV over your home Wi-Fi.

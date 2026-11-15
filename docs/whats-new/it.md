@@ -1,3 +1,4 @@
+- VantaView ora parla arabo, con un layout da destra a sinistra. Segue la lingua del dispositivo, oppure sceglilo per ogni profilo in Impostazioni › Aspetto. Anche i dettagli di film e serie arrivano in arabo.
 - Le pagine delle Impostazioni sono più ordinate: ogni sezione ora è un menu a discesa, e aprirne una chiude le altre. La schermata di avvio mostra versione e numero di build, e VantaView cerca aggiornamenti a ogni avvio.
 - Un vero test di velocità in Impostazioni › Sorgenti: ping, download e upload su un indicatore in tempo reale, con ciò che la tua connessione può riprodurre.
 - Aggiungi una playlist dal telefono: in Sorgenti o durante la configurazione scegli Mostra codice QR, inquadralo col telefono e incolla lì il messaggio del provider, un link o file M3U o Xtream Codes. Arriva direttamente alla TV tramite la Wi-Fi di casa.

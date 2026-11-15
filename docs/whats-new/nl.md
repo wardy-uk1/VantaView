@@ -1,3 +1,4 @@
+- VantaView spreekt nu Arabisch, met een lay-out van rechts naar links. Het volgt je apparaat, of kies per profiel Arabisch bij Instellingen › Weergave. Film- en seriedetails komen ook in het Arabisch.
 - Instellingenpagina's zijn overzichtelijker: elk onderdeel is nu een uitklapmenu, en als je er een opent, gaan de andere dicht. Het opstartscherm toont de versie en het buildnummer, en VantaView zoekt bij elke start naar updates.
 - Een echte snelheidstest in Instellingen › Bronnen: ping, download en upload op een live meter, met wat je verbinding kan afspelen.
 - Voeg een playlist toe vanaf je telefoon: kies bij Bronnen of tijdens het instellen QR-code tonen, scan hem met je telefoon en plak daar het bericht van je provider, een M3U-link of -bestand, of Xtream Codes. Het gaat rechtstreeks via je wifi naar de tv.

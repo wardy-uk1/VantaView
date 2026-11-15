@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -112,8 +115,15 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { runCatching { providers.autoRefresh(sourceSettings.playlists) } }
         setContent {
             val look by appearance.state.collectAsState()
-            VantaTheme(look) {
-                AppNav(prefs, providers, addons, profiles, parental, updates, library, playRequest, remindWhilePlaying = { playbackSettings.remindersWhilePlaying }, lastInput = lastInput, onExit = { finish() })
+            // Arabic reads right to left: mirror the layout when it is the app's language.
+            // The app's own language decides, not the device's — the device may be set to
+            // a left-to-right language while the profile uses Arabic (or the other way round).
+            CompositionLocalProvider(
+                LocalLayoutDirection provides if (com.vantaview.app.ui.I18n.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+            ) {
+                VantaTheme(look) {
+                    AppNav(prefs, providers, addons, profiles, parental, updates, library, playRequest, remindWhilePlaying = { playbackSettings.remindersWhilePlaying }, lastInput = lastInput, onExit = { finish() })
+                }
             }
         }
     }

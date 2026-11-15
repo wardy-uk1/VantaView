@@ -1,3 +1,4 @@
+- VantaView ahora habla árabe, con un diseño de derecha a izquierda. Sigue el idioma de tu dispositivo, o elígelo para cada perfil en Ajustes › Apariencia. Los detalles de películas y series también llegan en árabe.
 - Las páginas de Ajustes están más ordenadas: cada sección es ahora un desplegable, y al abrir una se cierran las demás. La pantalla de inicio muestra la versión y la compilación, y VantaView busca actualizaciones cada vez que se inicia.
 - Una prueba de velocidad completa en Ajustes › Fuentes: ping, descarga y subida en un indicador en directo, con lo que tu conexión puede reproducir.
 - Añade una lista desde el móvil: en Fuentes o durante la configuración, elige Mostrar código QR, escanéalo con el móvil y pega allí el mensaje de tu proveedor, un enlace o archivo M3U, o Xtream Codes. Llega directamente a la TV por la Wi-Fi de casa.

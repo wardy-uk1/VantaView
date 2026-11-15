@@ -20,6 +20,7 @@ object I18n {
     val languages = listOf(
         "en" to "English", "es" to "Español", "fr" to "Français", "de" to "Deutsch", "it" to "Italiano",
         "pt" to "Português (Brasil)", "nl" to "Nederlands", "pl" to "Polski", "tr" to "Türkçe",
+        "ar" to "العربية",
     )
 
     /** The language in use, as a two-letter code. Reading it in a composable redraws on change. */
@@ -34,8 +35,13 @@ object I18n {
         get() = when (lang) {
             "en" -> null
             "pt" -> "pt-BR"
+            // The generic form would give "ar-AR" (Argentina); TMDB's Arabic is "ar-SA".
+            "ar" -> "ar-SA"
             else -> lang + "-" + lang.uppercase()
         }
+
+    /** Whether the language in use reads right to left (Arabic, for now). */
+    val isRtl: Boolean get() = lang == "ar"
 
     /** The device's own language, whatever the app is set to. */
     val deviceLang: String get() = Resources.getSystem().configuration.locales[0].language

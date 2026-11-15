@@ -1,3 +1,4 @@
+- VantaView artık Arapça konuşuyor ve sağdan sola bir düzene sahip. Cihazının dilini izler ya da Ayarlar › Görünüm'den her profil için Arapçayı seç. Film ve dizi ayrıntıları da Arapça gelir.
 - Ayarlar sayfaları daha düzenli: her bölüm artık açılır bir menü ve birini açınca diğerleri kapanır. Açılış ekranı sürümü ve derleme numarasını gösterir; VantaView her açılışta güncellemeleri kontrol eder.
 - Ayarlar › Kaynaklar'da gerçek bir hız testi: ping, indirme ve yükleme canlı bir göstergede, bağlantının neyi oynatabileceğiyle birlikte.
 - Telefondan oynatma listesi ekle: Kaynaklar'da veya kurulum sırasında QR kodu göster'i seç, telefonla tara ve orada sağlayıcı mesajını, M3U bağlantısını veya dosyasını ya da Xtream Codes'u yapıştır. Ev Wi-Fi'n üzerinden doğrudan TV'ye gider.
