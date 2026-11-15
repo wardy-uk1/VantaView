@@ -1,3 +1,4 @@
+- TV'de kumanda artık yukarı ve aşağı ile metin kutularının yanından doğrudan geçiyor; klavye yalnızca birinde OK'a basınca açılıyor.
 - Kanal yukarı/aşağı ve kaydırma artık kanalı açtığın listeyi izliyor: Favoriler'den açtıysan favorilerin arasında gezersin. Ana sayfada aşağı çekmek veya yeni Yenile düğmesi oynatma listelerini, rehberi ve hava durumunu yeniler. Ayarlar › Görünüm'de yeni bir Ekran boyutu var (Otomatik, uygulamayı cihazına uydurur).
 - Canlı TV bir kanalı önce küçük bir pencerede, şimdi ve sonra ne olduğuyla birlikte gösterebilir. Tam ekran için tekrar bas veya Tam ekran izle'yi seç. Ayarlar › Oynatma'dan kapatılabilir.
 - Ayarlar sayfaları daha düzenli: her bölüm artık açılır bir menü ve birini açınca diğerleri kapanır. Açılış ekranı sürümü ve derleme numarasını gösterir; VantaView her açılışta güncellemeleri kontrol eder.
@@ -5,4 +6,3 @@
 - Telefondan oynatma listesi ekle: Kaynaklar'da veya kurulum sırasında QR kodu göster'i seç, telefonla tara ve orada sağlayıcı mesajını, M3U bağlantısını veya dosyasını ya da Xtream Codes'u yapıştır. Ev Wi-Fi'n üzerinden doğrudan TV'ye gider.
 - Pencere içinde pencere artık Ayarlar › Oynatma'dan kapatılabiliyor; böylece Ana ekran oynatıcıyı küçük bir pencereye küçültmüyor.
 - Catch-up artık, listende geçmiş programları saklayan kanallar varsa Ana Sayfa'da Canlı TV ve TV Rehberi'nin yanında kendi kutucuğuna sahip. Catch-up düğmesi TV Rehberi'nden kaldırıldı.
-- M3U liste bağlantıları artık şifrelenmiş olarak saklanıyor ve içlerindeki giriş bilgileri kaydedilen tüm kanal ve film adreslerinde gizleniyor. Mevcut listeler güncellemeden sonra bir kez şifrelenip yeniden yüklenir.

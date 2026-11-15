@@ -1,3 +1,4 @@
+- Am Fernseher springt die Fernbedienung mit hoch und runter jetzt direkt über Textfelder, und die Tastatur öffnet sich erst, wenn du OK drückst.
 - Sender hoch und runter sowie Wischen gehen jetzt durch die Liste, aus der du den Sender geöffnet hast – aus den Favoriten also durch deine Favoriten. Herunterziehen oder der neue Aktualisieren-Knopf auf der Startseite lädt Playlists, TV-Guide und Wetter neu. Einstellungen › Darstellung hat eine neue Bildschirmgröße (Auto passt die App an dein Gerät an).
 - Live-TV kann einen Sender zuerst in einem kleinen Fenster zeigen, mit dem, was gerade und danach läuft. Nochmal drücken oder „Im Vollbild ansehen“ für Vollbild. Abschaltbar unter Einstellungen › Wiedergabe.
 - Die Einstellungsseiten sind übersichtlicher: Jeder Abschnitt ist jetzt ein Dropdown, und beim Öffnen schließen sich die anderen. Der Startbildschirm zeigt Version und Build-Nummer, und VantaView sucht bei jedem Start nach Updates.
@@ -5,4 +6,3 @@
 - Playlist vom Handy hinzufügen: Unter Quellen oder bei der Einrichtung „QR-Code zeigen“ wählen, mit dem Handy scannen und dort die Anbieter-Nachricht, einen M3U-Link oder eine M3U-Datei oder Xtream Codes eingeben. Alles geht direkt über dein WLAN an den Fernseher.
 - Bild-in-Bild lässt sich jetzt unter Einstellungen › Wiedergabe ausschalten, damit Home den Player nicht mehr zu einem kleinen Fenster verkleinert.
 - Catch-up hat jetzt eine eigene Kachel auf der Startseite, neben Live-TV und dem TV-Programm, wenn deine Playlist Sender mit vergangenen Sendungen hat. Die Catch-up-Schaltfläche ist aus dem TV-Programm verschwunden.
-- M3U-Playlist-Links werden jetzt verschlüsselt gespeichert, und der darin enthaltene Zugang wird in allen gespeicherten Sender- und Filmadressen verborgen. Vorhandene Playlists werden nach dem Update einmal verschlüsselt und neu geladen.

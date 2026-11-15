@@ -1,3 +1,4 @@
+- En una TV, el mando ahora pasa directamente por los cuadros de texto con arriba y abajo, y el teclado solo se abre al pulsar OK en uno.
 - Subir y bajar canal, y deslizar, ahora recorren la lista desde la que abriste el canal: desde Favoritos pasas por tus favoritos. Deslizar hacia abajo o el nuevo botón Actualizar en Inicio recarga tus listas, la guía y el tiempo. Ajustes › Apariencia tiene un nuevo Tamaño de pantalla (Automático adapta la app a tu dispositivo).
 - TV en directo puede previsualizar un canal en una ventana pequeña, con lo que se emite ahora y después. Vuelve a pulsarlo, o Ver a pantalla completa, para pantalla completa. Desactívalo en Ajustes › Reproducción.
 - Las páginas de Ajustes están más ordenadas: cada sección es ahora un desplegable, y al abrir una se cierran las demás. La pantalla de inicio muestra la versión y la compilación, y VantaView busca actualizaciones cada vez que se inicia.
@@ -5,4 +6,3 @@
 - Añade una lista desde el móvil: en Fuentes o durante la configuración, elige Mostrar código QR, escanéalo con el móvil y pega allí el mensaje de tu proveedor, un enlace o archivo M3U, o Xtream Codes. Llega directamente a la TV por la Wi-Fi de casa.
 - La imagen en imagen ahora se puede desactivar en Ajustes › Reproducción, para que pulsar Inicio ya no reduzca el reproductor a una ventana pequeña.
 - A la carta ahora tiene su propio mosaico en Inicio, junto a TV en directo y la Guía de TV, cuando tu lista tiene canales que guardan programas emitidos. El botón A la carta ya no está en la Guía de TV.
-- Los enlaces de listas M3U ahora se guardan cifrados, y el acceso que contienen se oculta en todas las direcciones de canales y películas guardadas. Las listas existentes se cifran y se vuelven a cargar una vez tras actualizar.

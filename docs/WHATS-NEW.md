@@ -1,3 +1,4 @@
+- On a TV, the remote now moves straight past text boxes with up and down, and the keyboard only opens when you press OK on one.
 - Channel up and down, and swiping, now move through the list you opened the channel from, so from Favourites you go through your favourites. A pull-down or the new Refresh button on Home reloads your playlists, guide and weather. Settings › Appearance has a new Screen size (Auto fits the app to your device).
 - Live TV can preview a channel in a small window first, with what's on now and next. Press it again, or Watch full screen, to go full screen. Turn this off in Settings › Playback.
 - Settings pages are tidier: each section is now a drop-down, and opening one closes the others. The start-up screen shows the version and build number, and VantaView checks for updates every time it starts.
@@ -5,4 +6,3 @@
 - Add a playlist from your phone: on Sources or during setup, choose Show QR code, scan it with your phone and paste your provider's message, an M3U link or file, or Xtream Codes there. It goes straight to the TV over your home Wi-Fi.
 - Picture-in-picture can now be turned off in Settings › Playback, so pressing Home no longer shrinks the player into a small window.
 - Catch-up now has its own tile on Home, next to Live TV and the TV Guide, when your playlist has channels that keep past programmes. The Catch-up button has moved off the TV Guide.
-- M3U playlist links are now stored encrypted, and the login inside them is hidden in every saved channel and film address. Existing playlists are encrypted and reloaded once after updating.

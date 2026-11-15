@@ -1,3 +1,4 @@
+- Sulla TV, il telecomando ora supera direttamente le caselle di testo con su e giù, e la tastiera si apre solo premendo OK su una casella.
 - Canale su e giù, e lo scorrimento, ora seguono l'elenco da cui hai aperto il canale: dai Preferiti scorri i tuoi preferiti. Trascinare in basso o il nuovo pulsante Aggiorna nella Home ricarica playlist, guida e meteo. Impostazioni › Aspetto ha una nuova Dimensione schermo (Auto adatta l'app al tuo dispositivo).
 - TV in diretta può mostrare prima un canale in una piccola finestra, con il programma in corso e il successivo. Premi di nuovo, o Guarda a schermo intero, per lo schermo intero. Disattivalo in Impostazioni › Riproduzione.
 - Le pagine delle Impostazioni sono più ordinate: ogni sezione ora è un menu a discesa, e aprirne una chiude le altre. La schermata di avvio mostra versione e numero di build, e VantaView cerca aggiornamenti a ogni avvio.
@@ -5,4 +6,3 @@
 - Aggiungi una playlist dal telefono: in Sorgenti o durante la configurazione scegli Mostra codice QR, inquadralo col telefono e incolla lì il messaggio del provider, un link o file M3U o Xtream Codes. Arriva direttamente alla TV tramite la Wi-Fi di casa.
 - Il picture-in-picture ora si può disattivare in Impostazioni › Riproduzione, così premere Home non riduce più il lettore in una piccola finestra.
 - Il Replay ora ha il suo riquadro nella Home, accanto a TV in diretta e Guida TV, quando la tua playlist ha canali che conservano i programmi passati. Il pulsante Replay non è più nella Guida TV.
-- I link delle playlist M3U ora sono salvati cifrati, e l'accesso che contengono è nascosto in tutti gli indirizzi salvati di canali e film. Le playlist esistenti vengono cifrate e ricaricate una volta dopo l'aggiornamento.

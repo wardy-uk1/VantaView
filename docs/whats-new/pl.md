@@ -1,3 +1,4 @@
+- Na telewizorze pilot przechodzi teraz w górę i w dół prosto obok pól tekstowych, a klawiatura otwiera się dopiero po naciśnięciu OK.
 - Kanał w górę i w dół oraz przesuwanie przechodzą teraz przez listę, z której otwarto kanał: z Ulubionych przechodzisz przez ulubione. Pociągnięcie w dół lub nowy przycisk Odśwież na stronie głównej wczytuje ponownie playlisty, przewodnik i pogodę. W Ustawienia › Wygląd jest nowy Rozmiar ekranu (Auto dopasowuje aplikację do urządzenia).
 - Telewizja na żywo może najpierw pokazać kanał w małym oknie, z tym, co leci teraz i później. Naciśnij ponownie lub Oglądaj na pełnym ekranie, aby przejść do pełnego ekranu. Wyłączysz to w Ustawienia › Odtwarzanie.
 - Strony ustawień są bardziej przejrzyste: każda sekcja to teraz rozwijane menu, a otwarcie jednej zamyka pozostałe. Ekran startowy pokazuje wersję i numer kompilacji, a VantaView sprawdza aktualizacje przy każdym uruchomieniu.
@@ -5,4 +6,3 @@
 - Dodaj playlistę z telefonu: w Źródłach lub podczas konfiguracji wybierz Pokaż kod QR, zeskanuj go telefonem i wklej tam wiadomość od dostawcy, link lub plik M3U albo Xtream Codes. Trafia to prosto na telewizor przez domowe Wi-Fi.
 - Obraz w obrazie można teraz wyłączyć w Ustawienia › Odtwarzanie, aby Ekran główny nie zmniejszał już odtwarzacza do małego okna.
 - Archiwum ma teraz własny kafelek na stronie Start, obok TV na żywo i Programu TV, gdy Twoja playlista ma kanały z minionymi audycjami. Przycisk Archiwum zniknął z Programu TV.
-- Linki do playlist M3U są teraz przechowywane w postaci zaszyfrowanej, a dane logowania w nich są ukryte we wszystkich zapisanych adresach kanałów i filmów. Istniejące playlisty zostaną raz zaszyfrowane i wczytane ponownie po aktualizacji.
