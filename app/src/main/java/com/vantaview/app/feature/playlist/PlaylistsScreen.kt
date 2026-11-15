@@ -2,6 +2,9 @@
 @file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 package com.vantaview.app.feature.playlist
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -183,8 +186,8 @@ private fun Field(
         singleLine = singleLine,
         minLines = minLines,
         visualTransformation = if (password) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(keyboardType = if (password) KeyboardType.Password else keyboard),
-        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = (KeyboardOptions(keyboardType = if (password) KeyboardType.Password else keyboard)).tvSafe(),
+        modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
     )
 }
 

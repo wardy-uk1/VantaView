@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.sources
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -133,7 +136,7 @@ private fun KeyDialog(state: ConnectUi.EnterKey, onSave: (String) -> Unit, onCan
                 OutlinedTextField(
                     value = key, onValueChange = { key = it.trim() }, label = { Text("API key") }, singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Password)).tvSafe(), modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
                 )
                 state.error?.let { Text(it, color = Vanta.Error, fontSize = 13.sp) }
             }

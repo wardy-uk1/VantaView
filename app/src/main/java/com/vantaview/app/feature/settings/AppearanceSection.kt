@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.settings
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -225,13 +228,14 @@ private fun CustomColour(current: Color, onPick: (Color) -> Unit) {
     }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         OutlinedTextField(
-            value = hex, singleLine = true, label = { Text("Hex, e.g. FF4FD8") }, modifier = Modifier.weight(1f),
+            value = hex, singleLine = true, label = { Text("Hex, e.g. FF4FD8") }, modifier = (Modifier.weight(1f)).then(Modifier.tvTextField()),
             onValueChange = { v ->
                 hex = v.removePrefix("#").uppercase().filter { it in "0123456789ABCDEF" }.take(6)
                 bad = false
                 if (hex.length == 6) onPick(Color(0xFF000000 or hex.toLong(16)))
             },
             isError = bad,
+            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
         )
     }
 }

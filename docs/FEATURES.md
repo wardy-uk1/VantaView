@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] TV remote and text boxes: up and down move straight past a text box, and the keyboard only opens when OK is pressed on it
 - [x] Screen size (Settings › Appearance): Auto fits the layout to the device and screen (scales up very wide TVs, down on very narrow phones, keeps huge system fonts in check), or Compact, Normal or Large
 - [x] Refresh on Home: pull down on a phone, or the Refresh button; reloads playlists, TV guide, weather and Home rows
 - [x] Live TV preview: first press plays a channel in a small window with now and next, second press goes full screen (switch in Settings › Playback)

@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.vantaview.app.ui.TvInput.isTv = packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_LEANBACK)
         // Automatic backups after playlist or profile changes (when switched on in Settings).
         backups.startAutomatic()
         // Settings › Updates: look for a new version every time VantaView starts (not on a screen turn).

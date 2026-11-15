@@ -43,7 +43,7 @@ fun SearchToggle(query: String, onQuery: (String) -> Unit, label: String, modifi
             trailingIcon = {
                 IconButton(onClick = { onQuery(""); open = false }) { Icon(Icons.Filled.Close, contentDescription = "Close search") }
             },
-            modifier = modifier.fillMaxWidth().focusRequester(focus),
+            modifier = (modifier.fillMaxWidth().focusRequester(focus)).then(Modifier.tvTextField()),
         )
         LaunchedEffect(justOpened) { if (justOpened) { runCatching { focus.requestFocus() }; justOpened = false } }
     } else {

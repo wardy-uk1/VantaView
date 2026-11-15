@@ -3,6 +3,9 @@
 
 package com.vantaview.app.feature.settings
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -182,9 +185,9 @@ private fun NewPin(button: String, onSet: (String) -> Unit) {
 private fun PinBox(label: String, value: String, modifier: Modifier, onChange: (String) -> Unit) {
     OutlinedTextField(
         value = value, onValueChange = { v -> onChange(v.filter { it.isDigit() }.take(4)) },
-        label = { Text(label) }, singleLine = true, modifier = modifier,
+        label = { Text(label) }, singleLine = true, modifier = (modifier).then(Modifier.tvTextField()),
         visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+        keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.NumberPassword)).tvSafe(),
     )
 }
 
@@ -229,7 +232,8 @@ private fun CategoryTicks(vm: ParentalViewModel, providerId: Long) {
     val all = cats ?: run { Text("Loading…", color = Vanta.TextDim); return }
     OutlinedTextField(
         value = query, onValueChange = { query = it }, singleLine = true,
-        label = { Text("Find a category") }, modifier = Modifier.fillMaxWidth(),
+        label = { Text("Find a category") }, modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
+        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
     )
     // Adult ones first, so they're easy to check.
     val shown = all.filter { query.isBlank() || it.name.contains(query.trim(), true) }

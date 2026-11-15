@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.profiles
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -150,7 +153,8 @@ fun ProfileEditScreen(
             AvatarCircle(avatar, 120.dp, ring = true, modifier = if (first) Modifier else Modifier.padding(top = 4.dp))
             OutlinedTextField(
                 value = name, onValueChange = { name = it.take(20); error = null },
-                label = { Text("Profile name") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+                label = { Text("Profile name") }, singleLine = true, modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
             )
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 itemsIndexed(Avatars.all) { i, _ ->
@@ -276,7 +280,7 @@ private fun PinField(label: String, value: String, onChange: (String) -> Unit) {
         label = { Text(label) },
         singleLine = true,
         visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.NumberPassword)).tvSafe(),
+        modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
     )
 }

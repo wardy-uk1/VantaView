@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.settings
 
+import com.vantaview.app.ui.tvTextField
+import com.vantaview.app.ui.tvSafe
+
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -200,7 +203,8 @@ fun SettingsScreen(onEditProfile: (Long) -> Unit = {}, vm: SettingsViewModel = h
                             value = pw, onValueChange = { pw = it }, singleLine = true,
                             label = { Text("Backup password") },
                             visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Password)).tvSafe(),
+                            modifier = Modifier.tvTextField(),
                         )
                         if (p.wrongPassword) Text("That password isn't right.", color = Vanta.Error)
                         Text("Leave it blank to restore everything except logins.", color = Vanta.TextDim, fontSize = 12.sp)
@@ -351,12 +355,14 @@ private fun PasswordDialog(
                 OutlinedTextField(
                     value = pw, onValueChange = { pw = it }, singleLine = true, label = { Text("Backup password") },
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Password)).tvSafe(),
+                    modifier = Modifier.tvTextField(),
                 )
                 OutlinedTextField(
                     value = again, onValueChange = { again = it }, singleLine = true, label = { Text("Type it again") },
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Password)).tvSafe(),
+                    modifier = Modifier.tvTextField(),
                 )
                 if (!matches) Text("The two passwords don't match.", color = Vanta.Error, fontSize = 13.sp)
                 if (pw.isNotEmpty() && pw.length < 4) Text("Use at least 4 characters.", color = Vanta.Error, fontSize = 13.sp)
@@ -426,7 +432,8 @@ private fun WeatherSection(vm: SettingsViewModel) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedTextField(
                 value = query, onValueChange = { query = it }, singleLine = true,
-                label = { Text("Town or city") }, modifier = Modifier.weight(1f),
+                label = { Text("Town or city") }, modifier = (Modifier.weight(1f)).then(Modifier.tvTextField()),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
             )
             FocusCard(onClick = { vm.searchPlaces(query) }) { Text("Find", color = Vanta.Text) }
         }
