@@ -46,6 +46,29 @@ enum class Look(
     SPOTLIGHT("Spotlight", "Dark blue, rounded tiles and a big title with a Watch button, like a 2020 games console", topMenu = true, dashboard = true),
 }
 
+/**
+ * Screen size (Settings › Appearance): how big everything is drawn. Auto picks it from the device and screen;
+ * the others are fixed sizes for when Auto isn't right on a particular screen.
+ */
+enum class UiSize(val label: String, val scale: Float?) {
+    AUTO("Auto", null), COMPACT("Compact", 0.85f), NORMAL("Normal", 1f), LARGE("Large", 1.15f);
+
+    companion object {
+        /**
+         * Auto: TVs that report a very wide screen (some 4K sets) are scaled up so the layout fills them as on
+         * a 1080p TV; very narrow phones are scaled down a little so pages fit across.
+         */
+        fun auto(tv: Boolean, widthDp: Int, smallestDp: Int): Float = when {
+            tv && widthDp > 1100 -> (widthDp / 960f).coerceAtMost(1.6f)
+            !tv && smallestDp in 1..359 -> 0.9f
+            else -> 1f
+        }
+
+        /** Auto also keeps a very large system font size from breaking layouts. */
+        const val AUTO_MAX_FONT = 1.3f
+    }
+}
+
 enum class TextSize(val label: String, val scale: Float) { SMALL("Small", 0.9f), NORMAL("Normal", 1f), LARGE("Large", 1.15f) }
 
 data class Appearance(
@@ -55,6 +78,7 @@ data class Appearance(
     /** Used when [accent] is null (a custom colour), as 0xAARRGGBB. */
     val custom: Long = 0xFF00E5FF,
     val textSize: TextSize = TextSize.NORMAL,
+    val uiSize: UiSize = UiSize.AUTO,
     val sidebarAutoHide: Boolean = true,
     val loadingScreen: Boolean = true,
     /** A language code from [com.vantaview.app.ui.I18n.languages], or "" to follow the device. */
@@ -91,6 +115,7 @@ class AppearanceSettings @Inject constructor(
         accent = sp.getString(k("accent"), AccentPreset.CYAN.name).let { n -> AccentPreset.entries.firstOrNull { it.name == n } },
         custom = sp.getLong(k("custom"), 0xFF00E5FF),
         textSize = runCatching { TextSize.valueOf(sp.getString(k("text"), null)!!) }.getOrDefault(TextSize.NORMAL),
+        uiSize = runCatching { UiSize.valueOf(sp.getString(k("ui_size"), null)!!) }.getOrDefault(UiSize.AUTO),
         sidebarAutoHide = sp.getBoolean(k("sidebar_autohide"), true),
         loadingScreen = sp.getBoolean(k("loading_screen"), true),
         language = sp.getString(k("language"), "") ?: "",
@@ -105,6 +130,7 @@ class AppearanceSettings @Inject constructor(
             .putString(p + "accent", a.accent?.name ?: "CUSTOM")
             .putLong(p + "custom", a.custom)
             .putString(p + "text", a.textSize.name)
+            .putString(p + "ui_size", a.uiSize.name)
             .putBoolean(p + "sidebar_autohide", a.sidebarAutoHide)
             .putBoolean(p + "loading_screen", a.loadingScreen)
             .putString(p + "language", a.language)

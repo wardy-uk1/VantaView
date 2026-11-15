@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+@file:kotlin.OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.vantaview.app.feature.home
 
 import androidx.annotation.OptIn
@@ -121,6 +122,7 @@ fun HomeScreen(
         }
     }
 
+    val refreshing by vm.refreshing.collectAsStateWithLifecycle()
     var now by remember { mutableStateOf(Date()) }
     LaunchedEffect(Unit) { while (true) { now = Date(); delay(15_000) } }
 
@@ -137,7 +139,9 @@ fun HomeScreen(
                     onPlayChannel = onPlayChannel,
                 ),
             )
-        } else Column(
+        } else androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+            isRefreshing = refreshing, onRefresh = vm::refreshAll, modifier = Modifier.fillMaxSize(),
+        ) { Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -148,6 +152,8 @@ fun HomeScreen(
                 showSetUp = weather == null && vm.weatherEnabled && remember(weather) { !vm.weatherHasSource() },
                 onWeather = { showForecast = true },
                 onSearch = { onSection("search") },
+                onRefresh = vm::refreshAll,
+                refreshing = refreshing,
                 onSetUp = {
                     val granted = androidx.core.content.ContextCompat.checkSelfPermission(
                         context, android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -235,7 +241,7 @@ fun HomeScreen(
             if (favs.isNotEmpty()) {
                 com.vantaview.app.ui.SectionTitle("Favourite channels", onClick = { onSection("live") })
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(favs, key = { it.id }) { ch -> ChannelCard(ch) { onPlayChannel(ch.id) } }
+                    items(favs, key = { it.id }) { ch -> ChannelCard(ch) { com.vantaview.app.feature.player.ZapList.set(favs.map { it.id }); onPlayChannel(ch.id) } }
                 }
             }
 
@@ -246,7 +252,7 @@ fun HomeScreen(
                 )
             }
             Spacer(Modifier.height(16.dp))
-        }
+        } }
     }
 
     if (showForecast) weather?.let { w -> ForecastDialog(w) { showForecast = false } }
@@ -448,6 +454,8 @@ private fun GreetingRow(
     onWeather: () -> Unit,
     onSetUp: () -> Unit,
     onSearch: () -> Unit,
+    onRefresh: () -> Unit = {},
+    refreshing: Boolean = false,
 ) {
     val hour = java.util.Calendar.getInstance().apply { time = now }.get(java.util.Calendar.HOUR_OF_DAY)
     val greeting = when (hour) {
@@ -459,6 +467,12 @@ private fun GreetingRow(
     val search: @Composable () -> Unit = {
         FocusCard(onClick = onSearch, shape = CircleShape, padding = PaddingValues(12.dp), contentAlignment = Alignment.Center) {
             Icon(Icons.Filled.Search, contentDescription = "Search", tint = Vanta.Text)
+        }
+    }
+    val refresh: @Composable () -> Unit = {
+        FocusCard(onClick = onRefresh, shape = CircleShape, padding = PaddingValues(12.dp), contentAlignment = Alignment.Center) {
+            if (refreshing) androidx.compose.material3.CircularProgressIndicator(Modifier.size(24.dp), color = Vanta.Cyan, strokeWidth = 2.dp)
+            else Icon(Icons.Filled.Refresh, contentDescription = "Refresh", tint = Vanta.Text)
         }
     }
     val weatherCard: @Composable () -> Unit = {
@@ -503,6 +517,7 @@ private fun GreetingRow(
                 Text(greeting, color = Vanta.Text, fontSize = 26.sp, fontWeight = FontWeight.Black)
                 Text(date, color = Vanta.TextDim, fontSize = 14.sp)
             }
+            refresh()
             search()
             weatherCard()
         }

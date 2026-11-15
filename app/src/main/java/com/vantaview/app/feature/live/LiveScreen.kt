@@ -104,6 +104,21 @@ fun LiveScreen(
     val guideVersion by vm.guideVersion.collectAsStateWithLifecycle()
     val state = active?.let { sync[it.id] }
 
+    // Preview first (Settings › Playback): the first press plays the channel in a small window, the second goes
+    // full screen. Channel up and down in the player then move through the list it was opened from.
+    val preview: LivePreviewModel = hiltViewModel()
+    val previewing by preview.channel.collectAsStateWithLifecycle()
+    LivePreviewLifecycle(preview)
+    val openFull: (Long) -> Unit = { id ->
+        com.vantaview.app.feature.player.ZapList.set(channels.map { it.channel.id })
+        preview.pause()
+        onPlay(id)
+    }
+    val pick: (Long) -> Unit = { id ->
+        val row = channels.firstOrNull { it.channel.id == id }
+        if (preview.enabled && row != null && previewing?.id != id) preview.show(row.channel) else openFull(id)
+    }
+
     // Re-read now and next every minute, and whenever a guide finishes loading.
     var minute by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) { while (true) { delay(60_000); minute++ } }
@@ -204,12 +219,17 @@ fun LiveScreen(
                             }
                         }
                     }
-                    ChannelList(channels, filter, query, wide = true, Modifier.weight(1f).fillMaxHeight(), onPlay, vm::toggleFavourite, guideTick, vm::nowNext)
+                    ChannelList(channels, filter, query, wide = true, Modifier.weight(1f).fillMaxHeight(), pick, vm::toggleFavourite, guideTick, vm::nowNext)
+                    if (previewing != null) LivePreviewPanel(preview, wide = true, onFull = { openFull(it.id) }, Modifier.weight(0.9f))
                 }
             } else {
                 CategoryRow(categories, filter, radioCount > 0) { vm.filter.value = it }
                 Spacer(Modifier.height(10.dp))
-                ChannelList(channels, filter, query, wide = false, Modifier.fillMaxSize(), onPlay, vm::toggleFavourite, guideTick, vm::nowNext)
+                if (previewing != null) {
+                    LivePreviewPanel(preview, wide = false, onFull = { openFull(it.id) }, Modifier.fillMaxWidth())
+                    Spacer(Modifier.height(10.dp))
+                }
+                ChannelList(channels, filter, query, wide = false, Modifier.fillMaxSize(), pick, vm::toggleFavourite, guideTick, vm::nowNext)
             }
         }
 

@@ -286,6 +286,33 @@ class HomeViewModel @Inject constructor(
 
     fun removeFromContinue(e: HistoryEntry) = history.remove(e.type, e.metaId)
 
+    // ---- Refresh ----
+
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing
+
+    /** Home › Refresh (pull down on a phone): playlists, TV guide, weather and the rows on Home load again. */
+    fun refreshAll() {
+        if (_refreshing.value) return
+        _refreshing.value = true
+        viewModelScope.launch {
+            try {
+                val list = db.providers().allFor(session.id)
+                list.forEach { providers.sync(it.id) }
+                list.forEach { runCatching { guide.refresh(it) } }
+                runCatching { weatherRepo.refresh(true) }
+                runCatching { buildTiles() }
+                runCatching { buildContinue(history.entries.first()) }
+                runCatching { buildOnNow(favourites.value) }
+                runCatching { loadPreview() }
+                // Playlists carry on loading in the background; their progress shows on Live TV and Sources.
+                kotlinx.coroutines.delay(800)
+            } finally {
+                _refreshing.value = false
+            }
+        }
+    }
+
     // ---- Live preview ----
 
     /** Fires once after the app starts when "Start on last channel" is on: open this channel. */

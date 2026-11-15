@@ -105,7 +105,7 @@ internal class Dash(
     private fun favCard(ch: ChannelEntity) = DashCard(
         "f:${ch.id}", ChannelNames.display(ch.name), onNow.firstOrNull { it.first.id == ch.id }?.second?.title?.let { "Now: $it" } ?: "Channel ${ch.number}",
         ch.logo, true, null,
-    ) { onPlayChannel(ch.id) }
+    ) { com.vantaview.app.feature.player.ZapList.set(favs.map { it.id }); onPlayChannel(ch.id) }
 
     private fun nowCard(p: Pair<ChannelEntity, ProgrammeEntity>) = DashCard(
         "n:${p.first.id}", p.second.title, ChannelNames.display(p.first.name), p.first.logo, true,
@@ -231,7 +231,7 @@ private fun BladesHome(d: Dash) {
             add("All channels" to { d.onSection("live") })
             add("TV Guide" to { d.onSection("guide") })
             add("Catch-up" to { d.onSection("catchup") })
-            d.favs.take(4).forEach { ch -> add(ChannelNames.display(ch.name) to { d.onPlayChannel(ch.id) }) }
+            d.favs.take(4).forEach { ch -> add(ChannelNames.display(ch.name) to { com.vantaview.app.feature.player.ZapList.set(d.favs.map { it.id }); d.onPlayChannel(ch.id) }) }
         }, "live"))
         add(Blade("MOVIES & SERIES", listOf(
             "Movies" to { d.onSection("movies") }, "TV Series" to { d.onSection("series") }, "Library" to { d.onSection("library") },

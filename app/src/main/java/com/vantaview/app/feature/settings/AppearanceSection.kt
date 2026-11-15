@@ -87,6 +87,20 @@ fun AppearanceSection(s: AppearanceSettings) {
     }
     }
 
+    Section("Screen size") {
+        Text(
+            "How big everything is drawn. Auto fits it to this device and screen; pick another size if pages look too cramped or too big here.",
+            color = Vanta.TextDim, fontSize = 13.sp,
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            com.vantaview.app.data.UiSize.entries.forEach { u ->
+                Box(Modifier.weight(1f)) {
+                    Pick(u.label, a.uiSize == u, Modifier.fillMaxWidth()) { s.update { it.copy(uiSize = u) } }
+                }
+            }
+        }
+    }
+
     Section("Text size") {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextSize.entries.forEach { t ->

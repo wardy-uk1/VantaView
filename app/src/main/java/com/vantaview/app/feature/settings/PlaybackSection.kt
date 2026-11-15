@@ -29,6 +29,7 @@ fun PlaybackSection(s: PlaybackSettings) {
     var buffer by remember { mutableStateOf(s.buffer) }
     var controls by remember { mutableStateOf(s.controlsSeconds) }
     var mini by remember { mutableStateOf(s.miniPlayer) }
+    var livePreview by remember { mutableStateOf(s.livePreview) }
     var gestures by remember { mutableStateOf(s.gestures) }
     var pip by remember { mutableStateOf(s.pip) }
     var startLast by remember { mutableStateOf(s.startOnLastChannel) }
@@ -79,6 +80,11 @@ fun PlaybackSection(s: PlaybackSettings) {
 
     Section("Live TV") {
         Toggle("Mini player on Home", "A small, muted preview of the last channel you watched", mini) { mini = it; s.miniPlayer = it }
+        Toggle(
+            "Preview channels first",
+            "In Live TV, the first press on a channel plays it in a small window; press it again for full screen",
+            livePreview,
+        ) { livePreview = it; s.livePreview = it }
         Toggle("Start on last channel", "Open straight into the last channel when VantaView starts", startLast) { startLast = it; s.startOnLastChannel = it }
         Toggle(
             "Remember picture size",

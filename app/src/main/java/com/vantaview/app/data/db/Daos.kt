@@ -98,6 +98,10 @@ interface ContentDao {
     @Query("SELECT * FROM channel WHERE id = :id")
     suspend fun channel(id: Long): ChannelEntity?
 
+    /** Several channels by id (in any order), for zapping through the list a channel was opened from. */
+    @Query("SELECT * FROM channel WHERE id IN (:ids)")
+    suspend fun channelsById(ids: List<Long>): List<ChannelEntity>
+
     /** Guide IDs used by a playlist's channels. */
     @Query("SELECT DISTINCT epgChannelId FROM channel WHERE providerId = :providerId AND epgChannelId IS NOT NULL AND epgChannelId != ''")
     suspend fun guideKeys(providerId: Long): List<String>

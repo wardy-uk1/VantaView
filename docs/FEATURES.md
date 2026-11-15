@@ -147,6 +147,10 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Screen size (Settings › Appearance): Auto fits the layout to the device and screen (scales up very wide TVs, down on very narrow phones, keeps huge system fonts in check), or Compact, Normal or Large
+- [x] Refresh on Home: pull down on a phone, or the Refresh button; reloads playlists, TV guide, weather and Home rows
+- [x] Live TV preview: first press plays a channel in a small window with now and next, second press goes full screen (switch in Settings › Playback)
+- [x] Channel up and down follow the list a channel was opened from (Favourites, a category, search, the Home favourites row)
 - [x] Add a playlist from a phone: QR code on Sources and in setup opens a form on the phone (provider message, M3U link or file, Xtream Codes) that sends it to the device over the home network
 - [x] Picture-in-picture switch (Settings › Playback): turns off the PiP button and shrinking on Home
 - [x] M3U links encrypted on the device; logins in them hidden in saved channel, film and guide addresses, and kept in the locked part of backups

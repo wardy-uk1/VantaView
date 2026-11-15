@@ -1,8 +1,8 @@
+- Zender omhoog en omlaag, en vegen, gaan nu door de lijst waaruit je de zender opende: vanuit Favorieten ga je door je favorieten. Omlaag trekken of de nieuwe knop Vernieuwen op Start laadt je playlists, gids en weer opnieuw. Instellingen › Weergave heeft een nieuwe Schermgrootte (Auto past de app aan je apparaat aan).
+- Live-tv kan een zender eerst in een klein venster tonen, met wat er nu en straks op is. Druk nogmaals, of op Volledig scherm kijken, voor volledig scherm. Uit te zetten in Instellingen › Afspelen.
 - Instellingenpagina's zijn overzichtelijker: elk onderdeel is nu een uitklapmenu, en als je er een opent, gaan de andere dicht. Het opstartscherm toont de versie en het buildnummer, en VantaView zoekt bij elke start naar updates.
 - Een echte snelheidstest in Instellingen › Bronnen: ping, download en upload op een live meter, met wat je verbinding kan afspelen.
 - Voeg een playlist toe vanaf je telefoon: kies bij Bronnen of tijdens het instellen QR-code tonen, scan hem met je telefoon en plak daar het bericht van je provider, een M3U-link of -bestand, of Xtream Codes. Het gaat rechtstreeks via je wifi naar de tv.
 - Beeld-in-beeld kun je nu uitzetten bij Instellingen › Afspelen, zodat Home de speler niet meer tot een klein venster verkleint.
 - Terugkijken heeft nu een eigen tegel op Home, naast Live-tv en de tv-gids, als je playlist zenders heeft die eerdere programma's bewaren. De knop Terugkijken staat niet meer in de tv-gids.
 - M3U-playlistlinks worden nu versleuteld opgeslagen, en de login erin wordt verborgen in elk opgeslagen zender- en filmadres. Bestaande playlists worden na de update één keer versleuteld en opnieuw geladen.
-- Films en series uit je M3U-playlist of Xtream Codes-login verschijnen nu bij Films en Series, met posters en details van TMDB. Ze verschijnen ook als "Uit je playlist" als je dezelfde titel via een add-on opent. Vernieuw de playlist één keer om ze binnen te halen; ze verschijnen ook zonder add-ons.
-- Terwijl een torrent of debrid-stream klaargemaakt wordt, is de voortgang 5 seconden te zien en verdwijnt dan. Tik op het scherm om hem weer te zien.

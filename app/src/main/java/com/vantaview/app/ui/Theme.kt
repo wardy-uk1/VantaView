@@ -197,6 +197,13 @@ fun VantaTheme(appearance: com.vantaview.app.data.Appearance = com.vantaview.app
         }
     }
     val density = androidx.compose.ui.platform.LocalDensity.current
+    // Settings › Appearance › Screen size: Auto from the device and screen, or a fixed size.
+    val config = androidx.compose.ui.platform.LocalConfiguration.current
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    val tv = remember { ctx.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_LEANBACK) }
+    val ui = appearance.uiSize
+    val uiScale = ui.scale ?: com.vantaview.app.data.UiSize.auto(tv, config.screenWidthDp, config.smallestScreenWidthDp)
+    val systemFont = if (ui == com.vantaview.app.data.UiSize.AUTO) density.fontScale.coerceAtMost(com.vantaview.app.data.UiSize.AUTO_MAX_FONT) else density.fontScale
     val colors = if (p.light) {
         androidx.compose.material3.lightColorScheme(
             primary = p.accent, onPrimary = Color.White, secondary = Color(0xFF7C4DFF),
@@ -211,7 +218,7 @@ fun VantaTheme(appearance: com.vantaview.app.data.Appearance = com.vantaview.app
     androidx.compose.runtime.CompositionLocalProvider(
         LocalAppearance provides appearance,
         androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(
-            density.density, density.fontScale * appearance.textSize.scale,
+            density.density * uiScale, systemFont * appearance.textSize.scale,
         ),
     ) {
         MaterialTheme(colorScheme = colors, content = content)

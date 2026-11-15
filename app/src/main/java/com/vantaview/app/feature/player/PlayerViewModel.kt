@@ -163,19 +163,36 @@ class PlayerViewModel @Inject constructor(
                 return@launch
             }
             // Provider divider rows ("◆◆◆ CINEMA ◆◆◆") are headings, not channels to switch to.
-            siblings = db.content().siblings(channel.providerId, channel.categoryRemoteId)
-                .filter { it.id == channel.id || !ChannelNames.isDivider(it.name) }
+            // The list it was opened from (Favourites, say), in that order; otherwise its own category.
+            val from = ZapList.take(channelId)
+            siblings = if (from != null) {
+                val byId = db.content().channelsById(from).associateBy { it.id }
+                from.mapNotNull { byId[it] }
+            } else {
+                db.content().siblings(channel.providerId, channel.categoryRemoteId)
+            }.filter { it.id == channel.id || !ChannelNames.isDivider(it.name) }
             val profile = profiles.current()
+            // A list from Favourites can mix playlists, so each playlist's own categories are checked.
+            val providers = siblings.map { it.providerId }.distinct()
             if (profile?.isKids == true) {
-                val allow = db.profiles().kidsCategories(profile.id)
-                    .filter { it.providerId == channel.providerId }.map { it.categoryRemoteId }.toSet()
-                val adultCats = db.content().categories(channel.providerId)
-                    .filter { com.vantaview.app.data.profile.KidsFilter.looksAdult(it.name) }.map { it.remoteId }.toSet()
-                siblings = siblings.filter { com.vantaview.app.data.profile.KidsFilter.channelAllowed(it, adultCats, allow) }
+                val kidsCats = db.profiles().kidsCategories(profile.id)
+                val allowed = HashSet<Long>()
+                providers.forEach { pid ->
+                    val allow = kidsCats.filter { it.providerId == pid }.map { it.categoryRemoteId }.toSet()
+                    val adultCats = db.content().categories(pid)
+                        .filter { com.vantaview.app.data.profile.KidsFilter.looksAdult(it.name) }.map { it.remoteId }.toSet()
+                    siblings.filter { it.providerId == pid && com.vantaview.app.data.profile.KidsFilter.channelAllowed(it, adultCats, allow) }
+                        .forEach { allowed += it.id }
+                }
+                siblings = siblings.filter { it.id in allowed }
             } else if (parental.hiding) {
                 // Settings › Parental control: don't zap into hidden adult channels.
-                val ids = parental.adultIds(db.content().categories(channel.providerId))
-                siblings = siblings.filter { it.id == channel.id || !parental.hidden(it, ids) }
+                val hidden = HashSet<Long>()
+                providers.forEach { pid ->
+                    val ids = parental.adultIds(db.content().categories(pid))
+                    siblings.filter { it.providerId == pid && parental.hidden(it, ids) }.forEach { hidden += it.id }
+                }
+                siblings = siblings.filter { it.id == channel.id || it.id !in hidden }
             }
             index = siblings.indexOfFirst { it.id == channel.id }.coerceAtLeast(0)
             if (siblings.isEmpty()) siblings = listOf(channel)

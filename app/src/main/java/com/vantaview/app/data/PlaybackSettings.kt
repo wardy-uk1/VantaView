@@ -84,6 +84,11 @@ class PlaybackSettings @Inject constructor(
         get() = sp.getBoolean("pip", true)
         set(v) { sp.edit().putBoolean("pip", v).apply(); com.vantaview.app.feature.player.PlayerPip.enabled = v }
 
+    /** Live TV: the first press on a channel previews it in a small window; the second goes full screen. */
+    var livePreview: Boolean
+        get() = sp.getBoolean("live_preview", true)
+        set(v) { sp.edit().putBoolean("live_preview", v).apply() }
+
     var miniPlayer: Boolean
         get() = sp.getBoolean("mini_player", true)
         set(v) { sp.edit().putBoolean("mini_player", v).apply() }

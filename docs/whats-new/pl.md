@@ -1,8 +1,8 @@
+- Kanał w górę i w dół oraz przesuwanie przechodzą teraz przez listę, z której otwarto kanał: z Ulubionych przechodzisz przez ulubione. Pociągnięcie w dół lub nowy przycisk Odśwież na stronie głównej wczytuje ponownie playlisty, przewodnik i pogodę. W Ustawienia › Wygląd jest nowy Rozmiar ekranu (Auto dopasowuje aplikację do urządzenia).
+- Telewizja na żywo może najpierw pokazać kanał w małym oknie, z tym, co leci teraz i później. Naciśnij ponownie lub Oglądaj na pełnym ekranie, aby przejść do pełnego ekranu. Wyłączysz to w Ustawienia › Odtwarzanie.
 - Strony ustawień są bardziej przejrzyste: każda sekcja to teraz rozwijane menu, a otwarcie jednej zamyka pozostałe. Ekran startowy pokazuje wersję i numer kompilacji, a VantaView sprawdza aktualizacje przy każdym uruchomieniu.
 - Prawdziwy test prędkości w Ustawienia › Źródła: ping, pobieranie i wysyłanie na żywym wskaźniku, z informacją, co Twoje łącze może odtwarzać.
 - Dodaj playlistę z telefonu: w Źródłach lub podczas konfiguracji wybierz Pokaż kod QR, zeskanuj go telefonem i wklej tam wiadomość od dostawcy, link lub plik M3U albo Xtream Codes. Trafia to prosto na telewizor przez domowe Wi-Fi.
 - Obraz w obrazie można teraz wyłączyć w Ustawienia › Odtwarzanie, aby Ekran główny nie zmniejszał już odtwarzacza do małego okna.
 - Archiwum ma teraz własny kafelek na stronie Start, obok TV na żywo i Programu TV, gdy Twoja playlista ma kanały z minionymi audycjami. Przycisk Archiwum zniknął z Programu TV.
 - Linki do playlist M3U są teraz przechowywane w postaci zaszyfrowanej, a dane logowania w nich są ukryte we wszystkich zapisanych adresach kanałów i filmów. Istniejące playlisty zostaną raz zaszyfrowane i wczytane ponownie po aktualizacji.
-- Filmy i seriale z playlisty M3U lub konta Xtream Codes pojawiają się teraz w Filmach i Serialach, z plakatami i szczegółami z TMDB. Pojawiają się też jako „Z Twojej playlisty”, gdy otworzysz ten sam tytuł z dodatku. Odśwież playlistę raz, aby je pobrać; widać je nawet bez dodatków.
-- Gdy torrent lub strumień debrid się przygotowuje, postęp jest widoczny przez 5 sekund, a potem znika. Stuknij ekran, aby zobaczyć go ponownie.
