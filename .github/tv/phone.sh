@@ -62,7 +62,11 @@ PY
 rotate() { adb shell settings put system user_rotation $1; adb shell wm user-rotation lock $1 >/dev/null 2>&1; sleep 4; }
 size() { adb shell wm size | tail -1 | grep -o '[0-9]*x[0-9]*'; }
 scroll() { s=$(size); w=${s%x*}; h=${s#*x}; adb shell input swipe $((w/2)) $((h*3/4)) $((w/2)) $((h/4)) 400; sleep 1; }
-menu() { tap_text "Menu"; sleep 1; tap_text "$1"; sleep 4; }
+# The on-screen keyboard (Search opens it) covers the menu button, so it's closed first.
+hidekb() { if adb shell dumpsys input_method | grep -q 'mInputShown=true'; then adb shell input keyevent KEYCODE_BACK; sleep 1; fi; }
+menu() { hidekb; tap_text "Menu"; sleep 1; tap_text "$1"; sleep 4; }
+# Player controls on screen (a tap in the middle brings them back).
+controls() { dump; grep -q 'text="Size:' $OUT/ui.xml || { s=$(size); w=${s%x*}; h=${s#*x}; adb shell input tap $((w/2)) $((h/2)); sleep 1; }; }
 crashes() { adb logcat -d | grep -E "FATAL EXCEPTION|AndroidRuntime: |ANR in com.vantaview" > $OUT/crashes.txt || true; }
 
 adb install -r VantaView-test.apk || exit 1
@@ -110,12 +114,16 @@ sleep 12; shot player-portrait
 s=$(size); w=${s%x*}; h=${s#*x}; adb shell input tap $((w/2)) $((h/6)); sleep 1; shot player-portrait-controls
 rotate 1; shot player-landscape
 adb shell input tap 400 300; sleep 1; shot player-landscape-controls
+# A preview window first? Then the full player (the Size button is there).
+controls; dump; grep -q 'text="Size:' $OUT/ui.xml || { [ -n "$xy" ] && adb shell input tap $xy; sleep 8; }
 # Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
 for i in 1 2 3 4 5 6 7; do
-  tap_text "Size:" || true; sleep 1; shot "size-$i"; dump; grep -q 'text="Size:' $OUT/ui.xml 2>/dev/null || { adb shell input tap 400 300; sleep 1; }
+  controls; tap_text "Size:"; sleep 2; shot "size-$i"
 done
-tap_text "Zoom"; tap_text "Zoom"; tap_text "Zoom"; sleep 1; shot zoom-3-steps
-tap_text "Hold"; sleep 1; shot zoom-hold-top
+controls; tap_text "Zoom"; controls; tap_text "Zoom"; controls; tap_text "Zoom"; sleep 2; shot zoom-3-steps
+controls; tap_text "Hold"; sleep 2; shot zoom-hold-top
+# Back to 100% (seven presses of Size went round to Fit again) for the rest of the run.
+controls; for i in 1 2 3 4; do tap_text "Zoom"; controls; done
 rotate 0; key BACK; key BACK; sleep 2
 # Movies: tiles, a tile's page, a film's details.
 menu "Movies"; shot movies

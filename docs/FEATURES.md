@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Protected (ClearKey or Widevine) add-on streams, DASH included, read from the usual shapes add-ons use ("drm", "clearKeys", license_key); Sports TV also shows add-on rows of the "sports" and "events" types
 - [x] Jellyfin servers as a source (Sources › Jellyfin; username and password or Quick Connect): films and series on Movies and TV Series (with episodes), Live TV channels and guide in Live TV
 - [x] Add-on rows of Stremio's "other" type on Movies and TV Series (titles with several videos open like a series)
 - [x] More picture sizes in the live and film players: Fit, Stretch, Fill screen, 16:9, 4:3, 21:9 and Original, plus Zoom (100–200%) held at the middle, top or bottom; each channel, film and series remembers its own, with a default in Settings › Playback

@@ -372,7 +372,9 @@ class AddonRepository @Inject constructor(
         const val TV = "tv"
         /** Stremio's "other" type (mixed titles some add-ons use) is shown on both Movies and TV Series. */
         const val OTHER = "other"
-        fun typeOk(catalogType: String, page: String) = catalogType == page || (page == TV && catalogType == "channel") ||
+        /** Also on Sports TV: types some sports add-ons use instead of "tv". */
+        val TV_TYPES = setOf("channel", "sports", "sport", "events", "event", "live")
+        fun typeOk(catalogType: String, page: String) = catalogType == page || (page == TV && catalogType in TV_TYPES) ||
             (catalogType == OTHER && (page == "movie" || page == "series"))
     }
 }

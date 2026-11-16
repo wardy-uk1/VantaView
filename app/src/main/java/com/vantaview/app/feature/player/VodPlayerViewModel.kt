@@ -442,9 +442,12 @@ class VodPlayerViewModel @Inject constructor(
             okHttp.newBuilder().readTimeout(3, java.util.concurrent.TimeUnit.MINUTES).build() else okHttp
         val http = OkHttpDataSource.Factory(client)
             .setUserAgent(ua)
-            .setDefaultRequestProperties(headers.filterKeys { !it.equals("User-Agent", true) })
-        val item = MediaItem.Builder().setUri(url).apply {
+            .setDefaultRequestProperties(com.vantaview.app.data.player.Drm.httpHeaders(headers).filterKeys { !it.equals("User-Agent", true) })
+        // Protected (ClearKey or Widevine) streams, as add-ons describe them.
+        val drm = com.vantaview.app.data.player.Drm.info(headers)
+        val builder = MediaItem.Builder().setUri(url).apply {
             if (url.substringBefore('?').endsWith(".m3u8", true)) setMimeType(MimeTypes.APPLICATION_M3U8)
+            else if (com.vantaview.app.data.player.Drm.isDash(url, headers)) setMimeType(MimeTypes.APPLICATION_MPD)
             if (subs.isNotEmpty()) setSubtitleConfigurations(subs.map { s ->
                 val path = s.url.substringBefore('?').lowercase()
                 MediaItem.SubtitleConfiguration.Builder(android.net.Uri.parse(s.url))
@@ -459,8 +462,10 @@ class VodPlayerViewModel @Inject constructor(
                     .setLabel(listOfNotNull(s.lang?.let { l -> java.util.Locale(l).getDisplayLanguage(com.vantaview.app.ui.I18n.locale) }, s.addonName).joinToString(" · "))
                     .build()
             })
-        }.build()
-        player.setMediaSource(DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http), com.vantaview.app.data.player.PlayerTuning.extractors()).createMediaSource(item))
+        }
+        val factory = DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http), com.vantaview.app.data.player.PlayerTuning.extractors())
+        drm?.let { com.vantaview.app.data.player.Drm.apply(it, builder, factory, http) }
+        player.setMediaSource(factory.createMediaSource(builder.build()))
         player.prepare()
         if (positionMs > 0) player.seekTo(positionMs)
         player.playWhenReady = true

@@ -270,8 +270,8 @@ object AddonJson {
             if (direct == null && hash == null) return@mapNotNull null
             val url = direct.orEmpty()
             val hints = s.optJSONObject("behaviorHints")
-            val headers = hints?.optJSONObject("proxyHeaders")?.optJSONObject("request")
-                ?.let { h -> h.keys().asSequence().toList().associateWith { h.optString(it) } }.orEmpty()
+            val headers = (hints?.optJSONObject("proxyHeaders")?.optJSONObject("request")
+                ?.let { h -> h.keys().asSequence().toList().associateWith { h.optString(it) } }.orEmpty()) + drmOf(s, url)
             val name = s.optString("name").replace('\n', ' ').trim()
             val title = s.optString("title").ifBlank { s.optString("description") }.replace('\n', ' ').trim()
             val all = "$name $title ${hints?.optString("filename").orEmpty()}"
@@ -291,6 +291,64 @@ object AddonJson {
                 }.orEmpty(),
             )
         }
+    }
+
+    /**
+     * Protected (ClearKey or Widevine) streams. Stremio's format has no field for these, so add-ons that offer
+     * them use their own; the usual shapes are read: a "drm" object on the stream or its behaviorHints
+     * ({"clearkey": {"kid": "key"}}, {"type": "clearkey", "keys": …}, {"type": "widevine", "licenseUrl": …}),
+     * "clearKeys"/"clearkeys" ({"kid": "key"}), "keyId" + "key", or Kodi-style "license_type"/"license_key".
+     * They're kept as the same notes M3U channels use (see Drm), so the player handles both alike.
+     */
+    private fun drmOf(s: JSONObject, url: String): Map<String, String> {
+        val hints = s.optJSONObject("behaviorHints")
+        val out = HashMap<String, String>()
+        fun keysText(v: Any?): String? = when (v) {
+            is JSONObject -> if (v.has("keys") && v.opt("keys") is JSONArray) v.toString()
+                else if (v.has("keyId") && v.has("key")) "${v.optString("keyId")}:${v.optString("key")}"
+                else v.keys().asSequence().toList().takeIf { it.isNotEmpty() }?.joinToString(",") { k -> "$k:${v.optString(k)}" }
+            is JSONArray -> (0 until v.length()).mapNotNull { v.optJSONObject(it) }.mapNotNull { o ->
+                val kid = o.optString("kid").ifBlank { o.optString("keyId") }
+                val k = o.optString("k").ifBlank { o.optString("key") }
+                if (kid.isNotBlank() && k.isNotBlank()) "$kid:$k" else null
+            }.takeIf { it.isNotEmpty() }?.joinToString(",")
+            is String -> v.trim().ifBlank { null }
+            else -> null
+        }
+        for (holder in listOfNotNull(s, hints)) {
+            val drm = holder.opt("drm")
+            when (drm) {
+                is JSONObject -> {
+                    val ck = drm.opt("clearkey") ?: drm.opt("clearKey") ?: drm.opt("org.w3.clearkey")
+                    val wv = drm.optJSONObject("widevine") ?: drm.optJSONObject("com.widevine.alpha")
+                    val type = drm.optString("type").lowercase()
+                    when {
+                        ck != null -> keysText(if (ck is JSONObject && ck.has("keys") && ck.opt("keys") is JSONObject) ck.opt("keys") else ck)
+                            ?.let { out[com.vantaview.app.data.player.Drm.TYPE] = "clearkey"; out[com.vantaview.app.data.player.Drm.KEY] = it }
+                        wv != null -> wv.optString("licenseUrl").ifBlank { wv.optString("license_url").ifBlank { wv.optString("serverURL") } }.ifBlank { null }
+                            ?.let { out[com.vantaview.app.data.player.Drm.TYPE] = "widevine"; out[com.vantaview.app.data.player.Drm.KEY] = it }
+                        "widevine" in type -> drm.optString("licenseUrl").ifBlank { drm.optString("license") }.ifBlank { null }
+                            ?.let { out[com.vantaview.app.data.player.Drm.TYPE] = "widevine"; out[com.vantaview.app.data.player.Drm.KEY] = it }
+                        else -> keysText(drm.opt("keys") ?: drm.opt("clearKeys") ?: drm.opt("license") ?: drm.opt("key")?.let { drm })
+                            ?.let { out[com.vantaview.app.data.player.Drm.TYPE] = "clearkey"; out[com.vantaview.app.data.player.Drm.KEY] = it }
+                    }
+                }
+                is String -> if (drm.isNotBlank()) { out[com.vantaview.app.data.player.Drm.TYPE] = "clearkey"; out[com.vantaview.app.data.player.Drm.KEY] = drm }
+            }
+            if (com.vantaview.app.data.player.Drm.KEY !in out) {
+                keysText(holder.opt("clearKeys") ?: holder.opt("clearkeys") ?: holder.opt("clearKey"))
+                    ?.let { out[com.vantaview.app.data.player.Drm.TYPE] = "clearkey"; out[com.vantaview.app.data.player.Drm.KEY] = it }
+            }
+            if (com.vantaview.app.data.player.Drm.KEY !in out && holder.optString("license_key").isNotBlank()) {
+                val t = holder.optString("license_type").lowercase()
+                out[com.vantaview.app.data.player.Drm.TYPE] = if ("widevine" in t) "widevine" else "clearkey"
+                out[com.vantaview.app.data.player.Drm.KEY] = holder.optString("license_key")
+            }
+            if (com.vantaview.app.data.player.Drm.KEY in out) break
+        }
+        val manifest = (s.optString("manifestType").ifBlank { hints?.optString("manifestType").orEmpty() }).lowercase()
+        if (manifest == "mpd" || manifest == "dash") out[com.vantaview.app.data.player.Drm.MANIFEST] = "mpd"
+        return out
     }
 
     /**
