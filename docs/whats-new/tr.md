@@ -1,3 +1,4 @@
+- Canlı TV ve TV Rehberi artık tüm listelerini birlikte gösterebiliyor: Canlı TV'nin üstündeki liste seçicide Tüm oynatma listeleri'ni seç. Aynı adlı gruplar birleşir ve her kanal hangi listeden geldiğini gösterir.
 - Kanalları toplu göster veya gizle: Canlı TV › Kanallar ✎ (veya Ayarlar › Kanallar). Kanalları ya da bütün bir grubu işaretle, sonra hepsini birden gizle veya göster. ClearKey veya Widevine ile korunan M3U kanalları artık oynuyor; listeler kartlarından yeniden adlandırılabiliyor.
 - TV Rehberi'nde kumandadaki Geri'yi basılı tutarak izlediğin kanala tam ekran olarak hemen dön. Kısa basış eskisi gibi geri gider.
 - İlk kurulum artık bağlantını kontrol edip VantaView'u ona göre ayarlıyor: arabellek boyutu, önce hangi kalitenin deneneceği, torrentler ve Ana sayfadaki mini oynatıcı. İstediğin zaman Ayarlar › Kaynaklar'daki hız testinin altındaki Ayarlarımı ayarla ile tekrarla.
@@ -5,4 +6,3 @@
 - Bir eklenti bir başlık için video yerine yalnızca web sayfası sunduğunda, Tarayıcıda aç düğmeleri artık bunları tarayıcında açıyor. Spor TV artık film türleri ve yılları olmadan yalnızca eklentilerin satırlarını gösteriyor.
 - Oynatma listeleri sayfası artık her listenin sunucu adresini, kullanıcı adını, ne zaman eklendiğini ve son yüklendiğini gösteriyor; böylece aynı adlı listeler ayırt edilebiliyor. Adsız eklenen yeni listeler sunucunun adını alıyor. Listeler ayrıca kapatılıp açılabiliyor: kapalıyken her yerde gizlenir ama silinmez.
 - Canlı kanal veya spor etkinliği sunan eklentiler artık Ana sayfada kendi kutucuğu olan yeni Spor TV sayfasında görünüyor. Bir eklentinin kurulum sayfası adresini (/configure ile biten) yapıştırmak artık kurulum bağlantısı gibi çalışıyor.
-- TV'de kumanda artık yukarı ve aşağı ile metin kutularının yanından doğrudan geçiyor; klavye yalnızca birinde OK'a basınca açılıyor.

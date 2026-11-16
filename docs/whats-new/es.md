@@ -1,3 +1,4 @@
+- TV en directo y la guía ahora pueden mostrar todas tus listas juntas: elige Todas las listas en el selector de listas arriba en TV en directo. Los grupos con el mismo nombre se unen y cada canal indica de qué lista viene.
 - Muestra u oculta canales en bloque: TV en directo › Canales ✎ (o Ajustes › Canales). Marca canales o un grupo entero y ocúltalos o muéstralos a la vez. Los canales M3U protegidos con ClearKey o Widevine ahora se reproducen, y las listas se pueden renombrar desde su tarjeta.
 - En la guía de TV, mantén pulsado Atrás en el mando para volver directamente al canal que veías, a pantalla completa. Una pulsación corta sigue funcionando como antes.
 - La primera configuración ahora comprueba tu conexión y ajusta VantaView a ella: tamaño del búfer, qué calidad probar primero, torrents y el minirreproductor de Inicio. Repítelo cuando quieras con Ajustar mis ajustes bajo la prueba de velocidad en Ajustes › Fuentes.
@@ -5,4 +6,3 @@
 - Cuando un complemento solo ofrece páginas web para un título en lugar de un vídeo, los botones Abrir en el navegador las abren en tu navegador. TV deportiva ahora muestra solo las filas de los complementos, sin géneros ni años de películas.
 - La página Listas ahora muestra la dirección del servidor y el usuario de cada lista, y cuándo se añadió y se cargó por última vez, para distinguir listas con el mismo nombre. Las listas nuevas sin nombre toman el de su servidor. Las listas también se pueden desactivar y activar: desactivadas, quedan ocultas en todas partes pero se conservan.
 - Los complementos con canales en directo o eventos deportivos ahora aparecen en una nueva página TV deportiva, con su propio mosaico en Inicio. Pegar la dirección de la página de configuración de un complemento (terminada en /configure) ahora funciona igual que su enlace de instalación.
-- En una TV, el mando ahora pasa directamente por los cuadros de texto con arriba y abajo, y el teclado solo se abre al pulsar OK en uno.

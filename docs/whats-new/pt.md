@@ -1,3 +1,4 @@
+- A TV ao vivo e o guia agora podem mostrar todas as suas listas juntas: escolha Todas as listas no seletor no topo da TV ao vivo. Grupos com o mesmo nome são unidos e cada canal mostra de qual lista vem.
 - Mostre ou oculte canais em massa: TV ao vivo › Canais ✎ (ou Configurações › Canais). Marque canais ou um grupo inteiro e oculte ou mostre todos de uma vez. Canais M3U protegidos com ClearKey ou Widevine agora tocam, e as listas podem ser renomeadas pelo cartão.
 - No guia de TV, segure Voltar no controle para voltar direto ao canal que você assistia, em tela cheia. Um toque curto continua voltando como antes.
 - A primeira configuração agora verifica sua conexão e ajusta o VantaView a ela: tamanho do buffer, qual qualidade tentar primeiro, torrents e o miniplayer do Início. Refaça quando quiser com Ajustar minhas configurações abaixo do teste de velocidade em Configurações › Fontes.
@@ -5,4 +6,3 @@
 - Quando um complemento só oferece páginas web para um título em vez de um vídeo, botões Abrir no navegador agora as abrem no seu navegador. TV esportiva agora mostra só as fileiras dos complementos, sem gêneros e anos de filmes.
 - A página Listas agora mostra o endereço do servidor e o usuário de cada lista, e quando foi adicionada e carregada pela última vez, para diferenciar listas com o mesmo nome. Listas novas sem nome recebem o nome do servidor. As listas também podem ser desativadas e ativadas: desativadas, ficam ocultas em todo lugar, mas continuam salvas.
 - Complementos com canais ao vivo ou eventos esportivos agora aparecem numa nova página TV esportiva, com seu próprio bloco no Início. Colar o endereço da página de configuração de um complemento (terminando em /configure) agora funciona como o link de instalação.
-- Na TV, o controle agora passa direto pelas caixas de texto com cima e baixo, e o teclado só abre quando você pressiona OK numa delas.

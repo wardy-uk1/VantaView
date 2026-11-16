@@ -1,3 +1,4 @@
+- Live TV and the TV Guide can now show all your playlists together: choose All playlists in the playlist picker at the top of Live TV. Groups with the same name are merged, and each channel shows which playlist it's from.
 - Show or hide channels in bulk: Live TV › Channels ✎ (or Settings › Channels). Tick channels or a whole group, then Hide or Show them all at once. M3U channels protected with ClearKey or Widevine now play, and playlists can be renamed from their card.
 - In the TV Guide, hold Back on your remote to go straight back to the channel you were watching, full screen. A short press still goes back as before.
 - First setup now checks your connection and sets VantaView up to suit it: buffer size, which stream quality to try first, torrents and the Home mini player. Do it again any time with Adjust my settings under the speed test in Settings › Sources.
@@ -5,4 +6,3 @@
 - When an add-on only offers web pages for a title instead of a video, Open in browser buttons now open them in your browser. Sports TV now shows just the add-ons' rows, without the film genres and years.
 - The Playlists page now shows each playlist's server address and username, and when it was added and last loaded, so playlists with the same name can be told apart. New playlists without a name are named after their server. Playlists can also be switched off and on: switched off, they're hidden everywhere but kept.
 - Add-ons with live channels or sports events now show on a new Sports TV page, with its own tile on Home. Pasting an add-on's set-up page address (ending in /configure) now works as well as its install link.
-- On a TV, the remote now moves straight past text boxes with up and down, and the keyboard only opens when you press OK on one.

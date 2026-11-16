@@ -35,6 +35,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
+import com.vantaview.app.ui.tr
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -83,6 +84,9 @@ private val digitKeys = mapOf(
     Key.NumPad5 to 5, Key.NumPad6 to 6, Key.NumPad7 to 7, Key.NumPad8 to 8, Key.NumPad9 to 9,
 )
 
+/** Live TV › All playlists: each playlist's name by id, shown under its channels (null otherwise). */
+internal val LocalPlaylistTags = androidx.compose.runtime.staticCompositionLocalOf<Map<Long, String>?> { null }
+
 @Composable
 fun LiveScreen(
     onPlay: (Long) -> Unit,
@@ -103,6 +107,7 @@ fun LiveScreen(
     val countryLabel by vm.countryLabel.collectAsStateWithLifecycle()
     val guideVersion by vm.guideVersion.collectAsStateWithLifecycle()
     val state = active?.let { sync[it.id] }
+    val showingAll by vm.showingAll.collectAsStateWithLifecycle()
 
     // Preview first (Settings › Playback): the first press plays the channel in a small window, the second goes
     // full screen. Channel up and down in the player then move through the list it was opened from.
@@ -149,11 +154,13 @@ fun LiveScreen(
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)) {
             Header(
                 wide = wide,
-                playlistName = active?.name ?: "No playlist",
-                providers = providers.map { it.id to it.name },
+                playlistName = if (showingAll) tr("All playlists") else active?.name ?: "No playlist",
+                // "All playlists" first, when there's more than one (not on Kids profiles).
+                providers = (if (providers.size > 1 && !isKids) listOf(ALL_PLAYLISTS to tr("All playlists")) else emptyList()) +
+                    providers.map { it.id to it.name },
                 countryLabel = countryLabel,
                 showRefresh = providers.isNotEmpty(),
-                onPickProvider = vm::selectProvider,
+                onPickProvider = { id -> if (id == ALL_PLAYLISTS) vm.selectAll() else vm.selectProvider(id) },
                 onCountries = vm::editCountries,
                 onRefresh = vm::refresh,
                 onCatchUp = onCatchUpPage,
@@ -188,7 +195,7 @@ fun LiveScreen(
                 com.vantaview.app.ui.SearchToggle(query, { vm.query.value = it }, "Search channels or numbers", Modifier.weight(1f, fill = false))
                 if (query.isEmpty()) {
                     FocusCard(onClick = { sortOpen = true }) { Text("Order: ${sort.label} ▾", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
-                    if (!isKids) FocusCard(onClick = { editGroups = true }) { Text("Groups ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
+                    if (!isKids && !showingAll) FocusCard(onClick = { editGroups = true }) { Text("Groups ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (!isKids) FocusCard(onClick = { editChannels = true }) { Text("Channels ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (filter == Filter.Favourites && channels.size > 1 && !isKids) {
                         FocusCard(onClick = { editFavs = true }) { Text("Edit favourites", color = Vanta.Text, fontSize = 14.sp) }
@@ -206,6 +213,8 @@ fun LiveScreen(
             }
             Spacer(Modifier.height(10.dp))
 
+            val tags = if (showingAll) providers.associate { it.id to it.name } else null
+            androidx.compose.runtime.CompositionLocalProvider(LocalPlaylistTags provides tags) {
             if (wide) {
                 Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     LazyColumn(
@@ -233,6 +242,7 @@ fun LiveScreen(
                     Spacer(Modifier.height(10.dp))
                 }
                 ChannelList(channels, filter, query, wide = false, Modifier.fillMaxSize(), pick, vm::toggleFavourite, guideTick, vm::nowNext)
+            }
             }
         }
 
@@ -562,6 +572,10 @@ private fun ChannelItem(
                         modifier = if (wide) Modifier.scrollWhenFocused() else Modifier,
                     )
                     if (event) Text("Event only · plays while an event is on", color = dimColour, fontSize = 12.sp, maxLines = 1)
+                    // All playlists: which playlist the channel comes from.
+                    LocalPlaylistTags.current?.get(row.channel.providerId)?.let {
+                        Text(it, color = Vanta.Cyan.copy(alpha = 0.8f), fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
                     NowNextLine(row.channel, guideTick, nowNext, if (filled) textColour else null, if (filled) dimColour else null)
                 }
             }

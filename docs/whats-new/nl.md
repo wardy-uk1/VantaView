@@ -1,3 +1,4 @@
+- Live-tv en de tv-gids kunnen nu al je playlists samen tonen: kies Alle playlists in de playlistkiezer bovenaan Live-tv. Groepen met dezelfde naam worden samengevoegd en bij elke zender staat uit welke playlist hij komt.
 - Zenders in één keer tonen of verbergen: Live-tv › Zenders ✎ (of Instellingen › Zenders). Vink zenders of een hele groep aan en verberg of toon ze allemaal tegelijk. M3U-zenders beveiligd met ClearKey of Widevine spelen nu af, en playlists kun je hernoemen vanaf hun kaart.
 - Houd in de tv-gids Terug op je afstandsbediening ingedrukt om meteen terug te gaan naar de zender die je keek, volledig scherm. Kort drukken werkt zoals altijd.
 - De eerste installatie controleert nu je verbinding en stelt VantaView daarop in: buffergrootte, welke kwaliteit eerst wordt geprobeerd, torrents en de minispeler op Start. Doe het opnieuw wanneer je wilt met Mijn instellingen aanpassen onder de snelheidstest in Instellingen › Bronnen.
@@ -5,4 +6,3 @@
 - Als een add-on voor een titel alleen webpagina's biedt in plaats van een video, openen knoppen Openen in browser ze nu in je browser. Sport-tv toont nu alleen de rijen van add-ons, zonder filmgenres en jaren.
 - De pagina Playlists toont nu per playlist het serveradres en de gebruikersnaam, en wanneer hij is toegevoegd en voor het laatst geladen, zodat playlists met dezelfde naam uit elkaar te houden zijn. Nieuwe playlists zonder naam krijgen de naam van hun server. Playlists kun je ook uit- en inschakelen: uitgeschakeld zijn ze overal verborgen maar blijven ze bewaard.
 - Add-ons met livezenders of sportevenementen staan nu op een nieuwe pagina Sport-tv, met een eigen tegel op Start. Het adres van de instelpagina van een add-on plakken (eindigend op /configure) werkt nu net als de installatielink.
-- Op een tv gaat de afstandsbediening nu met omhoog en omlaag gewoon langs tekstvakken, en het toetsenbord opent pas als je op OK drukt.

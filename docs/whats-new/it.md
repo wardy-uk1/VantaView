@@ -1,3 +1,4 @@
+- TV in diretta e la guida ora possono mostrare tutte le tue playlist insieme: scegli Tutte le playlist nel selettore in alto in TV in diretta. I gruppi con lo stesso nome sono uniti e ogni canale indica la sua playlist.
 - Mostra o nascondi canali in blocco: TV in diretta › Canali ✎ (o Impostazioni › Canali). Spunta canali o un intero gruppo, poi nascondili o mostrali tutti insieme. I canali M3U protetti con ClearKey o Widevine ora si riproducono, e le playlist si possono rinominare dalla loro scheda.
 - Nella guida TV, tieni premuto Indietro sul telecomando per tornare subito al canale che guardavi, a schermo intero. Una pressione breve funziona come prima.
 - La prima configurazione ora controlla la connessione e regola VantaView di conseguenza: dimensione del buffer, quale qualità provare per prima, torrent e mini player nella Home. Ripetilo quando vuoi con Adatta le mie impostazioni sotto il test di velocità in Impostazioni › Sorgenti.
@@ -5,4 +6,3 @@
 - Quando un add-on offre solo pagine web per un titolo invece di un video, i pulsanti Apri nel browser ora le aprono nel browser. TV sportiva ora mostra solo le righe degli add-on, senza generi e anni dei film.
 - La pagina Playlist ora mostra l'indirizzo del server e il nome utente di ogni playlist, e quando è stata aggiunta e caricata l'ultima volta, così si distinguono playlist con lo stesso nome. Le nuove playlist senza nome prendono quello del server. Le playlist si possono anche disattivare e riattivare: disattivate, sono nascoste ovunque ma restano salvate.
 - Gli add-on con canali in diretta o eventi sportivi ora compaiono in una nuova pagina TV sportiva, con un proprio riquadro nella Home. Incollare l'indirizzo della pagina di configurazione di un add-on (che termina con /configure) ora funziona come il suo link di installazione.
-- Sulla TV, il telecomando ora supera direttamente le caselle di testo con su e giù, e la tastiera si apre solo premendo OK su una casella.

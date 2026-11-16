@@ -1,3 +1,4 @@
+- Live-TV und der TV-Guide können jetzt alle Playlists zusammen zeigen: oben in Live-TV in der Playlist-Auswahl „Alle Playlists“ wählen. Gleichnamige Gruppen werden zusammengelegt, und jeder Sender zeigt, aus welcher Playlist er kommt.
 - Sender gesammelt ein- oder ausblenden: Live-TV › Sender ✎ (oder Einstellungen › Sender). Sender oder ganze Gruppen ankreuzen und alle auf einmal aus- oder einblenden. Mit ClearKey oder Widevine geschützte M3U-Sender laufen jetzt, und Playlists lassen sich über ihre Karte umbenennen.
 - Im TV-Guide Zurück auf der Fernbedienung gedrückt halten, um direkt zum zuletzt geschauten Sender im Vollbild zurückzukehren. Kurz drücken geht wie bisher zurück.
 - Die Ersteinrichtung prüft jetzt deine Verbindung und stellt VantaView passend ein: Puffergröße, welche Stream-Qualität zuerst versucht wird, Torrents und den Mini-Player auf der Startseite. Jederzeit wiederholbar mit „Meine Einstellungen anpassen“ unter dem Speedtest in Einstellungen › Quellen.
@@ -5,4 +6,3 @@
 - Bietet ein Add-on für einen Titel nur Webseiten statt eines Videos an, öffnen Im-Browser-öffnen-Knöpfe sie jetzt in deinem Browser. Sport-TV zeigt jetzt nur die Reihen der Add-ons, ohne Film-Genres und Jahre.
 - Die Playlist-Seite zeigt jetzt Serveradresse und Benutzername jeder Playlist sowie wann sie hinzugefügt und zuletzt geladen wurde, damit gleichnamige Playlists unterscheidbar sind. Neue Playlists ohne Namen heißen wie ihr Server. Playlists lassen sich außerdem aus- und einschalten: Ausgeschaltet sind sie überall ausgeblendet, bleiben aber erhalten.
 - Add-ons mit Live-Sendern oder Sportereignissen erscheinen jetzt auf einer neuen Seite Sport-TV, mit eigener Kachel auf der Startseite. Die Adresse der Einrichtungsseite eines Add-ons (endet auf /configure) funktioniert jetzt genauso wie sein Installationslink.
-- Am Fernseher springt die Fernbedienung mit hoch und runter jetzt direkt über Textfelder, und die Tastatur öffnet sich erst, wenn du OK drückst.

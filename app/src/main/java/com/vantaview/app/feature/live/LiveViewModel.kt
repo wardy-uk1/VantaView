@@ -64,6 +64,12 @@ enum class ChannelSort(val label: String) {
     }
 }
 
+private data class Quad<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
+
+/** Live TV › "All playlists": a pretend playlist id, and the prefix of merged group ids (a group's name). */
+const val ALL_PLAYLISTS = -1L
+private const val NAME = "name:"
+
 @HiltViewModel
 class LiveViewModel @Inject constructor(
     private val db: VantaDb,
@@ -91,6 +97,22 @@ class LiveViewModel @Inject constructor(
     val sort = MutableStateFlow(ChannelSort.load(playback))
     fun setSort(s: ChannelSort) { sort.value = s; s.save(playback) }
 
+    // ---- All playlists: channels from every playlist in one list (not on Kids profiles) ----
+
+    private val allChoice = MutableStateFlow(playback.getString("live_all") == "1")
+
+    /** Showing every playlist together. */
+    val showingAll: StateFlow<Boolean> = combine(allChoice, providers, profile) { a, list, p -> a && list.size > 1 && p?.isKids != true }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun selectAll() {
+        allChoice.value = true
+        playback.setString("live_all", "1")
+        filter.value = Filter.All
+    }
+
+    private val allIds = combine(showingAll, providers) { all, list -> if (all) list.map { it.id } else null }.distinctUntilChanged()
+
     val active: StateFlow<ProviderEntity?> =
         combine(providers, providerId) { list, id -> list.firstOrNull { it.id == id } ?: list.firstOrNull() }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
@@ -106,8 +128,20 @@ class LiveViewModel @Inject constructor(
             }
         }
 
-    private val allCategories = activeId
-        .flatMapLatest { id -> if (id == null) flowOf(emptyList<CategoryEntity>()) else db.content().observeCategories(id) }
+    /** Every playlist's real groups (All playlists), for adult filtering per playlist. */
+    private val realAllCategories = allIds.flatMapLatest { ids -> if (ids == null) flowOf(emptyList()) else db.content().observeCategoriesIn(ids) }
+
+    private val allCategories = combine(activeId, allIds) { id, ids -> id to ids }
+        .flatMapLatest { (id, ids) ->
+            when {
+                // All playlists: groups with the same name are one group ("name:<name>").
+                ids != null -> db.content().observeCategoriesIn(ids).map { cats ->
+                    cats.distinctBy { it.name.trim().lowercase() }.mapIndexed { i, c -> CategoryEntity(id = -(i + 1L), providerId = ALL_PLAYLISTS, remoteId = NAME + c.name, name = c.name, position = i) }
+                }
+                id == null -> flowOf(emptyList<CategoryEntity>())
+                else -> db.content().observeCategories(id)
+            }
+        }
 
     /** Countries in the active playlist (re-read after each sync). */
     private val scan: StateFlow<CountryScan?> = active
@@ -142,6 +176,7 @@ class LiveViewModel @Inject constructor(
 
     private fun applyLayout(list: List<CategoryEntity>): List<CategoryEntity> {
         val pid = list.firstOrNull()?.providerId ?: return list
+        if (pid == ALL_PLAYLISTS) return list
         groupsForEditing = list
         val order = orderOf(pid).withIndex().associate { (i, id) -> id to i }
         val hidden = hiddenOf(pid)
@@ -150,7 +185,7 @@ class LiveViewModel @Inject constructor(
     }
 
     val categories: StateFlow<List<CategoryEntity>> =
-        combine(combine(allCategories, groupLayout) { c, _ -> c }, allowed, scan, chosen, parental.changes) { cats, allow, sc, pick, _ ->
+        combine(combine(allCategories, groupLayout) { c, _ -> c }, allowed, combine(scan, allIds) { s, ids -> if (ids != null) null else s }, chosen, parental.changes) { cats, allow, sc, pick, _ ->
             val kidsOk = when {
                 allow != null -> KidsFilter.categories(cats, allow)
                 parental.hiding -> cats.filter { !parental.isAdult(it) } // Settings › Parental control
@@ -167,8 +202,9 @@ class LiveViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     /** Short label for the Countries button, or null when the playlist has fewer than two countries. */
-    val countryLabel: StateFlow<String?> = combine(scan, chosen, profile) { sc, pick, p ->
+    val countryLabel: StateFlow<String?> = combine(scan, chosen, profile, showingAll) { sc, pick, p, all ->
         when {
+            all -> null
             sc == null || sc.countries.size < 2 || p?.isKids == true -> null
             pick == null -> "All countries"
             else -> pick.filter { it != CountryDetect.OTHER }.let { l ->
@@ -180,15 +216,16 @@ class LiveViewModel @Inject constructor(
     fun editCountries() { active.value?.let { countries.editRequest.value = it.id } }
 
     val channels: StateFlow<List<ChannelRow>> =
-        combine(combine(activeId, filter, query.debounce(250)) { id, f, q -> Triple(id, f, q.trim()) }, scan, chosen) { t, sc, pick ->
-            Triple(t, sc, pick)
+        combine(combine(activeId, filter, query.debounce(250)) { id, f, q -> Triple(id, f, q.trim()) }, scan, chosen, allIds) { t, sc, pick, ids ->
+            Quad(t, sc, pick, ids)
         }
-            .flatMapLatest { (t, sc, pick) ->
+            .flatMapLatest { (t, sc, pick, ids) ->
                 val (id, f, q) = t
                 val fav = if (f is Filter.Favourites) 1 else 0
                 val cat = (f as? Filter.Category)?.remoteId
                 val radio = if (f is Filter.Radio) 1 else 0
                 when {
+                    ids != null -> db.content().observeChannelsAll(ids, cat?.removePrefix(NAME), q, fav, radio)
                     id == null -> flowOf(emptyList<ChannelRow>())
                     pick == null || sc == null -> db.content().observeChannels(id, cat, q, fav, radio)
                     // Only channels from the chosen countries.
@@ -197,8 +234,15 @@ class LiveViewModel @Inject constructor(
             }
             .let { rows -> combine(rows, sort, filter) { list, so, f -> so.apply(list, f is Filter.Favourites) } }
             .let { rows ->
-                combine(rows, allCategories, allowed, parental.changes) { list, cats, allow, _ ->
-                    if (allow == null) {
+                combine(rows, combine(allCategories, realAllCategories, allIds) { c, real, ids -> if (ids != null) real else c }, allowed, parental.changes) { list, cats, allow, _ ->
+                    if (allow == null && cats.any { it.providerId != list.firstOrNull()?.channel?.providerId }) {
+                        // Several playlists: each channel is checked against its own playlist's adult groups.
+                        if (!parental.hiding) list
+                        else {
+                            val byProvider = cats.groupBy { it.providerId }.mapValues { (_, c) -> parental.adultIds(c) }
+                            list.filter { !parental.hidden(it.channel, byProvider[it.channel.providerId].orEmpty()) }
+                        }
+                    } else if (allow == null) {
                         if (!parental.hiding) list
                         else parental.adultIds(cats).let { ids -> list.filter { !parental.hidden(it.channel, ids) } }
                     } else {
@@ -210,8 +254,14 @@ class LiveViewModel @Inject constructor(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     /** Radio stations in the active playlist; Live TV shows a Radio tab when there are some. */
-    val radioCount: StateFlow<Int> = activeId
-        .flatMapLatest { id -> if (id == null) flowOf(0) else db.content().observeRadioCount(id) }
+    val radioCount: StateFlow<Int> = combine(activeId, allIds) { id, ids -> id to ids }
+        .flatMapLatest { (id, ids) ->
+            when {
+                ids != null -> db.content().observeRadioCountIn(ids)
+                id == null -> flowOf(0)
+                else -> db.content().observeRadioCount(id)
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     val isKids: StateFlow<Boolean> = profile.map { it?.isKids == true }
@@ -220,13 +270,15 @@ class LiveViewModel @Inject constructor(
     val sync: StateFlow<Map<Long, SyncState>> = repo.syncStates
 
     /** TV guide state for the active playlist, and a counter that changes when a guide finishes loading. */
-    val guideState = combine(active, guide.states) { p, m -> p?.let { m[it.id] } }
+    val guideState = combine(active, guide.states, showingAll) { p, m, all -> if (all) null else p?.let { m[it.id] } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     val guideVersion: StateFlow<Int> = guide.version
 
     fun addFreeTv() { viewModelScope.launch { repo.addFreeTv() } }
 
-    fun refreshGuide() { active.value?.let { guide.refresh(it) } }
+    fun refreshGuide() {
+        if (showingAll.value) providers.value.forEach { guide.refresh(it) } else active.value?.let { guide.refresh(it) }
+    }
 
     /** Now and next on a channel (empty when it has no guide). */
     suspend fun nowNext(channel: com.vantaview.app.data.db.ChannelEntity): List<com.vantaview.app.data.db.ProgrammeEntity> {
@@ -255,6 +307,8 @@ class LiveViewModel @Inject constructor(
     }
 
     fun selectProvider(id: Long) {
+        allChoice.value = false
+        playback.setString("live_all", "0")
         session.setLastProvider(id)
         providerId.value = id
         filter.value = Filter.All
@@ -268,7 +322,7 @@ class LiveViewModel @Inject constructor(
     fun lastChannelId(): Long = session.lastChannel()
 
     fun refresh() {
-        active.value?.let { repo.sync(it.id) }
+        if (showingAll.value) providers.value.forEach { repo.sync(it.id) } else active.value?.let { repo.sync(it.id) }
     }
 
     /** Live TV › Favourites › Edit: the new order of the favourites shown. */

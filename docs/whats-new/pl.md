@@ -1,3 +1,4 @@
+- TV na żywo i przewodnik mogą teraz pokazywać wszystkie playlisty razem: wybierz Wszystkie playlisty w wyborze playlisty u góry TV na żywo. Grupy o tej samej nazwie są łączone, a przy każdym kanale widać, z której playlisty pochodzi.
 - Pokazuj lub ukrywaj kanały hurtowo: TV na żywo › Kanały ✎ (lub Ustawienia › Kanały). Zaznacz kanały lub całą grupę i ukryj lub pokaż je naraz. Kanały M3U chronione ClearKey lub Widevine są teraz odtwarzane, a nazwę playlisty zmienisz na jej karcie.
 - W przewodniku TV przytrzymaj Wstecz na pilocie, aby od razu wrócić na pełnym ekranie do oglądanego kanału. Krótkie naciśnięcie działa jak dotąd.
 - Pierwsza konfiguracja sprawdza teraz połączenie i dopasowuje do niego VantaView: rozmiar bufora, jaką jakość próbować najpierw, torrenty i miniodtwarzacz na stronie głównej. Powtórzysz to w każdej chwili przyciskiem Dopasuj moje ustawienia pod testem prędkości w Ustawienia › Źródła.
@@ -5,4 +6,3 @@
 - Gdy dodatek oferuje dla tytułu tylko strony internetowe zamiast wideo, przyciski Otwórz w przeglądarce otwierają je teraz w przeglądarce. TV sportowa pokazuje teraz tylko rzędy dodatków, bez gatunków i lat filmów.
 - Strona Playlisty pokazuje teraz adres serwera i nazwę użytkownika każdej playlisty oraz kiedy ją dodano i ostatnio wczytano, by odróżnić playlisty o tej samej nazwie. Nowe playlisty bez nazwy dostają nazwę serwera. Playlisty można też wyłączać i włączać: wyłączone są wszędzie ukryte, ale zachowane.
 - Dodatki z kanałami na żywo lub wydarzeniami sportowymi pojawiają się teraz na nowej stronie TV sportowa, z własnym kafelkiem na stronie głównej. Wklejenie adresu strony konfiguracji dodatku (kończącego się na /configure) działa teraz tak samo jak link instalacyjny.
-- Na telewizorze pilot przechodzi teraz w górę i w dół prosto obok pól tekstowych, a klawiatura otwiera się dopiero po naciśnięciu OK.

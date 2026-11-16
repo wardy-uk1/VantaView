@@ -91,6 +91,33 @@ interface ContentDao {
     )
     fun observeChannelsIn(providerId: Long, category: String?, codes: List<String>, query: String, favOnly: Int, radio: Int): Flow<List<ChannelRow>>
 
+    // ---- Live TV › All playlists ----
+
+    @Query("SELECT * FROM category WHERE providerId IN (:providerIds) ORDER BY providerId, position")
+    fun observeCategoriesIn(providerIds: List<Long>): Flow<List<CategoryEntity>>
+
+    /** Channels from several playlists, in playlist order; [categoryName] matches groups of that name in any of them. */
+    @Query(
+        """
+        SELECT c.*, (f.remoteId IS NOT NULL) AS isFav, COALESCE(f.position, 0) AS favPos, COALESCE(f.addedAt, 0) AS favAt
+        FROM channel c
+        LEFT JOIN favourite f ON f.providerId = c.providerId AND f.remoteId = c.remoteId
+        LEFT JOIN category k ON k.providerId = c.providerId AND k.remoteId = c.categoryRemoteId
+        WHERE c.providerId IN (:providerIds)
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId)
+          AND (:categoryName IS NULL OR k.name = :categoryName)
+          AND (:query = '' OR c.name LIKE '%' || :query || '%' OR CAST(c.number AS TEXT) = :query)
+          AND (:favOnly = 0 OR f.remoteId IS NOT NULL)
+          AND (:favOnly = 1 OR :query != '' OR c.isRadio = :radio)
+        ORDER BY c.providerId, c.number, c.sortKey
+        LIMIT 6000
+        """
+    )
+    fun observeChannelsAll(providerIds: List<Long>, categoryName: String?, query: String, favOnly: Int, radio: Int): Flow<List<ChannelRow>>
+
+    @Query("SELECT COUNT(*) FROM channel WHERE providerId IN (:providerIds) AND isRadio = 1")
+    fun observeRadioCountIn(providerIds: List<Long>): Flow<Int>
+
     /** How many radio stations a playlist has (Live TV shows a Radio tab when there are some). */
     @Query("SELECT COUNT(*) FROM channel WHERE providerId = :providerId AND isRadio = 1")
     fun observeRadioCount(providerId: Long): Flow<Int>

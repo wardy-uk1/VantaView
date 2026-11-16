@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Live TV and TV Guide: "All playlists" in the playlist picker shows every playlist's channels together (groups with the same name merged, each channel marked with its playlist; not on Kids profiles)
 - [x] Show or hide channels in bulk (Live TV › Channels ✎, and Settings › Channels): tick channels or a whole group, then Hide or Show; hidden everywhere and kept through refreshes
 - [x] DRM channels: M3U channels protected with ClearKey (keys or licence server) or Widevine (licence server), from Kodi #KODIPROP lines; DASH (.mpd) streams
 - [x] Rename playlists (Rename on each playlist card; blank goes back to the automatic name)
