@@ -109,6 +109,8 @@ class PlaylistsViewModel @Inject constructor(
 
     fun refresh(id: Long) = repo.sync(id)
 
+    fun rename(p: ProviderEntity, name: String) { viewModelScope.launch { repo.rename(p.id, name) } }
+
     /** Switch a playlist off (hidden everywhere, kept) or on again. */
     fun setEnabled(p: ProviderEntity, on: Boolean) { viewModelScope.launch { repo.setEnabled(p.id, on) } }
 

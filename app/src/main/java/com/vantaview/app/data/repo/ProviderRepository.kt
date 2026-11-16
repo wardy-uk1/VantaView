@@ -40,7 +40,13 @@ sealed interface SyncState {
 }
 
 /** What the player needs to open a channel. */
-data class PlayTarget(val url: String, val altUrl: String?, val headers: Map<String, String>)
+data class PlayTarget(
+    val url: String, val altUrl: String?, val headers: Map<String, String>,
+    /** A ClearKey or Widevine protected channel (M3U #KODIPROP lines). */
+    val drm: com.vantaview.app.data.player.Drm.Info? = null,
+    /** A DASH (.mpd) stream. */
+    val dash: Boolean = false,
+)
 
 object GuideLinks {
     fun valid(link: String) = link.split(',').map { it.trim() }.filter { it.isNotEmpty() }.all { it.startsWith("http://", true) || it.startsWith("https://", true) }
@@ -97,6 +103,18 @@ class ProviderRepository @Inject constructor(
         val scheme = u.scheme?.lowercase() ?: "http"
         val port = if (u.port > 0) ":${u.port}" else ""
         return "$scheme://${u.host ?: url}$port"
+    }
+
+    /** Renames a playlist; a blank name goes back to the automatic one (its server's name). */
+    suspend fun rename(id: Long, name: String) {
+        val p = db.providers().get(id) ?: return
+        val auto = when {
+            p.kind == "M3U" && p.baseUrl.startsWith("file:") -> "My playlist"
+            p.kind == "M3U" -> defaultName(m3uLink(p), "My playlist")
+            p.kind == "STALKER" -> defaultName(p.baseUrl, "My portal")
+            else -> defaultName(p.baseUrl, "My playlist")
+        }
+        db.providers().update(p.copy(name = name.trim().ifBlank { auto }))
     }
 
     /** A name for a playlist added without one: its server's name, so two playlists can be told apart. */
@@ -263,6 +281,7 @@ class ProviderRepository @Inject constructor(
         db.content().deleteChannels(id)
         db.content().deleteCategories(id)
         db.content().deleteFavourites(id)
+        db.content().deleteHidden(id)
         db.vod().deleteFor(id)
         db.vod().deleteEpisodesFor(id)
         db.providers().delete(id)
@@ -729,7 +748,10 @@ class ProviderRepository @Inject constructor(
             val p = db.providers().get(channel.providerId) ?: throw IllegalStateException("Playlist not found")
             PlayTarget(stalker.createLink(p, "itv", channel.streamUrl.removePrefix("stalker:")), null, stalker.playHeaders + headers)
         } else {
-            PlayTarget(channel.streamUrl, null, headers)
+            PlayTarget(
+                channel.streamUrl, null, com.vantaview.app.data.player.Drm.httpHeaders(headers),
+                drm = com.vantaview.app.data.player.Drm.info(headers), dash = com.vantaview.app.data.player.Drm.isDash(channel.streamUrl, headers),
+            )
         }
     }
 

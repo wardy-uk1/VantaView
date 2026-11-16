@@ -82,6 +82,13 @@ data class FavouriteEntity(
     val position: Int = 0,
 )
 
+/** A channel the viewer hid (Live TV › Channels ✎): kept by playlist and the provider's own id, so refreshes keep it hidden. */
+@Entity(tableName = "hidden_channel", primaryKeys = ["providerId", "remoteId"])
+data class HiddenChannelEntity(val providerId: Long, val remoteId: String)
+
+/** A channel in the show or hide list, and whether it's hidden. */
+data class ChannelPick(@androidx.room.Embedded val channel: ChannelEntity, val hidden: Boolean)
+
 data class ChannelRow(
     @Embedded val channel: ChannelEntity,
     val isFav: Boolean,

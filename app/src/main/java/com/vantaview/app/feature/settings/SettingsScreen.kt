@@ -161,6 +161,7 @@ fun SettingsScreen(onEditProfile: (Long) -> Unit = {}, vm: SettingsViewModel = h
             SettingsSection.APPEARANCE -> { AppearanceSection(vm.appearance); ScreensaverSection(vm.playback) }
             SettingsSection.UPDATES -> UpdatesSection(vm.updates)
             SettingsSection.SOURCES -> { SourcesSection(); SpeedTestSection() }
+            SettingsSection.CHANNELS -> ChannelsSection()
             SettingsSection.SUBTITLES -> { SubtitlesSection(vm.playback); AiSubtitlesSection(vm.aiSubs) }
             else -> ComingSoon(section)
         }
@@ -391,6 +392,20 @@ internal fun QrCode(text: String, modifier: Modifier) {
             if (matrix.get(x, y)) drawRect(Color.Black, Offset(x * cell, y * cell), Size(cell + 0.5f, cell + 0.5f))
         }
     }
+}
+
+/** Settings › Channels: the show or hide screen. */
+@Composable
+private fun ChannelsSection() {
+    var open by remember { mutableStateOf(false) }
+    Section("Show or hide channels") {
+        Text(
+            "Tick channels, or a whole group, then Hide or Show them all at once. Hidden channels are left out of Live TV, the TV Guide, search and channel up and down, and stay hidden when the playlist refreshes.",
+            color = Vanta.TextDim, fontSize = 14.sp,
+        )
+        GradientButton("Show or hide channels", onClick = { open = true })
+    }
+    if (open) com.vantaview.app.feature.live.ChannelVisibilityDialog(null, onClose = { open = false })
 }
 
 /** Weather on Home: on or off, °C or °F, and where (this device's location or a chosen town). */

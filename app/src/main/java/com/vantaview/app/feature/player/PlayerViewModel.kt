@@ -103,6 +103,9 @@ class PlayerViewModel @Inject constructor(
     private var candidate = 0
     private var working: Int? = null
     private var headers: Map<String, String> = emptyMap()
+    /** The channel playing is protected (ClearKey or Widevine), or is DASH. */
+    private var drm: com.vantaview.app.data.player.Drm.Info? = null
+    private var dash = false
     private var attempts = 0
     private var watchdog: Job? = null
     private var retry: Job? = null
@@ -308,10 +311,12 @@ class PlayerViewModel @Inject constructor(
                 return@launch
             }
             headers = target.headers
+            drm = target.drm
+            dash = target.dash
             val list = ArrayList<Pair<String, Boolean>>()
             val hls = looksHls(target.url)
             list += target.url to hls
-            if (!hls) list += target.url to true
+            if (!hls && !dash) list += target.url to true
             target.altUrl?.let { list += it to looksHls(it) }
             candidates = list
             prepareCurrent()
@@ -477,8 +482,16 @@ class PlayerViewModel @Inject constructor(
         val http = OkHttpDataSource.Factory(okHttp)
             .setUserAgent(userAgent)
             .setDefaultRequestProperties(headers.filterKeys { !it.equals("User-Agent", true) })
-        val item = MediaItem.Builder().setUri(url).apply { if (hls) setMimeType(MimeTypes.APPLICATION_M3U8) }.build()
-        val source = DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http)).createMediaSource(item)
+        val builder = MediaItem.Builder().setUri(url).apply {
+            when {
+                dash -> setMimeType(MimeTypes.APPLICATION_MPD)
+                hls -> setMimeType(MimeTypes.APPLICATION_M3U8)
+            }
+        }
+        val factory = DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http))
+        // ClearKey or Widevine channels: the keys or licence server from the playlist.
+        drm?.let { com.vantaview.app.data.player.Drm.apply(it, builder, factory, http) }
+        val source = factory.createMediaSource(builder.build())
         player.setMediaSource(source)
         player.prepare()
         player.playWhenReady = true

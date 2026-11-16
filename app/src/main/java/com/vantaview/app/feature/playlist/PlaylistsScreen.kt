@@ -58,6 +58,8 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
         androidx.activity.result.contract.ActivityResultContracts.OpenDocument(),
     ) { uri -> if (uri != null) vm.addFile(uri) }
     var guideFor by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ProviderEntity?>(null) }
+    var renaming by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ProviderEntity?>(null) }
+    renaming?.let { p -> RenameDialog(p, onSave = { vm.rename(p, it); renaming = null }, onClose = { renaming = null }) }
 
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             providers.forEach { p ->
@@ -66,6 +68,7 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
                     onGuide = if (p.kind == "STALKER") null else ({ guideFor = p }),
                     address = androidx.compose.runtime.remember(p.baseUrl, p.kind) { vm.address(p) },
                     onToggle = { vm.setEnabled(p, !p.enabled) },
+                    onRename = { renaming = p },
                 )
             }
             guideFor?.let { p -> GuideLinkDialog(
@@ -194,7 +197,7 @@ private fun Field(
 @Composable
 private fun ProviderCard(
     p: ProviderEntity, state: SyncState?, onRefresh: () -> Unit, onCountries: () -> Unit, onDelete: () -> Unit, onGuide: (() -> Unit)? = null,
-    address: String = "", onToggle: () -> Unit = {},
+    address: String = "", onToggle: () -> Unit = {}, onRename: () -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxWidth().background(Vanta.Surface, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)).padding(14.dp),
@@ -227,6 +230,7 @@ private fun ProviderCard(
                 onGuide?.let { FocusCard(onClick = it) { Text(if (p.customEpg != null) "Guide ✓" else "Guide", color = Vanta.Text, maxLines = 1, softWrap = false) } }
                 FocusCard(onClick = onRefresh) { Text("Refresh", color = Vanta.Text, maxLines = 1, softWrap = false) }
             }
+            FocusCard(onClick = onRename) { Text("Rename", color = Vanta.Text, maxLines = 1, softWrap = false) }
             FocusCard(onClick = onToggle) { Text(if (p.enabled) "Switch off" else "Switch on", color = if (p.enabled) Vanta.Text else Vanta.Cyan, maxLines = 1, softWrap = false) }
             FocusCard(onClick = onDelete) { Text("Remove", color = Vanta.Error, maxLines = 1, softWrap = false) }
         }
@@ -248,6 +252,24 @@ private fun ProviderCard(
         }
         Text(line, color = colour, fontSize = 14.sp)
     }
+}
+
+/** Give a playlist your own name; blank goes back to the automatic one. */
+@Composable
+private fun RenameDialog(p: ProviderEntity, onSave: (String) -> Unit, onClose: () -> Unit) {
+    var name by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(p.name) }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onClose, containerColor = Vanta.Panel,
+        title = { Text("Rename playlist", color = Vanta.Text) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Field("Playlist name", name) { name = it }
+                Text("Leave it empty to use the automatic name (the server's).", color = Vanta.TextDim, fontSize = 13.sp)
+            }
+        },
+        confirmButton = { GradientButton("Save", onClick = { onSave(name) }) },
+        dismissButton = { androidx.compose.material3.TextButton(onClick = onClose) { Text("Cancel") } },
+    )
 }
 
 /** Type your own TV guide (XMLTV) link for a playlist, or clear it to use the playlist's own. */

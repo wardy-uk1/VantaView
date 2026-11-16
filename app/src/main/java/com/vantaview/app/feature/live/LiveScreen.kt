@@ -183,16 +183,19 @@ fun LiveScreen(
             var sortOpen by remember { mutableStateOf(false) }
             var editFavs by remember { mutableStateOf(false) }
             var editGroups by remember { mutableStateOf(false) }
+            var editChannels by remember { mutableStateOf(false) }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 com.vantaview.app.ui.SearchToggle(query, { vm.query.value = it }, "Search channels or numbers", Modifier.weight(1f, fill = false))
                 if (query.isEmpty()) {
                     FocusCard(onClick = { sortOpen = true }) { Text("Order: ${sort.label} ▾", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (!isKids) FocusCard(onClick = { editGroups = true }) { Text("Groups ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
+                    if (!isKids) FocusCard(onClick = { editChannels = true }) { Text("Channels ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (filter == Filter.Favourites && channels.size > 1 && !isKids) {
                         FocusCard(onClick = { editFavs = true }) { Text("Edit favourites", color = Vanta.Text, fontSize = 14.sp) }
                     }
                 }
             }
+            if (editChannels) ChannelVisibilityDialog(active?.id, onClose = { editChannels = false })
             if (editGroups) EditGroupsDialog(vm.groupsForEditing, vm.hiddenGroups(), onSave = { o, h -> vm.saveGroupLayout(o, h); editGroups = false }, onClose = { editGroups = false })
             if (sortOpen) SortDialog(sort, onPick = { vm.setSort(it); sortOpen = false }, onClose = { sortOpen = false })
             if (editFavs) EditFavouritesDialog(channels, onSave = { vm.saveFavouriteOrder(it); editFavs = false }, onRemove = vm::toggleFavourite, onClose = { editFavs = false })

@@ -10,10 +10,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         ProviderEntity::class, CategoryEntity::class, ChannelEntity::class, FavouriteEntity::class,
         AddonEntity::class, ProfileEntity::class, KidsCategoryEntity::class, ProgrammeEntity::class,
-        VodEntity::class, VodEpisodeEntity::class,
+        VodEntity::class, VodEpisodeEntity::class, HiddenChannelEntity::class,
     ],
     // Version 3 (profiles) starts the test database afresh: playlists and add-ons are added again.
-    version = 10,
+    version = 11,
     exportSchema = false,
 )
 abstract class VantaDb : RoomDatabase() {
@@ -26,6 +26,16 @@ abstract class VantaDb : RoomDatabase() {
     abstract fun vod(): VodDao
 
     companion object {
+        /** Version 11: channels the viewer hid. */
+        val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `hidden_channel` (`providerId` INTEGER NOT NULL, `remoteId` TEXT NOT NULL, " +
+                        "PRIMARY KEY(`providerId`, `remoteId`))"
+                )
+            }
+        }
+
         /** Version 10: playlists can be switched off. */
         val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(db: SupportSQLiteDatabase) {

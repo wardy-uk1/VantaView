@@ -73,6 +73,8 @@ object M3uParser {
         var skipped = 0
         var first = true
         val options = mutableMapOf<String, String>()
+        // #KODIPROP lines (DRM, DASH, headers) may come before or after #EXTINF; they belong to the next address.
+        val kodi = mutableMapOf<String, String>()
         // Catch-up given once for the whole list on the #EXTM3U line.
         var listCatchup: String? = null
         var listSource: String? = null
@@ -108,6 +110,7 @@ object M3uParser {
                         opt.startsWith("http-origin=", true) -> options["Origin"] = opt.substringAfter('=')
                     }
                 }
+                line.startsWith("#KODIPROP:", true) -> com.vantaview.app.data.player.Drm.readKodiProp(line, kodi)
                 line.startsWith("#") -> Unit
                 else -> {
                     val inf = info ?: continue
@@ -118,6 +121,7 @@ object M3uParser {
                     // Free-TV marks channels with circled letters; they are not part of the name.
                     val name = rawName.replace(circledLetters, "").replace(spaces, " ").trim().ifBlank { rawName }
                     val headers = options.toMutableMap()
+                    headers.putAll(kodi); kodi.clear()
                     var url = line
                     if ('|' in line) {
                         url = line.substringBefore('|')

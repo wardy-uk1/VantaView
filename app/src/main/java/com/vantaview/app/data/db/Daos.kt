@@ -61,6 +61,7 @@ interface ContentDao {
         FROM channel c
         LEFT JOIN favourite f ON f.providerId = c.providerId AND f.remoteId = c.remoteId
         WHERE c.providerId = :providerId
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId)
           AND (:category IS NULL OR c.categoryRemoteId = :category)
           AND (:query = '' OR c.name LIKE '%' || :query || '%' OR CAST(c.number AS TEXT) = :query)
           AND (:favOnly = 0 OR f.remoteId IS NOT NULL)
@@ -78,6 +79,7 @@ interface ContentDao {
         FROM channel c
         LEFT JOIN favourite f ON f.providerId = c.providerId AND f.remoteId = c.remoteId
         WHERE c.providerId = :providerId
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId)
           AND (:category IS NULL OR c.categoryRemoteId = :category)
           AND c.country IN (:codes)
           AND (:query = '' OR c.name LIKE '%' || :query || '%' OR CAST(c.number AS TEXT) = :query)
@@ -126,6 +128,7 @@ interface ContentDao {
         """
         SELECT * FROM channel
         WHERE providerId IN (:providerIds)
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId)
           AND (name LIKE '%' || :query || '%' OR CAST(number AS TEXT) = :query)
         ORDER BY CASE WHEN name LIKE :query || '%' THEN 0 ELSE 1 END, number
         LIMIT 60
@@ -139,23 +142,24 @@ interface ContentDao {
     suspend fun channelsPage(providerId: Long, n: Int): List<ChannelEntity>
 
     /** Channels with catch-up (Catch-up page), in channel-number order. */
-    @Query("SELECT COUNT(*) FROM channel WHERE providerId IN (:providerIds) AND archiveDays > 0")
+    @Query("SELECT COUNT(*) FROM channel WHERE providerId IN (:providerIds) AND archiveDays > 0 AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId)")
     suspend fun catchUpCount(providerIds: List<Long>): Int
 
-    @Query("SELECT * FROM channel WHERE providerId IN (:providerIds) AND archiveDays > 0 ORDER BY number, sortKey")
+    @Query("SELECT * FROM channel WHERE providerId IN (:providerIds) AND archiveDays > 0 AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId) ORDER BY number, sortKey")
     suspend fun catchUpChannels(providerIds: List<Long>): List<ChannelEntity>
 
-    @Query("SELECT * FROM channel WHERE providerId = :providerId AND epgChannelId IN (:keys)")
+    @Query("SELECT * FROM channel WHERE providerId = :providerId AND epgChannelId IN (:keys) AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId)")
     suspend fun channelsByGuideKey(providerId: Long, keys: List<String>): List<ChannelEntity>
 
     /** A channel by its number in a playlist (for typing a number on the remote). */
-    @Query("SELECT * FROM channel WHERE providerId = :providerId AND number = :number ORDER BY sortKey LIMIT 1")
+    @Query("SELECT * FROM channel WHERE providerId = :providerId AND number = :number AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId) ORDER BY sortKey LIMIT 1")
     suspend fun channelByNumber(providerId: Long, number: Int): ChannelEntity?
 
     @Query(
         """
         SELECT * FROM channel
         WHERE providerId = :providerId AND (:category IS NULL OR categoryRemoteId = :category)
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = channel.providerId AND h.remoteId = channel.remoteId)
         ORDER BY number, sortKey
         LIMIT 5000
         """
@@ -177,6 +181,35 @@ interface ContentDao {
     @Query("DELETE FROM favourite WHERE providerId = :providerId")
     suspend fun deleteFavourites(providerId: Long)
 
+    // ---- Show or hide channels ----
+
+    /** Every channel of a playlist (hidden ones too), optionally in one group or matching a search. */
+    @Query(
+        """
+        SELECT c.*, EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId) AS hidden
+        FROM channel c
+        WHERE c.providerId = :providerId
+          AND (:category IS NULL OR c.categoryRemoteId = :category)
+          AND (:query = '' OR c.name LIKE '%' || :query || '%' OR CAST(c.number AS TEXT) = :query)
+          AND (:hiddenOnly = 0 OR EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId))
+        ORDER BY c.number, c.sortKey
+        LIMIT 5000
+        """
+    )
+    fun observePicks(providerId: Long, category: String?, query: String, hiddenOnly: Int): Flow<List<ChannelPick>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun hide(items: List<HiddenChannelEntity>)
+
+    @Query("DELETE FROM hidden_channel WHERE providerId = :providerId AND remoteId IN (:remoteIds)")
+    suspend fun unhide(providerId: Long, remoteIds: List<String>)
+
+    @Query("DELETE FROM hidden_channel WHERE providerId = :providerId")
+    suspend fun deleteHidden(providerId: Long)
+
+    @Query("SELECT COUNT(*) FROM hidden_channel WHERE providerId = :providerId")
+    fun observeHiddenCount(providerId: Long): Flow<Int>
+
     /** Swap a provider's live content in one go, so a failed sync never leaves an empty list. */
     @Transaction
     suspend fun replaceLive(providerId: Long, categories: List<CategoryEntity>, channels: List<ChannelEntity>) {
@@ -192,6 +225,7 @@ interface ContentDao {
         SELECT c.* FROM channel c
         JOIN favourite f ON f.providerId = c.providerId AND f.remoteId = c.remoteId
         WHERE c.providerId IN (:providerIds)
+          AND NOT EXISTS (SELECT 1 FROM hidden_channel h WHERE h.providerId = c.providerId AND h.remoteId = c.remoteId)
         ORDER BY f.position, f.addedAt DESC
         LIMIT 40
         """

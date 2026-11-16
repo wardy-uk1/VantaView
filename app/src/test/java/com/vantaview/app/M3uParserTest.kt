@@ -72,4 +72,25 @@ class M3uParserTest {
         )
         assertEquals("http://example.com/a.m3u", M3uParser.rawGithub(" http://example.com/a.m3u "))
     }
+
+    @Test
+    fun kodiDrmLines() {
+        val r = M3uParser.parse(
+            """
+            #EXTM3U
+            #KODIPROP:inputstream.adaptive.license_type=clearkey
+            #KODIPROP:inputstream.adaptive.license_key=0123456789abcdef0123456789abcdef:fedcba9876543210fedcba9876543210
+            #EXTINF:-1 group-title="Locked",Locked One
+            #KODIPROP:inputstream.adaptive.manifest_type=mpd
+            https://example.com/live/one.mpd
+            #EXTINF:-1,Open Two
+            https://example.com/live/two.m3u8
+            """.trimIndent().lineSequence()
+        )
+        val one = r.entries.first { it.name == "Locked One" }
+        assertEquals("clearkey", one.headers["#drm-type"])
+        assertEquals("0123456789abcdef0123456789abcdef:fedcba9876543210fedcba9876543210", one.headers["#drm-key"])
+        assertEquals("mpd", one.headers["#manifest"])
+        assertNull(r.entries.first { it.name == "Open Two" }.headers["#drm-type"])
+    }
 }

@@ -28,7 +28,7 @@ object AppModule {
     @Singleton
     fun db(@ApplicationContext context: Context): VantaDb =
         Room.databaseBuilder(context, VantaDb::class.java, "vanta.db")
-            .addMigrations(VantaDb.MIGRATION_1_2, VantaDb.MIGRATION_3_4, VantaDb.MIGRATION_4_5, VantaDb.MIGRATION_5_6, VantaDb.MIGRATION_6_7, VantaDb.MIGRATION_7_8, VantaDb.MIGRATION_8_9, VantaDb.MIGRATION_9_10)
+            .addMigrations(VantaDb.MIGRATION_1_2, VantaDb.MIGRATION_3_4, VantaDb.MIGRATION_4_5, VantaDb.MIGRATION_5_6, VantaDb.MIGRATION_6_7, VantaDb.MIGRATION_7_8, VantaDb.MIGRATION_8_9, VantaDb.MIGRATION_9_10, VantaDb.MIGRATION_10_11)
             .fallbackToDestructiveMigration()
             .build()
 
