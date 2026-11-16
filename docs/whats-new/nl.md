@@ -1,3 +1,4 @@
+- De pagina Playlists toont nu per playlist het serveradres en de gebruikersnaam, en wanneer hij is toegevoegd en voor het laatst geladen, zodat playlists met dezelfde naam uit elkaar te houden zijn. Nieuwe playlists zonder naam krijgen de naam van hun server. Playlists kun je ook uit- en inschakelen: uitgeschakeld zijn ze overal verborgen maar blijven ze bewaard.
 - Add-ons met livezenders of sportevenementen staan nu op een nieuwe pagina Sport-tv, met een eigen tegel op Start. Het adres van de instelpagina van een add-on plakken (eindigend op /configure) werkt nu net als de installatielink.
 - Op een tv gaat de afstandsbediening nu met omhoog en omlaag gewoon langs tekstvakken, en het toetsenbord opent pas als je op OK drukt.
 - Zender omhoog en omlaag, en vegen, gaan nu door de lijst waaruit je de zender opende: vanuit Favorieten ga je door je favorieten. Omlaag trekken of de nieuwe knop Vernieuwen op Start laadt je playlists, gids en weer opnieuw. Instellingen › Weergave heeft een nieuwe Schermgrootte (Auto past de app aan je apparaat aan).
@@ -5,4 +6,3 @@
 - Instellingenpagina's zijn overzichtelijker: elk onderdeel is nu een uitklapmenu, en als je er een opent, gaan de andere dicht. Het opstartscherm toont de versie en het buildnummer, en VantaView zoekt bij elke start naar updates.
 - Een echte snelheidstest in Instellingen › Bronnen: ping, download en upload op een live meter, met wat je verbinding kan afspelen.
 - Voeg een playlist toe vanaf je telefoon: kies bij Bronnen of tijdens het instellen QR-code tonen, scan hem met je telefoon en plak daar het bericht van je provider, een M3U-link of -bestand, of Xtream Codes. Het gaat rechtstreeks via je wifi naar de tv.
-- Beeld-in-beeld kun je nu uitzetten bij Instellingen › Afspelen, zodat Home de speler niet meer tot een klein venster verkleint.

@@ -55,7 +55,7 @@ class PlaylistsViewModel @Inject constructor(
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
     val providers: StateFlow<List<ProviderEntity>> =
-        repo.observe().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        repo.observeEvery().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val sync: StateFlow<Map<Long, SyncState>> = repo.syncStates
 
     private val _form = MutableStateFlow(PlaylistForm())
@@ -108,6 +108,12 @@ class PlaylistsViewModel @Inject constructor(
     }
 
     fun refresh(id: Long) = repo.sync(id)
+
+    /** Switch a playlist off (hidden everywhere, kept) or on again. */
+    fun setEnabled(p: ProviderEntity, on: Boolean) { viewModelScope.launch { repo.setEnabled(p.id, on) } }
+
+    /** The playlist's server (or "A file on this device"), for telling playlists apart. */
+    fun address(p: ProviderEntity): String = repo.address(p)
 
     /** M3U from a file picked on this device. */
     fun addFile(uri: android.net.Uri) {

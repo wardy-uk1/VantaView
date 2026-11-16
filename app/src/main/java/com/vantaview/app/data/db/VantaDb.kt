@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         VodEntity::class, VodEpisodeEntity::class,
     ],
     // Version 3 (profiles) starts the test database afresh: playlists and add-ons are added again.
-    version = 9,
+    version = 10,
     exportSchema = false,
 )
 abstract class VantaDb : RoomDatabase() {
@@ -26,6 +26,13 @@ abstract class VantaDb : RoomDatabase() {
     abstract fun vod(): VodDao
 
     companion object {
+        /** Version 10: playlists can be switched off. */
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `provider` ADD COLUMN `enabled` INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         /** Version 9: films and series from playlists (M3U and Xtream Codes), filled on the next refresh. */
         val MIGRATION_8_9 = object : Migration(8, 9) {
             override fun migrate(db: SupportSQLiteDatabase) {

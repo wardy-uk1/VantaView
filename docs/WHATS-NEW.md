@@ -1,3 +1,4 @@
+- The Playlists page now shows each playlist's server address and username, and when it was added and last loaded, so playlists with the same name can be told apart. New playlists without a name are named after their server. Playlists can also be switched off and on: switched off, they're hidden everywhere but kept.
 - Add-ons with live channels or sports events now show on a new Sports TV page, with its own tile on Home. Pasting an add-on's set-up page address (ending in /configure) now works as well as its install link.
 - On a TV, the remote now moves straight past text boxes with up and down, and the keyboard only opens when you press OK on one.
 - Channel up and down, and swiping, now move through the list you opened the channel from, so from Favourites you go through your favourites. A pull-down or the new Refresh button on Home reloads your playlists, guide and weather. Settings › Appearance has a new Screen size (Auto fits the app to your device).
@@ -5,4 +6,3 @@
 - Settings pages are tidier: each section is now a drop-down, and opening one closes the others. The start-up screen shows the version and build number, and VantaView checks for updates every time it starts.
 - A proper speed test in Settings › Sources: ping, download and upload on a live dial, with what your connection can stream.
 - Add a playlist from your phone: on Sources or during setup, choose Show QR code, scan it with your phone and paste your provider's message, an M3U link or file, or Xtream Codes there. It goes straight to the TV over your home Wi-Fi.
-- Picture-in-picture can now be turned off in Settings › Playback, so pressing Home no longer shrinks the player into a small window.

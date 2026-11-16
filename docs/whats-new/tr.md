@@ -1,3 +1,4 @@
+- Oynatma listeleri sayfası artık her listenin sunucu adresini, kullanıcı adını, ne zaman eklendiğini ve son yüklendiğini gösteriyor; böylece aynı adlı listeler ayırt edilebiliyor. Adsız eklenen yeni listeler sunucunun adını alıyor. Listeler ayrıca kapatılıp açılabiliyor: kapalıyken her yerde gizlenir ama silinmez.
 - Canlı kanal veya spor etkinliği sunan eklentiler artık Ana sayfada kendi kutucuğu olan yeni Spor TV sayfasında görünüyor. Bir eklentinin kurulum sayfası adresini (/configure ile biten) yapıştırmak artık kurulum bağlantısı gibi çalışıyor.
 - TV'de kumanda artık yukarı ve aşağı ile metin kutularının yanından doğrudan geçiyor; klavye yalnızca birinde OK'a basınca açılıyor.
 - Kanal yukarı/aşağı ve kaydırma artık kanalı açtığın listeyi izliyor: Favoriler'den açtıysan favorilerin arasında gezersin. Ana sayfada aşağı çekmek veya yeni Yenile düğmesi oynatma listelerini, rehberi ve hava durumunu yeniler. Ayarlar › Görünüm'de yeni bir Ekran boyutu var (Otomatik, uygulamayı cihazına uydurur).
@@ -5,4 +6,3 @@
 - Ayarlar sayfaları daha düzenli: her bölüm artık açılır bir menü ve birini açınca diğerleri kapanır. Açılış ekranı sürümü ve derleme numarasını gösterir; VantaView her açılışta güncellemeleri kontrol eder.
 - Ayarlar › Kaynaklar'da gerçek bir hız testi: ping, indirme ve yükleme canlı bir göstergede, bağlantının neyi oynatabileceğiyle birlikte.
 - Telefondan oynatma listesi ekle: Kaynaklar'da veya kurulum sırasında QR kodu göster'i seç, telefonla tara ve orada sağlayıcı mesajını, M3U bağlantısını veya dosyasını ya da Xtream Codes'u yapıştır. Ev Wi-Fi'n üzerinden doğrudan TV'ye gider.
-- Pencere içinde pencere artık Ayarlar › Oynatma'dan kapatılabiliyor; böylece Ana ekran oynatıcıyı küçük bir pencereye küçültmüyor.

@@ -72,11 +72,41 @@ class ProviderRepository @Inject constructor(
     fun observe(): Flow<List<ProviderEntity>> =
         session.current.flatMapLatest { db.providers().observeFor(it) }
 
-    suspend fun count(): Int = db.providers().countFor(session.id)
+    /** Every playlist, switched off ones too, for the Playlists page. */
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    fun observeEvery(): Flow<List<ProviderEntity>> =
+        session.current.flatMapLatest { db.providers().observeEveryFor(it) }
+
+    /** Switches a playlist on or off. Switched on again, it's refreshed if it's out of date. */
+    suspend fun setEnabled(id: Long, on: Boolean) {
+        db.providers().setEnabled(id, on)
+        if (on) db.providers().get(id)?.takeIf { System.currentTimeMillis() - it.lastSyncAt > 6 * 3_600_000L }?.let { sync(it.id) }
+    }
+
+    /** Where a playlist comes from, for the Playlists page: the server's address, never the password. */
+    fun address(p: ProviderEntity): String = runCatching {
+        when {
+            p.kind == "M3U" && p.baseUrl.startsWith("file:") -> com.vantaview.app.ui.tr("A file on this device")
+            p.kind == "M3U" -> hostOf(m3uLink(p))
+            else -> hostOf(p.baseUrl)
+        }
+    }.getOrDefault("")
+
+    private fun hostOf(url: String): String {
+        val u = java.net.URI(url.trim())
+        val scheme = u.scheme?.lowercase() ?: "http"
+        val port = if (u.port > 0) ":${u.port}" else ""
+        return "$scheme://${u.host ?: url}$port"
+    }
+
+    /** A name for a playlist added without one: its server's name, so two playlists can be told apart. */
+    private fun defaultName(url: String, fallback: String): String =
+        runCatching { java.net.URI(url.trim().let { if ("://" in it) it else "http://$it" }).host }.getOrNull()
+            ?.removePrefix("www.")?.takeIf { it.isNotBlank() } ?: fallback
 
     /** Copies every playlist of one profile to another and loads the copies. */
     suspend fun copyAll(from: Long, to: Long) {
-        db.providers().allFor(from).forEach { p ->
+        db.providers().everyFor(from).forEach { p ->
             val id = db.providers().insert(
                 p.copy(id = 0, profileId = to, createdAt = System.currentTimeMillis(), lastSyncAt = 0, channelCount = 0, lastError = null)
             )
@@ -85,7 +115,7 @@ class ProviderRepository @Inject constructor(
     }
 
     suspend fun deleteAllFor(profileId: Long) {
-        db.providers().allFor(profileId).forEach { delete(it.id) }
+        db.providers().everyFor(profileId).forEach { delete(it.id) }
     }
 
     /** Sources: a guide link typed for a playlist (blank clears it and goes back to the playlist's own). */
@@ -125,7 +155,7 @@ class ProviderRepository @Inject constructor(
         val (user, pass) = linkLogin(clean)
         val id = db.providers().insert(
             ProviderEntity(
-                profileId = session.id, name = name.ifBlank { "My playlist" }, kind = "M3U", baseUrl = storedLink(clean),
+                profileId = session.id, name = name.ifBlank { defaultName(clean, "My playlist") }, kind = "M3U", baseUrl = storedLink(clean),
                 username = user.orEmpty(), passwordEnc = pass?.let(crypto::encrypt).orEmpty(), customEpg = guide.trim().ifBlank { null },
             )
         )
@@ -173,7 +203,7 @@ class ProviderRepository @Inject constructor(
 
     /** Adds the optional Free TV list (officially free channels), fetched now from its GitHub page, never bundled. */
     suspend fun addFreeTv(): Long {
-        db.providers().observeFor(session.id).first().firstOrNull { isFreeTv(it) }?.let { return it.id }
+        db.providers().everyFor(session.id).firstOrNull { isFreeTv(it) }?.let { if (!it.enabled) db.providers().setEnabled(it.id, true); return it.id }
         return addM3u("Free TV", FREE_TV_URL)
     }
 
@@ -184,7 +214,7 @@ class ProviderRepository @Inject constructor(
         val id = db.providers().insert(
             ProviderEntity(
                 profileId = session.id,
-                name = name.ifBlank { "My playlist" },
+                name = name.ifBlank { defaultName(server, "My playlist") },
                 kind = "XTREAM",
                 baseUrl = SmartAdd.normalizeServer(server),
                 username = username.trim(),
@@ -214,7 +244,7 @@ class ProviderRepository @Inject constructor(
         val id = db.providers().insert(
             ProviderEntity(
                 profileId = session.id,
-                name = name.ifBlank { "My portal" },
+                name = name.ifBlank { defaultName(portal, "My portal") },
                 kind = "STALKER",
                 baseUrl = url.substringBefore('#').trimEnd('/'),
                 passwordEnc = crypto.encrypt(

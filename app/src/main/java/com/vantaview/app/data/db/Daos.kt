@@ -11,11 +11,22 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProviderDao {
-    @Query("SELECT * FROM provider WHERE profileId = :profileId ORDER BY createdAt")
+    /** A profile's playlists that are switched on. */
+    @Query("SELECT * FROM provider WHERE profileId = :profileId AND enabled = 1 ORDER BY createdAt")
     fun observeFor(profileId: Long): Flow<List<ProviderEntity>>
 
-    @Query("SELECT * FROM provider WHERE profileId = :profileId ORDER BY createdAt")
+    @Query("SELECT * FROM provider WHERE profileId = :profileId AND enabled = 1 ORDER BY createdAt")
     suspend fun allFor(profileId: Long): List<ProviderEntity>
+
+    /** Every playlist of a profile, switched off ones too (the Playlists page, copying and removing). */
+    @Query("SELECT * FROM provider WHERE profileId = :profileId ORDER BY createdAt")
+    fun observeEveryFor(profileId: Long): Flow<List<ProviderEntity>>
+
+    @Query("SELECT * FROM provider WHERE profileId = :profileId ORDER BY createdAt")
+    suspend fun everyFor(profileId: Long): List<ProviderEntity>
+
+    @Query("UPDATE provider SET enabled = :on WHERE id = :id")
+    suspend fun setEnabled(id: Long, on: Boolean)
 
     @Query("SELECT * FROM provider WHERE id = :id")
     suspend fun get(id: Long): ProviderEntity?

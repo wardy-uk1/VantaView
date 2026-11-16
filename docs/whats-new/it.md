@@ -1,3 +1,4 @@
+- La pagina Playlist ora mostra l'indirizzo del server e il nome utente di ogni playlist, e quando è stata aggiunta e caricata l'ultima volta, così si distinguono playlist con lo stesso nome. Le nuove playlist senza nome prendono quello del server. Le playlist si possono anche disattivare e riattivare: disattivate, sono nascoste ovunque ma restano salvate.
 - Gli add-on con canali in diretta o eventi sportivi ora compaiono in una nuova pagina TV sportiva, con un proprio riquadro nella Home. Incollare l'indirizzo della pagina di configurazione di un add-on (che termina con /configure) ora funziona come il suo link di installazione.
 - Sulla TV, il telecomando ora supera direttamente le caselle di testo con su e giù, e la tastiera si apre solo premendo OK su una casella.
 - Canale su e giù, e lo scorrimento, ora seguono l'elenco da cui hai aperto il canale: dai Preferiti scorri i tuoi preferiti. Trascinare in basso o il nuovo pulsante Aggiorna nella Home ricarica playlist, guida e meteo. Impostazioni › Aspetto ha una nuova Dimensione schermo (Auto adatta l'app al tuo dispositivo).
@@ -5,4 +6,3 @@
 - Le pagine delle Impostazioni sono più ordinate: ogni sezione ora è un menu a discesa, e aprirne una chiude le altre. La schermata di avvio mostra versione e numero di build, e VantaView cerca aggiornamenti a ogni avvio.
 - Un vero test di velocità in Impostazioni › Sorgenti: ping, download e upload su un indicatore in tempo reale, con ciò che la tua connessione può riprodurre.
 - Aggiungi una playlist dal telefono: in Sorgenti o durante la configurazione scegli Mostra codice QR, inquadralo col telefono e incolla lì il messaggio del provider, un link o file M3U o Xtream Codes. Arriva direttamente alla TV tramite la Wi-Fi di casa.
-- Il picture-in-picture ora si può disattivare in Impostazioni › Riproduzione, così premere Home non riduce più il lettore in una piccola finestra.

@@ -24,6 +24,8 @@ data class ProviderEntity(
     val lastSyncAt: Long = 0,
     val channelCount: Int = 0,
     val lastError: String? = null,
+    /** Off: kept, but hidden everywhere (channels, guide, films and series, search) and not refreshed. */
+    @androidx.room.ColumnInfo(defaultValue = "1") val enabled: Boolean = true,
 )
 
 @Entity(tableName = "category", indices = [Index("providerId")])

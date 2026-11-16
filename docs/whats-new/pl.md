@@ -1,3 +1,4 @@
+- Strona Playlisty pokazuje teraz adres serwera i nazwę użytkownika każdej playlisty oraz kiedy ją dodano i ostatnio wczytano, by odróżnić playlisty o tej samej nazwie. Nowe playlisty bez nazwy dostają nazwę serwera. Playlisty można też wyłączać i włączać: wyłączone są wszędzie ukryte, ale zachowane.
 - Dodatki z kanałami na żywo lub wydarzeniami sportowymi pojawiają się teraz na nowej stronie TV sportowa, z własnym kafelkiem na stronie głównej. Wklejenie adresu strony konfiguracji dodatku (kończącego się na /configure) działa teraz tak samo jak link instalacyjny.
 - Na telewizorze pilot przechodzi teraz w górę i w dół prosto obok pól tekstowych, a klawiatura otwiera się dopiero po naciśnięciu OK.
 - Kanał w górę i w dół oraz przesuwanie przechodzą teraz przez listę, z której otwarto kanał: z Ulubionych przechodzisz przez ulubione. Pociągnięcie w dół lub nowy przycisk Odśwież na stronie głównej wczytuje ponownie playlisty, przewodnik i pogodę. W Ustawienia › Wygląd jest nowy Rozmiar ekranu (Auto dopasowuje aplikację do urządzenia).
@@ -5,4 +6,3 @@
 - Strony ustawień są bardziej przejrzyste: każda sekcja to teraz rozwijane menu, a otwarcie jednej zamyka pozostałe. Ekran startowy pokazuje wersję i numer kompilacji, a VantaView sprawdza aktualizacje przy każdym uruchomieniu.
 - Prawdziwy test prędkości w Ustawienia › Źródła: ping, pobieranie i wysyłanie na żywym wskaźniku, z informacją, co Twoje łącze może odtwarzać.
 - Dodaj playlistę z telefonu: w Źródłach lub podczas konfiguracji wybierz Pokaż kod QR, zeskanuj go telefonem i wklej tam wiadomość od dostawcy, link lub plik M3U albo Xtream Codes. Trafia to prosto na telewizor przez domowe Wi-Fi.
-- Obraz w obrazie można teraz wyłączyć w Ustawienia › Odtwarzanie, aby Ekran główny nie zmniejszał już odtwarzacza do małego okna.

@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -63,6 +64,8 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
                 ProviderCard(
                     p, sync[p.id], onRefresh = { vm.refresh(p.id) }, onCountries = { vm.editCountries(p.id) }, onDelete = { vm.delete(p.id) },
                     onGuide = if (p.kind == "STALKER") null else ({ guideFor = p }),
+                    address = androidx.compose.runtime.remember(p.baseUrl, p.kind) { vm.address(p) },
+                    onToggle = { vm.setEnabled(p, !p.enabled) },
                 )
             }
             guideFor?.let { p -> GuideLinkDialog(
@@ -191,26 +194,45 @@ private fun Field(
 @Composable
 private fun ProviderCard(
     p: ProviderEntity, state: SyncState?, onRefresh: () -> Unit, onCountries: () -> Unit, onDelete: () -> Unit, onGuide: (() -> Unit)? = null,
+    address: String = "", onToggle: () -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxWidth().background(Vanta.Surface, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)).padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
+            Column(Modifier.weight(1f).then(if (p.enabled) Modifier else Modifier.alpha(0.55f))) {
                 Text(p.name, color = Vanta.Text, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(
                     when (p.kind) { "XTREAM" -> "Xtream Codes"; "STALKER" -> "Stalker portal · live TV, films and series"; else -> "M3U playlist" },
                     color = Vanta.TextDim, fontSize = 13.sp,
                 )
+                // Which server it is, so playlists with the same name (or one provider's spare addresses) can be told apart.
+                if (address.isNotBlank()) Text(address, color = Vanta.Cyan, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                if (p.kind == "XTREAM" && p.username.isNotBlank()) {
+                    Text(com.vantaview.app.ui.tr("Username: {0}", p.username), color = Vanta.TextDim, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                val fmt = androidx.compose.runtime.remember { java.text.SimpleDateFormat("d MMM yyyy, HH:mm", com.vantaview.app.ui.I18n.locale) }
+                Text(
+                    com.vantaview.app.ui.tr("Added {0}", fmt.format(java.util.Date(p.createdAt))) +
+                        if (p.lastSyncAt > 0) " · " + com.vantaview.app.ui.tr("Last loaded {0}", fmt.format(java.util.Date(p.lastSyncAt))) else "",
+                    color = Vanta.TextDim, fontSize = 12.sp,
+                )
             }
         }
         // The buttons wrap onto a second line when the card is narrow (a phone held upright).
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (p.channelCount > 0) FocusCard(onClick = onCountries) { Text("Countries", color = Vanta.Text, maxLines = 1, softWrap = false) }
-            onGuide?.let { FocusCard(onClick = it) { Text(if (p.customEpg != null) "Guide ✓" else "Guide", color = Vanta.Text, maxLines = 1, softWrap = false) } }
-            FocusCard(onClick = onRefresh) { Text("Refresh", color = Vanta.Text, maxLines = 1, softWrap = false) }
+            if (p.enabled) {
+                if (p.channelCount > 0) FocusCard(onClick = onCountries) { Text("Countries", color = Vanta.Text, maxLines = 1, softWrap = false) }
+                onGuide?.let { FocusCard(onClick = it) { Text(if (p.customEpg != null) "Guide ✓" else "Guide", color = Vanta.Text, maxLines = 1, softWrap = false) } }
+                FocusCard(onClick = onRefresh) { Text("Refresh", color = Vanta.Text, maxLines = 1, softWrap = false) }
+            }
+            FocusCard(onClick = onToggle) { Text(if (p.enabled) "Switch off" else "Switch on", color = if (p.enabled) Vanta.Text else Vanta.Cyan, maxLines = 1, softWrap = false) }
             FocusCard(onClick = onDelete) { Text("Remove", color = Vanta.Error, maxLines = 1, softWrap = false) }
+        }
+        if (!p.enabled) {
+            Text("Switched off: its channels, guide, films and series are hidden everywhere until you switch it on.", color = Vanta.TextDim, fontSize = 14.sp)
+            return@Column
         }
         val (line, colour) = when (state) {
             is SyncState.Running -> "${state.stage}…" to Vanta.Cyan
