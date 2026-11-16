@@ -66,6 +66,7 @@ class ProviderRepository @Inject constructor(
     private val crypto: CredentialCrypto,
     private val session: com.vantaview.app.data.profile.ProfileSession,
     private val stalker: com.vantaview.app.data.stalker.StalkerClient,
+    private val jellyfin: com.vantaview.app.data.jellyfin.JellyfinClient,
     @AppScope private val scope: CoroutineScope,
 ) {
     private val userAgent = "VantaView/${BuildConfig.VERSION_NAME}"
@@ -112,6 +113,7 @@ class ProviderRepository @Inject constructor(
             p.kind == "M3U" && p.baseUrl.startsWith("file:") -> "My playlist"
             p.kind == "M3U" -> defaultName(m3uLink(p), "My playlist")
             p.kind == "STALKER" -> defaultName(p.baseUrl, "My portal")
+            p.kind == "JELLYFIN" -> runCatching { jellyfin.serverName(p.baseUrl) }.getOrDefault(defaultName(p.baseUrl, "Jellyfin"))
             else -> defaultName(p.baseUrl, "My playlist")
         }
         db.providers().update(p.copy(name = name.trim().ifBlank { auto }))
@@ -276,6 +278,79 @@ class ProviderRepository @Inject constructor(
         return id
     }
 
+    /**
+     * A Jellyfin server, once signed in. Only the session token Jellyfin gave is kept (encrypted), never
+     * the password; [userName] is shown on the card.
+     */
+    suspend fun addJellyfin(name: String, server: String, login: com.vantaview.app.data.jellyfin.JellyfinLogin): Long {
+        val base = jellyfin.normalize(server)
+        val id = db.providers().insert(
+            ProviderEntity(
+                profileId = session.id,
+                name = name.ifBlank { runCatching { jellyfin.serverName(base) }.getOrDefault(defaultName(base, "Jellyfin")) },
+                kind = "JELLYFIN", baseUrl = base, username = login.userName, passwordEnc = crypto.encrypt(login.token),
+            )
+        )
+        sync(id)
+        return id
+    }
+
+    /** A Jellyfin server's Live TV channels, and its films, series and episodes. */
+    private suspend fun syncJellyfin(p: ProviderEntity): SyncState.Done {
+        val token = crypto.decrypt(p.passwordEnc)
+        setState(p.id, SyncState.Running("Signing in"))
+        val user = jellyfin.me(p.baseUrl, token)
+
+        setState(p.id, SyncState.Running("Loading channels"))
+        val live = jellyfin.channels(p.baseUrl, token, user)
+        val cat = CategoryEntity(providerId = p.id, remoteId = "live", name = "Live TV", position = 0)
+        val channels = live.mapIndexedNotNull { i, o ->
+            val cid = o.optString("Id").ifBlank { return@mapIndexedNotNull null }
+            val name = o.optString("Name").trim().ifBlank { "Channel ${i + 1}" }
+            ChannelEntity(
+                providerId = p.id, remoteId = cid, name = name, sortKey = name.lowercase(),
+                number = o.optString("ChannelNumber").substringBefore('.').toIntOrNull() ?: (i + 1),
+                logo = jellyfin.poster(p.baseUrl, o), categoryRemoteId = "live", streamUrl = "jellyfin:$cid",
+                epgChannelId = cid, isRadio = o.optString("ChannelType").equals("Radio", true),
+            )
+        }
+        db.content().replaceLive(p.id, if (channels.isEmpty()) emptyList() else listOf(cat), channels)
+
+        setState(p.id, SyncState.Running("Loading films and series"))
+        val items = ArrayList<VodEntity>()
+        var pos = 0
+        for ((type, kind) in listOf("Movie" to "movie", "Series" to "series")) {
+            jellyfin.items(p.baseUrl, token, user, type) { o ->
+                val id = o.optString("Id").ifBlank { return@items }
+                val name = o.optString("Name").trim().ifBlank { return@items }
+                items += VodEntity(
+                    providerId = p.id, kind = kind, remoteId = id,
+                    name = com.vantaview.app.data.vod.VodNames.clean(name), norm = com.vantaview.app.data.vod.VodNames.norm(name),
+                    year = o.optInt("ProductionYear", 0).takeIf { it > 0 },
+                    groupName = o.optJSONArray("Genres")?.optString(0)?.ifBlank { null },
+                    poster = jellyfin.poster(p.baseUrl, o), url = if (kind == "movie") "jellyfin:$id" else null,
+                    plot = o.optString("Overview").ifBlank { null },
+                    rating = o.optDouble("CommunityRating", 0.0).takeIf { it > 0 }?.let { "%.1f".format(java.util.Locale.US, it) },
+                    imdb = o.optJSONObject("ProviderIds")?.optString("Imdb")?.takeIf { it.startsWith("tt") },
+                    added = com.vantaview.app.data.jellyfin.JellyfinClient.ms(o.optString("DateCreated")), position = pos++,
+                )
+            }
+        }
+        setState(p.id, SyncState.Running("Loading episodes"))
+        val episodes = ArrayList<com.vantaview.app.data.db.VodEpisodeEntity>()
+        jellyfin.items(p.baseUrl, token, user, "Episode") { o ->
+            val id = o.optString("Id").ifBlank { return@items }
+            val series = o.optString("SeriesId").ifBlank { return@items }
+            episodes += com.vantaview.app.data.db.VodEpisodeEntity(
+                providerId = p.id, seriesId = series, season = o.optInt("ParentIndexNumber", 1),
+                episode = o.optInt("IndexNumber", 0), title = o.optString("Name").ifBlank { null }, url = "jellyfin:$id",
+            )
+        }
+        db.vod().replace(p.id, items, episodes.sortedWith(compareBy({ it.seriesId }, { it.season }, { it.episode })))
+        if (channels.isEmpty() && items.isEmpty()) throw IllegalStateException("This Jellyfin user has no films, series or Live TV to show")
+        return SyncState.Done(channels.size, items.size)
+    }
+
     suspend fun delete(id: Long) {
         stalker.forget(id)
         db.content().deleteChannels(id)
@@ -311,6 +386,7 @@ class ProviderRepository @Inject constructor(
                 val done = when (provider.kind) {
                     "XTREAM" -> syncXtream(provider)
                     "STALKER" -> syncStalker(provider)
+                    "JELLYFIN" -> syncJellyfin(provider)
                     else -> syncM3u(provider)
                 }
                 db.providers().get(id)?.let {
@@ -480,6 +556,7 @@ class ProviderRepository @Inject constructor(
             stored.startsWith("xtreamurl:") -> stored.removePrefix("xtreamurl:").replace(USER_TOKEN, p.username).replace(PASS_TOKEN, pass)
             stored.startsWith("xtream-movie:") -> "${p.baseUrl}/movie/${p.username}/$pass/${stored.removePrefix("xtream-movie:")}"
             stored.startsWith("xtream-series:") -> "${p.baseUrl}/series/${p.username}/$pass/${stored.removePrefix("xtream-series:")}"
+            stored.startsWith("jellyfin:") -> jellyfin.playAddress(p.baseUrl, pass, stored.removePrefix("jellyfin:"))
             else -> stored
         }
     }
@@ -776,6 +853,11 @@ class ProviderRepository @Inject constructor(
                 .replace(PASS_TOKEN, crypto.decrypt(p.passwordEnc))
             val m3u8 = if (url.endsWith(".ts")) url.removeSuffix(".ts") + ".m3u8" else null
             PlayTarget(url, m3u8, headers)
+        } else if (channel.streamUrl.startsWith("jellyfin:")) {
+            val p = db.providers().get(channel.providerId) ?: throw IllegalStateException("Playlist not found")
+            val token = crypto.decrypt(p.passwordEnc)
+            val url = jellyfin.liveAddress(p.baseUrl, token, jellyfin.me(p.baseUrl, token), channel.streamUrl.removePrefix("jellyfin:"))
+            PlayTarget(url, null, emptyMap())
         } else if (channel.streamUrl.startsWith("stalker:")) {
             val p = db.providers().get(channel.providerId) ?: throw IllegalStateException("Playlist not found")
             PlayTarget(stalker.createLink(p, "itv", channel.streamUrl.removePrefix("stalker:")), null, stalker.playHeaders + headers)

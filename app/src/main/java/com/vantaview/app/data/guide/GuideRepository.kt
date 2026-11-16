@@ -49,6 +49,7 @@ class GuideRepository @Inject constructor(
     private val countries: CountryStore,
     private val schedule: com.vantaview.app.data.SourceSettings,
     private val stalker: com.vantaview.app.data.stalker.StalkerClient,
+    private val jellyfin: com.vantaview.app.data.jellyfin.JellyfinClient,
     @AppScope private val scope: CoroutineScope,
 ) {
     private val sp = context.getSharedPreferences("guide", Context.MODE_PRIVATE)
@@ -142,6 +143,7 @@ class GuideRepository @Inject constructor(
         val pick = countries.chosen(session.id, p.id)
         val keys = (if (pick == null) db.content().guideKeys(p.id) else db.content().guideKeysIn(p.id, pick.toList())).toHashSet()
         if (all.isEmpty() && p.kind == "STALKER") return loadStalker(p, keys)
+        if (all.isEmpty() && p.kind == "JELLYFIN") return loadJellyfin(p, keys)
         if (all.isEmpty()) throw IllegalStateException("This playlist doesn't include a TV guide link")
         if (keys.isEmpty()) throw IllegalStateException("The channels in this playlist don't have guide IDs")
 
@@ -166,6 +168,37 @@ class GuideRepository @Inject constructor(
             throw lastError!!
         }
         return sink.total
+    }
+
+    /** A Jellyfin server's Live TV guide, from yesterday to a week ahead. */
+    private suspend fun loadJellyfin(p: ProviderEntity, keys: Set<String>): Int {
+        if (keys.isEmpty()) throw IllegalStateException("This Jellyfin server has no Live TV channels")
+        val token = crypto.decrypt(p.passwordEnc)
+        val user = jellyfin.me(p.baseUrl, token)
+        val from = XmltvTime.dayStart(-1)
+        val to = XmltvTime.dayStart(8)
+        val dao = db.guide()
+        var cleared = false
+        var total = 0
+        jellyfin.programmes(p.baseUrl, token, user, keys.toList(), from, to) { list ->
+            val rows = list.mapNotNull { o ->
+                val start = com.vantaview.app.data.jellyfin.JellyfinClient.ms(o.optString("StartDate"))
+                val stop = com.vantaview.app.data.jellyfin.JellyfinClient.ms(o.optString("EndDate"))
+                val ch = o.optString("ChannelId")
+                if (start <= 0 || stop <= start || ch !in keys) null
+                else ProgrammeEntity(
+                    providerId = p.id, channelKey = ch, start = start, stop = stop, title = o.optString("Name").ifBlank { "—" },
+                    description = o.optString("Overview").ifBlank { null }, category = o.optJSONArray("Genres")?.optString(0)?.ifBlank { null },
+                )
+            }
+            if (rows.isEmpty()) return@programmes
+            if (!cleared) { dao.deleteFor(p.id); cleared = true }
+            dao.insert(rows)
+            total += rows.size
+            setState(p.id, GuideState.Loading("Loading the TV guide: ${"%,d".format(total)} programmes"))
+        }
+        if (total == 0) throw IllegalStateException("The Jellyfin server's TV guide had nothing for the next week")
+        return total
     }
 
     /** A Stalker portal's own guide (get_epg_info), from yesterday to a week ahead where the portal has it. */

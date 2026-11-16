@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class SourceTab(val label: String) { SMART("Smart Add"), M3U("M3U link"), XTREAM("Xtream Codes"), STALKER("Stalker portal") }
+enum class SourceTab(val label: String) { SMART("Smart Add"), M3U("M3U link"), XTREAM("Xtream Codes"), STALKER("Stalker portal"), JELLYFIN("Jellyfin") }
 
 data class PlaylistForm(
     val tab: SourceTab = SourceTab.SMART,
@@ -55,7 +55,45 @@ class PlaylistsViewModel @Inject constructor(
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
     private val phoneHandler: com.vantaview.app.data.remote.PhoneAddHandler,
     private val imageText: com.vantaview.app.data.remote.ImageText,
+    private val jellyfin: com.vantaview.app.data.jellyfin.JellyfinClient,
 ) : ViewModel() {
+    /** Jellyfin › Quick Connect: the code to approve on another device, while waiting. */
+    private val _quick = MutableStateFlow<com.vantaview.app.data.jellyfin.QuickCode?>(null)
+    val quick: StateFlow<com.vantaview.app.data.jellyfin.QuickCode?> = _quick
+    private var quickJob: kotlinx.coroutines.Job? = null
+
+    /** Signs in to a Jellyfin server with Quick Connect: shows a code, then waits up to 5 minutes for it to be approved. */
+    fun jellyfinQuick() {
+        val f = _form.value
+        quickJob?.cancel()
+        quickJob = viewModelScope.launch {
+            try {
+                val base = jellyfin.normalize(f.server)
+                jellyfin.serverName(base)
+                if (!jellyfin.quickConnectOn(base)) throw IllegalStateException(com.vantaview.app.ui.tr("Quick Connect is switched off on this server. Sign in with your username and password instead."))
+                val q = jellyfin.quickStart(base)
+                _quick.value = q
+                _form.update { it.copy(message = null, isError = false) }
+                val until = System.currentTimeMillis() + 5 * 60_000L
+                var login: com.vantaview.app.data.jellyfin.JellyfinLogin? = null
+                while (login == null && System.currentTimeMillis() < until) {
+                    kotlinx.coroutines.delay(3_000)
+                    login = jellyfin.quickCheck(base, q)
+                }
+                _quick.value = null
+                val l = login ?: throw IllegalStateException(com.vantaview.app.ui.tr("The code ran out of time. Start again."))
+                val id = repo.addJellyfin(f.name, base, l)
+                session.setLastProvider(id)
+                _form.value = PlaylistForm(tab = f.tab, message = "Jellyfin server added. Loading…")
+            } catch (e: Exception) {
+                _quick.value = null
+                if (e !is kotlinx.coroutines.CancellationException) _form.update { it.copy(message = e.message ?: "Couldn't sign in to that Jellyfin server", isError = true) }
+            }
+        }
+    }
+
+    fun cancelQuick() { quickJob?.cancel(); _quick.value = null }
+
     /** Reading a picture now (Smart Add › Choose an image). */
     private val _reading = MutableStateFlow(false)
     val reading: StateFlow<Boolean> = _reading
@@ -130,6 +168,11 @@ class PlaylistsViewModel @Inject constructor(
                     SourceTab.M3U -> repo.addM3u(f.name, f.m3uUrl, f.guide)
                     SourceTab.XTREAM -> repo.addXtream(f.name, f.server, f.username, f.password, f.guide)
                     SourceTab.STALKER -> repo.addStalker(f.name, f.portal, f.mac, f.model, f.serial, f.deviceId, f.deviceId2, f.signature)
+                    SourceTab.JELLYFIN -> {
+                        val base = jellyfin.normalize(f.server)
+                        jellyfin.serverName(base)
+                        repo.addJellyfin(f.name, base, jellyfin.signIn(base, f.username, f.password))
+                    }
                     SourceTab.SMART -> { detect(); return@launch }
                 }
                 session.setLastProvider(id)

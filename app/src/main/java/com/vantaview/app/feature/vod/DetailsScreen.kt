@@ -73,7 +73,8 @@ fun DetailsScreen(
     val meta = ui.meta
     val name = meta?.name?.ifBlank { null } ?: vm.fallbackName
     val poster = meta?.poster ?: vm.fallbackPoster
-    val isSeries = vm.type == "series"
+    // Stremio's "other" titles with several videos are shown like a series (episodes to pick).
+    val isSeries = vm.type == "series" || (vm.type == "other" && (meta?.videos?.size ?: 0) > 1)
 
     BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Bg)) {
         val wide = maxWidth >= 720.dp

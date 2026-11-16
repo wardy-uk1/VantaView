@@ -47,7 +47,7 @@ class PlaylistVod @Inject constructor(
     private fun playlistOf(ref: CatalogRef) = -ref.addon.entity.id - OFFSET
 
     /** Playlists that can carry films and series. */
-    fun eligible(all: List<ProviderEntity>) = all.filter { it.kind == "M3U" || it.kind == "XTREAM" }
+    fun eligible(all: List<ProviderEntity>) = all.filter { it.kind == "M3U" || it.kind == "XTREAM" || it.kind == "JELLYFIN" }
 
     private fun asAddon(p: ProviderEntity) = InstalledAddon(
         AddonEntity(id = -(p.id + OFFSET), profileId = p.profileId, manifestUrl = "playlist://${p.id}", name = p.name, manifestJson = "{}"),
@@ -64,7 +64,7 @@ class PlaylistVod @Inject constructor(
             val addon = asAddon(p)
             val groups = db.vod().groups(p.id, type).filter { g -> !(hideAdult && KidsFilter.looksAdult(g.groupName)) && g.groupName != null }
             val top = buildList {
-                if (p.kind == "XTREAM") add(CatalogRef(addon, CatalogDef(type, "#new", "${p.name} · Recently added", searchable = false, needsExtra = false)))
+                if (p.kind == "XTREAM" || p.kind == "JELLYFIN") add(CatalogRef(addon, CatalogDef(type, "#new", "${p.name} · Recently added", searchable = false, needsExtra = false)))
                 add(CatalogRef(addon, CatalogDef(type, "*", "${p.name} · All", searchable = true, needsExtra = false)))
             }
             top + groups.take(MAX_ROWS).map { g -> CatalogRef(addon, CatalogDef(type, "g:" + g.groupName, "${p.name} · ${g.groupName}", searchable = false, needsExtra = false)) }

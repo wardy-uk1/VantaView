@@ -147,6 +147,8 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Jellyfin servers as a source (Sources › Jellyfin; username and password or Quick Connect): films and series on Movies and TV Series (with episodes), Live TV channels and guide in Live TV
+- [x] Add-on rows of Stremio's "other" type on Movies and TV Series (titles with several videos open like a series)
 - [x] More picture sizes in the live and film players: Fit, Stretch, Fill screen, 16:9, 4:3, 21:9 and Original, plus Zoom (100–200%) held at the middle, top or bottom; each channel, film and series remembers its own, with a default in Settings › Playback
 - [x] Stremio account sign-in (Settings › Stremio, QR code or email): each profile keeps add-ons, Library (Watchlist), Continue watching and watched films in step with its Stremio account, both ways; first sync only adds. Nuvio: backup import and Trakt (Nuvio has no public sign-in for other apps)
 - [x] Low-memory mode for 1 GB TVs (Auto/On/Off in Settings › Appearance › Memory): lighter effects, smaller artwork and picture cache, smaller player buffer, fewer torrent connections; big Xtream lists saved as they download

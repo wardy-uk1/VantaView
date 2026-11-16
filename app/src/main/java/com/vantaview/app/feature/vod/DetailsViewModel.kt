@@ -119,7 +119,7 @@ class DetailsViewModel @Inject constructor(
             }
             when {
                 autoplay == null -> Unit
-                autoplay == "movie" || type != "series" -> play(null, false)
+                autoplay == "movie" || (type != "series" && (type != "other" || (meta?.videos?.size ?: 0) <= 1)) -> play(null, false)
                 else -> meta?.videos?.firstOrNull { it.id == autoplay }?.let { play(it, false) }
             }
         }
@@ -188,7 +188,8 @@ class DetailsViewModel @Inject constructor(
         if (_ui.value.blocked) return
         // Pressing another episode (or ⋯) while one is still looking starts over with the new one.
         findJob?.cancel()
-        val streamId = video?.id ?: id
+        // An "other" title with a single video plays that video (as Stremio does).
+        val streamId = video?.id ?: (if (type == "other") _ui.value.meta?.videos?.singleOrNull()?.id else null) ?: id
         val subtitle = video?.let { v ->
             val code = if (v.season > 0) "S${v.season} E${v.episode}" else "Episode ${v.episode}"
             listOf(code, v.title).filter { it.isNotBlank() }.joinToString(" · ")

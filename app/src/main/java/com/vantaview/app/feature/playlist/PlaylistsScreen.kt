@@ -147,6 +147,29 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
                         enabled = form.server.isNotBlank() && form.username.isNotBlank() && form.password.isNotBlank(),
                     )
                 }
+                SourceTab.JELLYFIN -> {
+                    val quick by vm.quick.collectAsStateWithLifecycle()
+                    Text(
+                        "Your own Jellyfin media server (or one you've been given access to). Its films and series go to Movies and TV Series, and its Live TV and guide to Live TV.",
+                        color = Vanta.TextDim,
+                    )
+                    Field("Name (optional)", form.name) { v -> vm.edit { it.copy(name = v) } }
+                    Field("Server address (like https://jellyfin.example.com or http://192.168.1.20:8096)", form.server, keyboard = KeyboardType.Uri) { v -> vm.edit { it.copy(server = v) } }
+                    val q = quick
+                    if (q != null) {
+                        Text("In Jellyfin on your phone or computer, open your profile › Quick Connect and enter:", color = Vanta.TextDim)
+                        Text(q.code, color = Vanta.Cyan, fontSize = 30.sp, fontWeight = FontWeight.Black, letterSpacing = 4.sp)
+                        Text("Waiting for you to approve it…", color = Vanta.TextDim, fontSize = 13.sp)
+                        FocusCard(onClick = vm::cancelQuick) { Text("Cancel", color = Vanta.Text) }
+                    } else {
+                        FocusCard(onClick = { if (form.server.isNotBlank()) vm.jellyfinQuick() }) { Text("Sign in with Quick Connect", color = Vanta.Text) }
+                        Text("Or with your username and password:", color = Vanta.TextDim, fontSize = 13.sp)
+                        Field("Username", form.username) { v -> vm.edit { it.copy(username = v) } }
+                        Field("Password", form.password, password = true) { v -> vm.edit { it.copy(password = v) } }
+                        GradientButton("Add server", onClick = vm::add, enabled = form.server.isNotBlank() && form.username.isNotBlank())
+                        Text("Only the sign-in Jellyfin gives back is kept, never your password.", color = Vanta.TextDim, fontSize = 12.sp)
+                    }
+                }
                 SourceTab.STALKER -> {
                     Text(
                         "For a MAG-style portal subscription. Use the portal address and the MAC address your provider registered for you.",
