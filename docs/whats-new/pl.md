@@ -1,3 +1,4 @@
+- Zaloguj się do Stremio w Ustawienia › Stremio, kodem QR lub e-mailem: dodatki, Biblioteka, Kontynuuj oglądanie i obejrzane filmy będą synchronizowane z kontem w obie strony. Każdy profil może mieć własne konto.
 - Działa lepiej na telewizorach i przystawkach z 1 GB pamięci: tryb małej pamięci włącza się tam sam, z lżejszymi efektami, mniejszymi grafikami i mniejszym buforem, a duże listy dostawców nie muszą już mieścić się w pamięci naraz. Zmień w Ustawienia › Wygląd › Pamięć.
 - Smart Add odczyta teraz zrzut ekranu lub zdjęcie wiadomości od dostawcy: wybierz obraz (albo wyślij go z karty Zrzut ekranu w telefonie), a VantaView wypełni dane do sprawdzenia. Obraz jest odczytywany na urządzeniu; nic nie jest wysyłane.
 - Płynniejsze kanały na żywo: VantaView zmienia dekoder, gdy ten w urządzeniu nie nadąża, odtwarza TV na żywo z dokładnie normalną prędkością i lepiej radzi sobie z uszkodzonymi danymi strumienia. Pełny ekran zakrywa teraz wycięcie na aparat w telefonach, a odtwarzacz filmów i seriali też ma przycisk Rozmiar (Dopasuj, Wypełnij, Powiększ).
@@ -5,4 +6,3 @@
 - Napisy po chorwacku, serbsku i bośniacku (każdy zastępuje pozostałe) oraz napisy z zainstalowanych dodatków napisów Stremio w Twoim języku. Odtwarzacz pokazuje, o której kończy się film lub odcinek, a dodatki wyślesz z telefonu kodem QR w Źródła › Dodatki.
 - TV na żywo i przewodnik mogą teraz pokazywać wszystkie playlisty razem: wybierz Wszystkie playlisty w wyborze playlisty u góry TV na żywo. Grupy o tej samej nazwie są łączone, a przy każdym kanale widać, z której playlisty pochodzi.
 - Pokazuj lub ukrywaj kanały hurtowo: TV na żywo › Kanały ✎ (lub Ustawienia › Kanały). Zaznacz kanały lub całą grupę i ukryj lub pokaż je naraz. Kanały M3U chronione ClearKey lub Widevine są teraz odtwarzane, a nazwę playlisty zmienisz na jej karcie.
-- W przewodniku TV przytrzymaj Wstecz na pilocie, aby od razu wrócić na pełnym ekranie do oglądanego kanału. Krótkie naciśnięcie działa jak dotąd.

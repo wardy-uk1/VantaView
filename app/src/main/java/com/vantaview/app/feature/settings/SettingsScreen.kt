@@ -154,6 +154,7 @@ fun SettingsScreen(onEditProfile: (Long) -> Unit = {}, vm: SettingsViewModel = h
         when (section) {
             SettingsSection.WEATHER -> WeatherSection(vm)
             SettingsSection.TRAKT -> TraktSection()
+            SettingsSection.STREMIO -> StremioSection()
             SettingsSection.BACKUP -> backupContent()
             SettingsSection.ABOUT -> HelpAbout()
             SettingsSection.PLAYBACK -> PlaybackSection(vm.playback)

@@ -57,6 +57,10 @@ enum class SettingsSection(val title: String, val summary: String, val keywords:
         "Trakt", "Link Trakt to sync your Watchlist, what you've watched, Continue watching, recommendations and lists",
         "trakt sync watchlist history watched scrobble continue watching recommendations lists account link sign in",
     ),
+    STREMIO(
+        "Stremio", "Sign in to Stremio to keep add-ons, Library, Continue watching and watched films in step",
+        "stremio account sign in login qr sync addons add-ons library watchlist continue watching watched nuvio",
+    ),
     BACKUP("Backup and restore", "Back up to a file or your phone, restore, and automatic backups", "backup restore export import password qr phone automatic folder"),
     PARENTAL(
         "Parental control", "Hide adult categories, lock Sources, your profile PIN and clearing watch history",

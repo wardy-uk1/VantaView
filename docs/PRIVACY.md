@@ -36,6 +36,10 @@ Your playlist provider login is only ever sent to that provider.
 
 The QR code on Sources opens a page served by VantaView itself, on your home network. What you type or pick on your phone goes straight from the phone to your TV over your Wi-Fi, never through the internet. The page only answers its own secret address, and stops after 15 minutes or when you leave the page.
 
+## Signing in to Stremio
+
+If you sign a profile in to Stremio (Settings › Stremio), VantaView talks to Stremio's account service to keep your add-ons, Library, Continue watching and watched films in step. Your password is sent to Stremio once and never kept; the session key Stremio gives back is stored encrypted on the device until you sign out.
+
 ## Reading a screenshot
 
 When Smart Add reads a screenshot or photo of your provider's message, the text is read on your device (with Tesseract, an open-source text reader). The picture isn't sent anywhere, and it isn't kept.

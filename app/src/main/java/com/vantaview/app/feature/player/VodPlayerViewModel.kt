@@ -62,6 +62,7 @@ class VodPlayerViewModel @Inject constructor(
     private val addons: com.vantaview.app.data.addon.AddonRepository,
     private val session: VodSession,
     private val trakt: com.vantaview.app.data.trakt.TraktSync,
+    private val stremio: com.vantaview.app.data.stremio.StremioSync,
     private val skips: com.vantaview.app.data.player.SkipSegments,
     private val torrents: com.vantaview.app.data.torrent.TorrentEngine,
 ) : ViewModel() {
@@ -311,6 +312,8 @@ class VodPlayerViewModel @Inject constructor(
         val dur = player.duration
         val p = percent ?: if (dur > 0 && dur != C.TIME_UNSET) player.currentPosition * 100f / dur else return
         trakt.scrobble(action, r.type, r.metaId, r.videoId, r.title, p)
+        // Stremio (when signed in) gets where this profile got to, once it's paused or stopped.
+        if (action != "start") stremio.progress(r.type, r.metaId)
     }
 
     /** Records where this profile got to, for Continue watching and resume. */

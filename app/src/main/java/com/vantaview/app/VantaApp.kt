@@ -17,6 +17,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class VantaApp : Application(), ImageLoaderFactory {
     @javax.inject.Inject lateinit var trakt: com.vantaview.app.data.trakt.TraktSync
+    @javax.inject.Inject lateinit var stremio: com.vantaview.app.data.stremio.StremioSync
 
     override fun onCreate() {
         // Before anything else: other parts read it as they start.
@@ -24,6 +25,8 @@ class VantaApp : Application(), ImageLoaderFactory {
         super.onCreate()
         // Profiles linked to Trakt keep their Watchlist, watched and Continue watching in step.
         trakt.start()
+        // Profiles signed in to Stremio keep add-ons, Library and Continue watching in step with it.
+        stremio.start()
         // Certificates the user chose to trust (Sources › Add-ons), read before any connection.
         com.vantaview.app.data.security.CertPins.init(this)
         // Switching low-memory mode rebuilds the picture loader with the new sizes.
