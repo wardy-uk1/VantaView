@@ -65,7 +65,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
     val ui by vm.ui.collectAsStateWithLifecycle()
     var playerView by remember { mutableStateOf<PlayerView?>(null) }
     val context = LocalContext.current
-    val size by vm.size.collectAsStateWithLifecycle()
+    val picture by vm.picture.collectAsStateWithLifecycle()
     val activity = context as? Activity
     val isTv = remember { context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) }
     var controls by remember { mutableStateOf(true) }
@@ -114,16 +114,16 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     setShowSubtitleButton(true)
                     TrackPrefs.style(this, vm.settings)
                     // Settings › Playback: how long the controls stay (0 = until hidden).
-                    resizeMode = vm.size.value.mode
                     controllerShowTimeoutMs = vm.settings.controlsSeconds.let { if (it <= 0) 0 else it * 1000 }
                     setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { v -> controls = v == android.view.View.VISIBLE })
                     player = vm.player
+                    PictureSize.attach(this) { vm.picture.value }
                     requestFocus()
                     playerView = this
                 }
             },
-            update = { it.resizeMode = size.mode },
-            onRelease = { it.player = null },
+            update = { picture.let { _ -> PictureSize.apply(it) } },
+            onRelease = { PictureSize.detach(it); it.player = null },
             modifier = Modifier.fillMaxSize(),
         )
 
@@ -179,7 +179,9 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
                     if (ui.isSeries) FocusCard(onClick = { vm.loadEpisodes(); episodesOpen = true }) { Text("Episodes", color = Vanta.Text, maxLines = 1) }
-                    FocusCard(onClick = vm::cycleSize) { Text(com.vantaview.app.ui.tr("Size: {0}", com.vantaview.app.ui.tr(size.label)), color = Vanta.Text, maxLines = 1) }
+                    FocusCard(onClick = vm::cycleSize) { Text(com.vantaview.app.ui.tr("Size: {0}", com.vantaview.app.ui.tr(picture.size.label)), color = Vanta.Text, maxLines = 1) }
+                    FocusCard(onClick = vm::cycleZoom) { Text(com.vantaview.app.ui.tr("Zoom {0}%", picture.zoom), color = Vanta.Text, maxLines = 1) }
+                    if (picture.zoom > 100) FocusCard(onClick = vm::cyclePos) { Text(com.vantaview.app.ui.tr("Hold: {0}", com.vantaview.app.ui.tr(picture.pos.label)), color = Vanta.Text, maxLines = 1) }
                     FocusCard(onClick = { speedOpen = true }) { Text(if (ui.speed == 1f) "Speed" else "${ui.speed}×", color = Vanta.Text, maxLines = 1) }
                     FocusCard(onClick = { moreOpen = true }) { Text("⋯ More", color = Vanta.Text, maxLines = 1) }
                     if (ui.streams.size > 1) {

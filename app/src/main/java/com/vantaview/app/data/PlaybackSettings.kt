@@ -18,13 +18,40 @@ enum class BufferSize(val label: String, val detail: String, val minMs: Int, val
     LARGE("Large", "Slowest to start, but rides out a poor connection.", 30_000, 60_000, 2_500, 5_000),
 }
 
-/** How video fills the screen. */
-enum class StreamSize(val label: String, val mode: Int) {
+/**
+ * How video fills the screen. [ratio] forces a shape (the picture is stretched to it, then fitted);
+ * ORIGINAL shows it at its own pixel size when that's smaller than the screen.
+ * (FILL and ZOOM keep their old stored names: FILL stretches, ZOOM fills the screen by cropping.)
+ */
+enum class StreamSize(val label: String, val mode: Int, val ratio: Float? = null) {
     FIT("Fit", AspectRatioFrameLayout.RESIZE_MODE_FIT),
-    FILL("Fill", AspectRatioFrameLayout.RESIZE_MODE_FILL),
-    ZOOM("Zoom", AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+    FILL("Stretch", AspectRatioFrameLayout.RESIZE_MODE_FILL),
+    ZOOM("Fill screen", AspectRatioFrameLayout.RESIZE_MODE_ZOOM),
+    WIDE("16:9", AspectRatioFrameLayout.RESIZE_MODE_FIT, 16f / 9f),
+    STANDARD("4:3", AspectRatioFrameLayout.RESIZE_MODE_FIT, 4f / 3f),
+    CINEMA("21:9", AspectRatioFrameLayout.RESIZE_MODE_FIT, 21f / 9f),
+    ORIGINAL("Original", AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
     fun next(): StreamSize = entries[(ordinal + 1) % entries.size]
+}
+
+/** Where a zoomed picture is held: the middle, or its top or bottom edge. */
+enum class PicturePos(val label: String) {
+    MIDDLE("Middle"), TOP("Top"), BOTTOM("Bottom");
+    fun next(): PicturePos = entries[(ordinal + 1) % entries.size]
+}
+
+/** The picture's size, extra zoom (in %) and where a zoomed picture sits. */
+data class Picture(val size: StreamSize = StreamSize.FIT, val zoom: Int = 100, val pos: PicturePos = PicturePos.MIDDLE) {
+    fun nextZoom(): Picture = copy(zoom = ZOOMS.firstOrNull { it > zoom } ?: 100)
+    fun encode() = "${size.name}|$zoom|${pos.name}"
+
+    companion object {
+        val ZOOMS = listOf(100, 110, 120, 135, 150, 175, 200)
+        fun decode(s: String?): Picture? = s?.split('|')?.let { p ->
+            runCatching { Picture(StreamSize.valueOf(p[0]), p.getOrNull(1)?.toIntOrNull() ?: 100, p.getOrNull(2)?.let(PicturePos::valueOf) ?: PicturePos.MIDDLE) }.getOrNull()
+        }
+    }
 }
 
 enum class SubtitleMode(val label: String) { OFF("Off"), FOREIGN("When the audio isn't my language"), ALWAYS("Always") }
@@ -138,11 +165,21 @@ class PlaybackSettings @Inject constructor(
         get() = sp.getBoolean("remember_size", true)
         set(v) { sp.edit().putBoolean("remember_size", v).apply() }
 
-    /** The stream size last picked in the player; Fit when not remembered. */
+    /** The default picture size (Settings › Playback), for channels and titles without their own. */
     var size: StreamSize
-        get() = if (!rememberSize) StreamSize.FIT
-            else runCatching { StreamSize.valueOf(sp.getString("size", null)!!) }.getOrDefault(StreamSize.FIT)
+        get() = runCatching { StreamSize.valueOf(sp.getString("size", null)!!) }.getOrDefault(StreamSize.FIT)
         set(v) { sp.edit().putString("size", v.name).apply() }
+
+    private val pictures by lazy { context.getSharedPreferences("picture", Context.MODE_PRIVATE) }
+
+    /** The picture for a channel or title ([key]): its own when remembered, otherwise the default. */
+    fun picture(key: String?): Picture =
+        (if (rememberSize && key != null) Picture.decode(pictures.getString(key, null)) else null) ?: Picture(size)
+
+    /** Remembers the picture for [key] (when remembering is on). */
+    fun savePicture(key: String?, p: Picture) {
+        if (rememberSize && key != null) pictures.edit().putString(key, p.encode()).apply()
+    }
 
     // ---- Settings › Subtitles and audio ----
 

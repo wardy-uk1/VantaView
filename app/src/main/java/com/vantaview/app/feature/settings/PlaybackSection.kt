@@ -34,6 +34,7 @@ fun PlaybackSection(s: PlaybackSettings) {
     var pip by remember { mutableStateOf(s.pip) }
     var startLast by remember { mutableStateOf(s.startOnLastChannel) }
     var rememberSize by remember { mutableStateOf(s.rememberSize) }
+    var defaultSize by remember { mutableStateOf(s.size) }
     var remindMins by remember { mutableStateOf(s.reminderMinutes) }
     var auto by remember { mutableStateOf(s.autoBuffer) }
     var skipIntro by remember { mutableStateOf(s.skipIntro) }
@@ -90,9 +91,17 @@ fun PlaybackSection(s: PlaybackSettings) {
             livePreview,
         ) { livePreview = it; s.livePreview = it }
         Toggle("Start on last channel", "Open straight into the last channel when VantaView starts", startLast) { startLast = it; s.startOnLastChannel = it }
+    }
+
+    Section("Picture size") {
+        Text(
+            "The size the picture starts at. In the player, Size changes it (Menu on a remote), Zoom enlarges it in steps, and Hold keeps a zoomed picture's middle, top or bottom on screen.",
+            color = Vanta.TextDim, fontSize = 13.sp,
+        )
+        Choices(com.vantaview.app.data.StreamSize.entries, defaultSize, { com.vantaview.app.ui.tr(it.label) }) { defaultSize = it; s.size = it }
         Toggle(
-            "Remember picture size",
-            "Keep Fit, Fill or Zoom between channels. Change it with the Size button, or Menu on a remote.",
+            "Remember per channel and title",
+            "Each channel, film and series keeps the size and zoom you last gave it; the rest start at the size above.",
             rememberSize,
         ) { rememberSize = it; s.rememberSize = it }
     }

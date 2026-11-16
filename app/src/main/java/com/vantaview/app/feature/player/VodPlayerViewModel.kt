@@ -143,10 +143,15 @@ class VodPlayerViewModel @Inject constructor(
     fun trackChoices(type: Int) = TrackPrefs.choices(player, type)
     fun pickTrack(type: Int, c: TrackChoice) { pickedTracks = true; TrackPrefs.pick(player, type, c) }
 
-    /** How the picture fills the screen (Fit, Fill or Zoom), shared with live TV. */
-    private val _size = kotlinx.coroutines.flow.MutableStateFlow(settings.size)
-    val size: kotlinx.coroutines.flow.StateFlow<com.vantaview.app.data.StreamSize> = _size
-    fun cycleSize() { _size.value = _size.value.next(); settings.size = _size.value }
+    /** How the picture fills the screen, its extra zoom and where a zoomed picture sits; each film or series keeps its own. */
+    private val _picture = kotlinx.coroutines.flow.MutableStateFlow(settings.picture(null))
+    val picture: kotlinx.coroutines.flow.StateFlow<com.vantaview.app.data.Picture> = _picture
+    private var pictureKey: String? = null
+    private fun setPicture(p: com.vantaview.app.data.Picture) { _picture.value = p; settings.savePicture(pictureKey, p) }
+    fun cycleSize() = setPicture(_picture.value.copy(size = _picture.value.size.next()))
+    fun cycleZoom() = setPicture(_picture.value.nextZoom().let { if (it.zoom == 100) it.copy(pos = com.vantaview.app.data.PicturePos.MIDDLE) else it })
+    fun cyclePos() = setPicture(_picture.value.copy(pos = _picture.value.pos.next()))
+    private fun usePictureFor(key: String) { pictureKey = key; _picture.value = settings.picture(key) }
 
     private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
 
@@ -162,6 +167,7 @@ class VodPlayerViewModel @Inject constructor(
             season = req.season
             episode = req.episode
             request = req
+            if (req.metaId.isNotBlank()) usePictureFor("vod:${req.type}:${req.metaId}")
             // Subtitles from subtitle add-ons, fetched alongside the stream (for the languages in Settings).
             subsJob = viewModelScope.async {
                 val id = if (req.type == "series" && req.videoId.isNotBlank()) req.videoId else req.metaId

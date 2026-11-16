@@ -87,10 +87,15 @@ class PlayerViewModel @Inject constructor(
         .setLoadControl(settings.loadControl())
         .build()
 
-    /** How the video fills the screen: Fit, Fill or Zoom. */
-    private val _size = MutableStateFlow(settings.size)
-    val size: StateFlow<com.vantaview.app.data.StreamSize> = _size
-    fun cycleSize() { _size.value = _size.value.next(); settings.size = _size.value }
+    /** How the picture fills the screen, its extra zoom and where a zoomed picture sits; each channel keeps its own. */
+    private val _picture = MutableStateFlow(settings.picture(null))
+    val picture: StateFlow<com.vantaview.app.data.Picture> = _picture
+    private var pictureKey: String? = null
+    private fun setPicture(p: com.vantaview.app.data.Picture) { _picture.value = p; settings.savePicture(pictureKey, p) }
+    fun cycleSize() = setPicture(_picture.value.copy(size = _picture.value.size.next()))
+    fun cycleZoom() = setPicture(_picture.value.nextZoom().let { if (it.zoom == 100) it.copy(pos = com.vantaview.app.data.PicturePos.MIDDLE) else it })
+    fun cyclePos() = setPicture(_picture.value.copy(pos = _picture.value.pos.next()))
+    private fun usePictureFor(key: String) { pictureKey = key; _picture.value = settings.picture(key) }
 
     private var siblings: List<ChannelEntity> = emptyList()
     private var index = 0
@@ -313,6 +318,7 @@ class PlayerViewModel @Inject constructor(
         stopShift()
         currentChannel?.takeIf { it.id != channel.id }?.let { previousChannel = it }
         currentChannel = channel
+        usePictureFor("ch:${channel.providerId}:${channel.remoteId}")
         player.stop()
         attempts = 0
         working = null

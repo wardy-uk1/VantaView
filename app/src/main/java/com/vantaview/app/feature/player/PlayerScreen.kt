@@ -216,7 +216,7 @@ private fun VideoArea(
 ) {
     val density = LocalDensity.current
     val swipe = with(density) { 60.dp.toPx() }
-    val size by vm.size.collectAsStateWithLifecycle()
+    val picture by vm.picture.collectAsStateWithLifecycle()
     val gestures = vm.settings.gestures
     var levelShown by remember { mutableStateOf<Level?>(null) }
     // Number keys on the remote: collect digits, then jump after a short pause.
@@ -306,10 +306,11 @@ private fun VideoArea(
                     setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS)
                     TrackPrefs.style(this, vm.settings)
                     player = vm.player
+                    PictureSize.attach(this) { vm.picture.value }
                 }
             },
-            update = { it.resizeMode = size.mode },
-            onRelease = { it.player = null },
+            update = { picture.let { _ -> PictureSize.apply(it) } },
+            onRelease = { PictureSize.detach(it); it.player = null },
             modifier = Modifier.fillMaxSize(),
         )
 
@@ -399,7 +400,13 @@ private fun VideoArea(
                             Text(com.vantaview.app.ui.tr("Source {0}/{1}", ui.sourceIndex + 1, ui.sourceCount), color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
                         }
                         FocusCard(onClick = vm::cycleSize) {
-                            Text("Size: ${size.label}", color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
+                            Text(com.vantaview.app.ui.tr("Size: {0}", com.vantaview.app.ui.tr(picture.size.label)), color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
+                        }
+                        FocusCard(onClick = vm::cycleZoom) {
+                            Text(com.vantaview.app.ui.tr("Zoom {0}%", picture.zoom), color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
+                        }
+                        if (picture.zoom > 100) FocusCard(onClick = vm::cyclePos) {
+                            Text(com.vantaview.app.ui.tr("Hold: {0}", com.vantaview.app.ui.tr(picture.pos.label)), color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
                         }
                         // Pause, rewind and Go live.
                         val sh = ui.shift
