@@ -34,6 +34,8 @@ PY
   if [ -n "$xy" ]; then adb shell input tap $xy; echo "tapped '$1' at $xy"; else echo "NOT FOUND: '$1'"; fi
   sleep 1.5
 }
+# Whether the on-screen keyboard is up (it should only open when OK is pressed on a text box).
+kb() { echo "   keyboard: $(adb shell dumpsys input_method | grep -o 'mInputShown=[a-z]*' | head -1)"; }
 crashes() { adb logcat -d | grep -E "FATAL EXCEPTION|AndroidRuntime: |ANR in com.vantaview" > $OUT/crashes.txt || true; }
 
 adb install -r VantaView-test.apk || exit 1
@@ -79,6 +81,37 @@ key DPAD_CENTER; sleep 6; shot guide-play
 key BACK; sleep 2
 # Search with the remote keyboard.
 home; tap_text "Search"; sleep 2; adb shell input text BBC; sleep 6; shot search-bbc
+
+# ---- Remote-only checks for the newer screens ----
+echo "---- remote: Home refresh button ----"
+home; key DPAD_UP DPAD_UP DPAD_UP; sleep 1; shot home-top
+key DPAD_RIGHT; sleep 1; shot home-right-1
+key DPAD_LEFT; sleep 1; shot home-left
+echo "---- remote: Live TV preview, then full screen, then channel up/down ----"
+home; tap_text "Live TV"; sleep 6
+key DPAD_RIGHT DPAD_DOWN DPAD_DOWN; sleep 1; shot live2-focus
+key DPAD_CENTER; sleep 10; shot live2-preview
+key DPAD_CENTER; sleep 10; shot live2-full
+key DPAD_UP; sleep 8; shot live2-ch-up
+key DPAD_DOWN; sleep 8; shot live2-ch-down
+key DPAD_CENTER; sleep 1; key DPAD_DOWN DPAD_DOWN; sleep 1; shot live2-controls
+key BACK BACK; sleep 3; shot live2-back
+key BACK; sleep 2
+echo "---- remote: Settings drop-downs ----"
+home; tap_text "Settings"; sleep 3
+key DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot settings2-playback
+key DPAD_RIGHT; sleep 1; shot settings2-in-pane
+key DPAD_CENTER; sleep 1; shot settings2-opened
+key DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot settings2-down
+key DPAD_UP DPAD_UP DPAD_UP DPAD_UP DPAD_DOWN; sleep 1; key DPAD_CENTER; sleep 1; shot settings2-second-opened
+echo "---- remote: text boxes on Sources (down should pass them, no keyboard) ----"
+home; tap_text "Sources"; sleep 4
+for i in 1 2 3 4 5 6 7 8 9 10 11 12; do key DPAD_DOWN; done; sleep 1; shot sources-down; kb
+for i in 1 2 3 4 5 6; do key DPAD_DOWN; done; sleep 1; shot sources-down-more; kb
+key DPAD_UP DPAD_UP DPAD_UP; sleep 1; shot sources-up; kb
+echo "---- remote: Show QR code ----"
+tap_text "Show QR code"; sleep 2; shot sources-qr
+key BACK; sleep 1
 # Back twice on Home leaves the app.
 home; key BACK; sleep 1; shot back-once; key BACK; sleep 2; shot back-twice
 crashes
