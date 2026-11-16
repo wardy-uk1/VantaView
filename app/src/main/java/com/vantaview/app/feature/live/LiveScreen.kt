@@ -220,7 +220,7 @@ fun LiveScreen(
                         }
                     }
                     ChannelList(channels, filter, query, wide = true, Modifier.weight(1f).fillMaxHeight(), pick, vm::toggleFavourite, guideTick, vm::nowNext)
-                    if (previewing != null) LivePreviewPanel(preview, wide = true, onFull = { openFull(it.id) }, Modifier.weight(0.9f))
+                    if (previewing != null) LivePreviewPanel(preview, wide = true, onFull = { openFull(it.id) }, Modifier.width(360.dp))
                 }
             } else {
                 CategoryRow(categories, filter, radioCount > 0) { vm.filter.value = it }

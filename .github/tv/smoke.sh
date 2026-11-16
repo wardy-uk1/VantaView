@@ -100,17 +100,18 @@ key BACK BACK; sleep 3; shot live2-back
 key BACK; sleep 2
 echo "---- remote: Settings drop-downs ----"
 home; tap_text "Settings"; sleep 3
-key DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot settings2-playback
+# Into the page: right from the menu to the Settings list (Playback), right again into its options.
+key DPAD_RIGHT; sleep 1; shot settings2-list
 key DPAD_RIGHT; sleep 1; shot settings2-in-pane
 key DPAD_CENTER; sleep 1; shot settings2-opened
 key DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot settings2-down
-key DPAD_UP DPAD_UP DPAD_UP DPAD_UP DPAD_DOWN; sleep 1; key DPAD_CENTER; sleep 1; shot settings2-second-opened
+key DPAD_DOWN DPAD_DOWN DPAD_DOWN DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; key DPAD_CENTER; sleep 1; shot settings2-second-opened
 echo "---- remote: text boxes on Sources (down should pass them, no keyboard) ----"
 home; tap_text "Sources"; sleep 4
-key BACK; sleep 1
-for i in 1 2 3 4 5 6 7 8 9 10 11 12; do key DPAD_DOWN; done; sleep 1; shot sources-down; kb
-for i in 1 2 3 4 5 6; do key DPAD_DOWN; done; sleep 1; shot sources-down-more; kb
-key DPAD_UP DPAD_UP DPAD_UP; sleep 1; shot sources-up; kb
+key DPAD_RIGHT; sleep 1; shot sources-in
+for i in 1 2 3 4 5 6 7 8; do key DPAD_DOWN; done; sleep 1; shot sources-down; kb
+for i in 1 2 3 4; do key DPAD_DOWN; done; sleep 1; shot sources-down-more; kb
+key DPAD_UP DPAD_UP; sleep 1; shot sources-up; kb
 # OK on a text box should start typing and open the keyboard.
 key DPAD_CENTER; sleep 2; shot sources-ok-on-box; kb; key BACK; sleep 1
 echo "---- remote: Show QR code ----"
