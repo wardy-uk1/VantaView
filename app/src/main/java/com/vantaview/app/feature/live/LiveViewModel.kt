@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -251,6 +252,22 @@ class LiveViewModel @Inject constructor(
                     }
                 }
             }
+            // Settings › Channels: several sources of the same channel become one line.
+            .let { rows ->
+                combine(rows, showingAll, providers) { list, all, provs ->
+                    val mode = com.vantaview.app.data.ChannelMerge.Mode.entries.firstOrNull { it.name == playback.getString("merge_channels") }
+                        ?: com.vantaview.app.data.ChannelMerge.Mode.BOTH
+                    val r = com.vantaview.app.data.ChannelMerge.merge(
+                        list,
+                        withinPlaylist = mode == com.vantaview.app.data.ChannelMerge.Mode.PLAYLIST || mode == com.vantaview.app.data.ChannelMerge.Mode.BOTH,
+                        acrossPlaylists = all && (mode == com.vantaview.app.data.ChannelMerge.Mode.ACROSS || mode == com.vantaview.app.data.ChannelMerge.Mode.BOTH),
+                        providerOrder = provs.map { it.id },
+                    )
+                    com.vantaview.app.feature.player.ChannelSources.set(r.sources)
+                    r.rows
+                }
+            }
+            .flowOn(kotlinx.coroutines.Dispatchers.Default)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     /** Radio stations in the active playlist; Live TV shows a Radio tab when there are some. */

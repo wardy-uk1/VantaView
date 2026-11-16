@@ -229,6 +229,7 @@ private fun VideoArea(
     // Audio or subtitle picker (a track type), and the buttons that open it.
     var picker by remember { mutableStateOf<Int?>(null) }
     var moreOpen by remember { mutableStateOf(false) }
+    var sourcesOpen by remember { mutableStateOf(false) }
     var showInfo by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
     SleepWatcher(vm.player) { }
@@ -388,6 +389,10 @@ private fun VideoArea(
                         FocusCard(onClick = { picker = C.TRACK_TYPE_TEXT }) {
                             Text("Subtitles", color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
                         }
+                        // A merged channel: pick which of its sources plays.
+                        if (ui.sourceCount > 1) FocusCard(onClick = { sourcesOpen = true }) {
+                            Text(com.vantaview.app.ui.tr("Source {0}/{1}", ui.sourceIndex + 1, ui.sourceCount), color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
+                        }
                         FocusCard(onClick = vm::cycleSize) {
                             Text("Size: ${size.label}", color = Vanta.Text, fontSize = if (compact) 13.sp else 15.sp, maxLines = 1)
                         }
@@ -454,7 +459,7 @@ private fun VideoArea(
                         NowInfo(ui, Modifier.fillMaxWidth().padding(bottom = 10.dp))
                     }
                     when (ui.status) {
-                        PlayStatus.LOADING -> Text(if (ui.eventOnly) "Looking for the event…" else "Loading…", color = Color.White)
+                        PlayStatus.LOADING -> Text(ui.sourceNote ?: if (ui.eventOnly) "Looking for the event…" else "Loading…", color = Color.White)
                         PlayStatus.RECONNECTING -> Text(
                             "Reconnecting (try ${ui.attempt} of 5)…",
                             color = Vanta.Cyan,
@@ -498,6 +503,24 @@ private fun VideoArea(
     }
 
     picker?.let { type -> TrackPicker(vm, type) { picker = null } }
+    if (sourcesOpen) {
+        val labels = remember(ui.sourceCount) { vm.sourceLabels() }
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { sourcesOpen = false }, containerColor = Vanta.Panel,
+            title = { Text("Sources", color = Vanta.Text) },
+            text = {
+                androidx.compose.foundation.layout.Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("The same channel from different places, best first. If one stops, the next is tried by itself.", color = Vanta.TextDim, fontSize = 13.sp)
+                    labels.forEachIndexed { i, label ->
+                        FocusCard(onClick = { vm.switchSource(i); sourcesOpen = false }, selected = i == ui.sourceIndex, modifier = Modifier.fillMaxWidth()) {
+                            Text("${i + 1}. $label", color = if (i == ui.sourceIndex) Vanta.Cyan else Vanta.Text, maxLines = 2)
+                        }
+                    }
+                }
+            },
+            confirmButton = { androidx.compose.material3.TextButton(onClick = { sourcesOpen = false }) { Text("Close") } },
+        )
+    }
     if (moreOpen) PlayerMoreDialog(
         onDismiss = { moreOpen = false },
         onInfo = { showInfo = !showInfo },

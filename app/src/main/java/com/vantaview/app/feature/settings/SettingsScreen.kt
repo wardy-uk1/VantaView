@@ -161,7 +161,7 @@ fun SettingsScreen(onEditProfile: (Long) -> Unit = {}, vm: SettingsViewModel = h
             SettingsSection.APPEARANCE -> { AppearanceSection(vm.appearance); ScreensaverSection(vm.playback) }
             SettingsSection.UPDATES -> UpdatesSection(vm.updates)
             SettingsSection.SOURCES -> { SourcesSection(); SpeedTestSection() }
-            SettingsSection.CHANNELS -> ChannelsSection()
+            SettingsSection.CHANNELS -> ChannelsSection(vm.playback)
             SettingsSection.SUBTITLES -> { SubtitlesSection(vm.playback); AiSubtitlesSection(vm.aiSubs) }
             else -> ComingSoon(section)
         }
@@ -396,8 +396,26 @@ internal fun QrCode(text: String, modifier: Modifier) {
 
 /** Settings › Channels: the show or hide screen. */
 @Composable
-private fun ChannelsSection() {
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+private fun ChannelsSection(playback: com.vantaview.app.data.PlaybackSettings) {
     var open by remember { mutableStateOf(false) }
+    var merge by remember {
+        mutableStateOf(com.vantaview.app.data.ChannelMerge.Mode.entries.firstOrNull { it.name == playback.getString("merge_channels") } ?: com.vantaview.app.data.ChannelMerge.Mode.BOTH)
+    }
+    Section("Merge the same channel") {
+        Text(
+            "Several sources of the same channel become one line: the best one plays, and if it fails or keeps stopping the next is tried by itself. Channels count as the same when they share a TV guide ID, or the same name without HD, FHD, 4K or a country in front.",
+            color = Vanta.TextDim, fontSize = 14.sp,
+        )
+        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            com.vantaview.app.data.ChannelMerge.Mode.entries.forEach { m ->
+                FocusCard(onClick = { merge = m; playback.setString("merge_channels", m.name) }, selected = merge == m) {
+                    Text(m.label, color = if (merge == m) Vanta.Cyan else Vanta.Text, maxLines = 1)
+                }
+            }
+        }
+        Text("Across playlists applies when Live TV shows All playlists. A Source button in the player lets you pick one yourself.", color = Vanta.TextDim, fontSize = 12.sp)
+    }
     Section("Show or hide channels") {
         Text(
             "Tick channels, or a whole group, then Hide or Show them all at once. Hidden channels are left out of Live TV, the TV Guide, search and channel up and down, and stay hidden when the playlist refreshes.",

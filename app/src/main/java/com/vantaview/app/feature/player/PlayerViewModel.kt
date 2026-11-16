@@ -48,6 +48,11 @@ data class PlayerUi(
     val next: com.vantaview.app.data.db.ProgrammeEntity? = null,
     /** Pause and rewind: null while simply watching live. */
     val shift: ShiftUi? = null,
+    /** Merged channels: how many sources it has, and which one is playing. */
+    val sourceCount: Int = 1,
+    val sourceIndex: Int = 0,
+    /** A short note, like "Trying another source (2 of 3)". */
+    val sourceNote: String? = null,
 )
 
 /** Paused or behind live: how far behind, and where the rewound picture comes from. */
@@ -204,6 +209,39 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    // ---- Merged channels (Settings › Channels): this channel's sources, best first ----
+
+    private var sources: List<ChannelEntity> = emptyList()
+    private var sourceAt = 0
+    private var sourceNames: Map<Long, String> = emptyMap()
+
+    /** Each source's label for the Sources picker: the channel's name and its playlist. */
+    fun sourceLabels(): List<String> = sources.map { c ->
+        listOfNotNull(ChannelNames.display(c.name), sourceNames[c.providerId]).joinToString(" · ")
+    }
+
+    /** Plays source [i] of the merged channel ([auto]: because the one playing failed). */
+    fun switchSource(i: Int, auto: Boolean = false) {
+        if (i !in sources.indices) return
+        sourceAt = i
+        start(sources[i], keepSources = true)
+        if (auto) _ui.update { it.copy(sourceNote = com.vantaview.app.ui.tr("Trying another source ({0} of {1})", i + 1, sources.size)) }
+    }
+
+    private fun loadSources(channel: ChannelEntity) {
+        val ids = ChannelSources.of(channel.id)
+        if (ids.size < 2) { sources = emptyList(); sourceAt = 0; return }
+        viewModelScope.launch {
+            val byId = db.content().channelsById(ids).associateBy { it.id }
+            val list = ids.mapNotNull { byId[it] }
+            sourceNames = db.providers().allFor(session.id).associate { it.id to it.name }
+            if (currentChannel?.id != channel.id || list.size < 2) return@launch
+            sources = list
+            sourceAt = list.indexOfFirst { it.id == channel.id }.coerceAtLeast(0)
+            _ui.update { it.copy(sourceCount = list.size, sourceIndex = sourceAt) }
+        }
+    }
+
     private var previousChannel: ChannelEntity? = null
     val hasLastChannel: Boolean get() = previousChannel != null
 
@@ -264,7 +302,7 @@ class PlayerViewModel @Inject constructor(
         prepareCurrent()
     }
 
-    private fun start(channel: ChannelEntity) {
+    private fun start(channel: ChannelEntity, keepSources: Boolean = false) {
         // A new channel: forget the last channel's picked tracks and use the Settings choices again.
         pickedTracks = false
         player.trackSelectionParameters = player.trackSelectionParameters.buildUpon().clearOverrides().build()
@@ -284,7 +322,9 @@ class PlayerViewModel @Inject constructor(
         _ui.value = PlayerUi(
             title = ChannelNames.display(channel.name), number = channel.number, status = PlayStatus.LOADING,
             hasSiblings = siblings.size > 1, eventOnly = event,
+            sourceCount = if (keepSources) sources.size.coerceAtLeast(1) else 1, sourceIndex = if (keepSources) sourceAt else 0,
         )
+        if (!keepSources) loadSources(channel)
         // Now and next from the TV guide, refreshed every minute while watching.
         guideJob?.cancel()
         guideJob = viewModelScope.launch {
@@ -519,6 +559,8 @@ class PlayerViewModel @Inject constructor(
                 candidate++
                 prepareCurrent()
             }
+            // A merged channel: a source that won't start, or keeps dropping, gives way to the next one.
+            sources.size > 1 && sourceAt < sources.lastIndex && (working == null || attempts >= 2) -> switchSource(sourceAt + 1, auto = true)
             // An event channel that never started is almost always just empty: don't keep retrying.
             _ui.value.eventOnly && working == null -> giveUpOnEvent()
             attempts < 5 -> {
