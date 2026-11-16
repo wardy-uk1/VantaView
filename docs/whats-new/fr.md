@@ -1,3 +1,4 @@
+- Quand un add-on ne propose que des pages web pour un titre au lieu d'une vidéo, des boutons Ouvrir dans le navigateur les ouvrent dans votre navigateur. TV sport n'affiche plus que les rangées des add-ons, sans genres ni années de films.
 - La page Playlists affiche désormais l'adresse du serveur et l'utilisateur de chaque playlist, ainsi que sa date d'ajout et de dernier chargement, pour distinguer les playlists de même nom. Les nouvelles playlists sans nom prennent celui de leur serveur. Les playlists peuvent aussi être désactivées et réactivées : désactivées, elles sont masquées partout mais conservées.
 - Les add-ons avec des chaînes en direct ou des événements sportifs apparaissent maintenant sur une nouvelle page TV sport, avec sa propre tuile sur l'Accueil. Coller l'adresse de la page de configuration d'un add-on (se terminant par /configure) fonctionne désormais comme son lien d'installation.
 - Sur une TV, la télécommande passe maintenant directement les zones de texte avec haut et bas, et le clavier ne s'ouvre que si vous appuyez sur OK.
@@ -5,4 +6,3 @@
 - TV en direct peut d'abord afficher une chaîne dans une petite fenêtre, avec le programme actuel et le suivant. Appuyez à nouveau, ou sur Regarder en plein écran, pour le plein écran. Désactivable dans Réglages › Lecture.
 - Les pages de Réglages sont plus claires : chaque section est désormais un menu déroulant, et en ouvrir une ferme les autres. L'écran de démarrage affiche la version et le numéro de build, et VantaView recherche les mises à jour à chaque démarrage.
 - Un vrai test de débit dans Réglages › Sources : ping, téléchargement et envoi sur un cadran en direct, avec ce que votre connexion peut lire.
-- Ajoutez une playlist depuis votre téléphone : dans Sources ou pendant la configuration, choisissez Afficher le QR code, scannez-le et collez-y le message de votre fournisseur, un lien ou fichier M3U, ou Xtream Codes. Tout arrive directement sur la TV par le Wi-Fi de la maison.

@@ -1,3 +1,4 @@
+- When an add-on only offers web pages for a title instead of a video, Open in browser buttons now open them in your browser. Sports TV now shows just the add-ons' rows, without the film genres and years.
 - The Playlists page now shows each playlist's server address and username, and when it was added and last loaded, so playlists with the same name can be told apart. New playlists without a name are named after their server. Playlists can also be switched off and on: switched off, they're hidden everywhere but kept.
 - Add-ons with live channels or sports events now show on a new Sports TV page, with its own tile on Home. Pasting an add-on's set-up page address (ending in /configure) now works as well as its install link.
 - On a TV, the remote now moves straight past text boxes with up and down, and the keyboard only opens when you press OK on one.
@@ -5,4 +6,3 @@
 - Live TV can preview a channel in a small window first, with what's on now and next. Press it again, or Watch full screen, to go full screen. Turn this off in Settings › Playback.
 - Settings pages are tidier: each section is now a drop-down, and opening one closes the others. The start-up screen shows the version and build number, and VantaView checks for updates every time it starts.
 - A proper speed test in Settings › Sources: ping, download and upload on a live dial, with what your connection can stream.
-- Add a playlist from your phone: on Sources or during setup, choose Show QR code, scan it with your phone and paste your provider's message, an M3U link or file, or Xtream Codes there. It goes straight to the TV over your home Wi-Fi.

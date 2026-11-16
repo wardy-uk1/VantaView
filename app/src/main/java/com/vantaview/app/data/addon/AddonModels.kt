@@ -286,6 +286,20 @@ object AddonJson {
         }
     }
 
+    /**
+     * The web-page links in an add-on's stream list (Stremio's "externalUrl"): pages to open in a browser, not
+     * video VantaView can play. Each is its label and address.
+     */
+    fun externalLinks(json: JSONObject, addonName: String): List<Pair<String, String>> {
+        val arr = json.optJSONArray("streams") ?: return emptyList()
+        return (0 until arr.length()).mapNotNull { arr.optJSONObject(it) }.mapNotNull { s ->
+            val url = s.optString("externalUrl").trim().takeIf { it.startsWith("https://") || it.startsWith("http://") } ?: return@mapNotNull null
+            val name = s.optString("name").replace('\n', ' ').trim()
+            val title = s.optString("title").ifBlank { s.optString("description") }.replace('\n', ' ').trim()
+            listOf(name, title).filter { it.isNotBlank() }.joinToString(" · ").ifBlank { addonName } to url
+        }
+    }
+
     /** Best first: highest resolution, then the add-on's own order. Unknown resolution sorts below 720p. */
     fun rank(list: List<AddonStream>): List<AddonStream> =
         list.withIndex().sortedWith(

@@ -1,3 +1,4 @@
+- Cuando un complemento solo ofrece páginas web para un título en lugar de un vídeo, los botones Abrir en el navegador las abren en tu navegador. TV deportiva ahora muestra solo las filas de los complementos, sin géneros ni años de películas.
 - La página Listas ahora muestra la dirección del servidor y el usuario de cada lista, y cuándo se añadió y se cargó por última vez, para distinguir listas con el mismo nombre. Las listas nuevas sin nombre toman el de su servidor. Las listas también se pueden desactivar y activar: desactivadas, quedan ocultas en todas partes pero se conservan.
 - Los complementos con canales en directo o eventos deportivos ahora aparecen en una nueva página TV deportiva, con su propio mosaico en Inicio. Pegar la dirección de la página de configuración de un complemento (terminada en /configure) ahora funciona igual que su enlace de instalación.
 - En una TV, el mando ahora pasa directamente por los cuadros de texto con arriba y abajo, y el teclado solo se abre al pulsar OK en uno.
@@ -5,4 +6,3 @@
 - TV en directo puede previsualizar un canal en una ventana pequeña, con lo que se emite ahora y después. Vuelve a pulsarlo, o Ver a pantalla completa, para pantalla completa. Desactívalo en Ajustes › Reproducción.
 - Las páginas de Ajustes están más ordenadas: cada sección es ahora un desplegable, y al abrir una se cierran las demás. La pantalla de inicio muestra la versión y la compilación, y VantaView busca actualizaciones cada vez que se inicia.
 - Una prueba de velocidad completa en Ajustes › Fuentes: ping, descarga y subida en un indicador en directo, con lo que tu conexión puede reproducir.
-- Añade una lista desde el móvil: en Fuentes o durante la configuración, elige Mostrar código QR, escanéalo con el móvil y pega allí el mensaje de tu proveedor, un enlace o archivo M3U, o Xtream Codes. Llega directamente a la TV por la Wi-Fi de casa.

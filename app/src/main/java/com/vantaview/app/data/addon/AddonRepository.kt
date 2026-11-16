@@ -231,6 +231,16 @@ class AddonRepository @Inject constructor(
         AddonJson.rank(jobs.awaitAll().flatten().distinctBy { it.key })
     }
 
+    /** Web pages the add-ons link to for [id] instead of a video ("Open in browser"), with the add-on's name. */
+    suspend fun externalLinks(type: String, id: String): List<Pair<String, String>> = coroutineScope {
+        enabled().filter { it.manifest.serves("stream", type, id) }.map { a ->
+            async {
+                withTimeoutOrNull(25_000) { json("${a.base}/stream/${enc(type)}/${enc(id)}.json", maxAgeMs = 0) }
+                    ?.let { AddonJson.externalLinks(it, a.manifest.name) }.orEmpty()
+            }
+        }.awaitAll().flatten().distinctBy { it.second }
+    }
+
     // ---- Restore: Stremio account import and backup files ----
 
     /** An add-on found in a Stremio account or a backup file. */

@@ -166,6 +166,7 @@ fun DetailsScreen(
                 if (noYouTube) Text("There's no YouTube app or browser here to play the trailer.", color = Vanta.TextDim, fontSize = 13.sp)
             }
             ui.message?.takeIf { ui.messageFor == null }?.let { m -> item { Text(m, color = Vanta.Error) } }
+            if (ui.webLinks.isNotEmpty()) item { WebLinks(ui.webLinks) }
             meta?.description?.let { d -> item { Text(d, color = Vanta.Text, fontSize = 15.sp, lineHeight = 22.sp) } }
             if (!meta?.director.isNullOrEmpty()) item { Text(com.vantaview.app.ui.tr("Director: {0}", meta!!.director.joinToString(", ")), color = Vanta.TextDim, fontSize = 14.sp) }
             if (!meta?.cast.isNullOrEmpty()) item {
@@ -343,4 +344,34 @@ private fun comingDate(s: String?): String? = runCatching {
 fun minutesLeft(ms: Long): String {
     val m = (ms / 60_000).coerceAtLeast(1)
     return if (m >= 60) "${m / 60} h ${m % 60} min left" else "$m min left"
+}
+
+/** "Open in browser" for the web pages an add-on offered instead of a stream. */
+@kotlin.OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun WebLinks(links: List<Pair<String, String>>) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var noBrowser by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    androidx.compose.foundation.layout.Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+        Text("These pages belong to the add-on, not VantaView.", color = Vanta.TextDim, fontSize = 13.sp)
+        androidx.compose.foundation.layout.FlowRow(
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+        ) {
+            links.forEach { (label, url) ->
+                com.vantaview.app.ui.FocusCard(onClick = {
+                    runCatching {
+                        context.startActivity(
+                            android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+                                .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                        )
+                    }.onFailure { noBrowser = true }
+                }) {
+                    Text(com.vantaview.app.ui.tr("Open in browser · {0}", label), color = Vanta.Text, maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                }
+            }
+        }
+        if (noBrowser) Text("This device has no web browser to open it with.", color = Vanta.Error, fontSize = 13.sp)
+    }
 }

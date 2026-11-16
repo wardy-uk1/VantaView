@@ -46,6 +46,8 @@ data class DetailsUi(
     val moreLike: List<com.vantaview.app.data.addon.MetaPreview> = emptyList(),
     /** Seasons announced but not out yet: number and first air date ("yyyy-mm-dd", or empty when not set). */
     val comingSeasons: List<Pair<Int, String>> = emptyList(),
+    /** Web pages the add-ons offered instead of a stream (label, address), for "Open in browser". */
+    val webLinks: List<Pair<String, String>> = emptyList(),
 )
 
 @HiltViewModel
@@ -191,7 +193,7 @@ class DetailsViewModel @Inject constructor(
             val code = if (v.season > 0) "S${v.season} E${v.episode}" else "Episode ${v.episode}"
             listOf(code, v.title).filter { it.isNotBlank() }.joinToString(" · ")
         }
-        _ui.update { it.copy(finding = streamId, message = null, messageFor = video?.id) }
+        _ui.update { it.copy(finding = streamId, message = null, messageFor = video?.id, webLinks = emptyList()) }
         findJob = viewModelScope.launch {
             val hasSource = repo.hasStreamSource(type, streamId)
             val raw = if (hasSource) runCatching { repo.streams(type, streamId, title, _ui.value.meta?.year) }.getOrDefault(emptyList()) else emptyList()
@@ -206,8 +208,15 @@ class DetailsViewModel @Inject constructor(
                 streams.isEmpty() && raw.any { it.isTorrent } -> _ui.update {
                     it.copy(finding = null, message = "Your add-ons only found torrent results. Turn on Play torrents in Settings › Playback, or connect a debrid account on Sources → Debrid.")
                 }
-                streams.isEmpty() -> _ui.update {
-                    it.copy(finding = null, message = "Your add-ons found no playable streams. External links can't be played in VantaView.")
+                streams.isEmpty() -> {
+                    val links = runCatching { repo.externalLinks(type, streamId) }.getOrDefault(emptyList())
+                    _ui.update {
+                        it.copy(
+                            finding = null, webLinks = links.take(6),
+                            message = if (links.isEmpty()) "Your add-ons found no playable streams."
+                            else "Your add-ons only link to web pages for this, which VantaView can't play itself. You can open them in your web browser.",
+                        )
+                    }
                 }
                 choose -> _ui.update { it.copy(finding = null, choice = StreamChoice(title, subtitle, streams, season, episode, video)) }
                 else -> {

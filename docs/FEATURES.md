@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Open in browser: when add-ons only offer web-page links (Stremio's externalUrl) for a title, buttons open them in the device's browser
 - [x] Playlists page shows each playlist's server address, username (Xtream), when it was added and last loaded; new playlists without a name are named after their server; playlists can be switched off (hidden everywhere and not refreshed) and on again
 - [x] Sports TV page (tile on Home when an add-on has them): add-on rows of Stremio's "tv" and "channel" types; add-on links also accepted as a "…/configure" page address or a nuvio:// link
 - [x] TV remote and text boxes: up and down move straight past a text box, and the keyboard only opens when OK is pressed on it

@@ -1,3 +1,4 @@
+- Als een add-on voor een titel alleen webpagina's biedt in plaats van een video, openen knoppen Openen in browser ze nu in je browser. Sport-tv toont nu alleen de rijen van add-ons, zonder filmgenres en jaren.
 - De pagina Playlists toont nu per playlist het serveradres en de gebruikersnaam, en wanneer hij is toegevoegd en voor het laatst geladen, zodat playlists met dezelfde naam uit elkaar te houden zijn. Nieuwe playlists zonder naam krijgen de naam van hun server. Playlists kun je ook uit- en inschakelen: uitgeschakeld zijn ze overal verborgen maar blijven ze bewaard.
 - Add-ons met livezenders of sportevenementen staan nu op een nieuwe pagina Sport-tv, met een eigen tegel op Start. Het adres van de instelpagina van een add-on plakken (eindigend op /configure) werkt nu net als de installatielink.
 - Op een tv gaat de afstandsbediening nu met omhoog en omlaag gewoon langs tekstvakken, en het toetsenbord opent pas als je op OK drukt.
@@ -5,4 +6,3 @@
 - Live-tv kan een zender eerst in een klein venster tonen, met wat er nu en straks op is. Druk nogmaals, of op Volledig scherm kijken, voor volledig scherm. Uit te zetten in Instellingen › Afspelen.
 - Instellingenpagina's zijn overzichtelijker: elk onderdeel is nu een uitklapmenu, en als je er een opent, gaan de andere dicht. Het opstartscherm toont de versie en het buildnummer, en VantaView zoekt bij elke start naar updates.
 - Een echte snelheidstest in Instellingen › Bronnen: ping, download en upload op een live meter, met wat je verbinding kan afspelen.
-- Voeg een playlist toe vanaf je telefoon: kies bij Bronnen of tijdens het instellen QR-code tonen, scan hem met je telefoon en plak daar het bericht van je provider, een M3U-link of -bestand, of Xtream Codes. Het gaat rechtstreeks via je wifi naar de tv.

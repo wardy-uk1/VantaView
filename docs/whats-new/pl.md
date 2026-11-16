@@ -1,3 +1,4 @@
+- Gdy dodatek oferuje dla tytułu tylko strony internetowe zamiast wideo, przyciski Otwórz w przeglądarce otwierają je teraz w przeglądarce. TV sportowa pokazuje teraz tylko rzędy dodatków, bez gatunków i lat filmów.
 - Strona Playlisty pokazuje teraz adres serwera i nazwę użytkownika każdej playlisty oraz kiedy ją dodano i ostatnio wczytano, by odróżnić playlisty o tej samej nazwie. Nowe playlisty bez nazwy dostają nazwę serwera. Playlisty można też wyłączać i włączać: wyłączone są wszędzie ukryte, ale zachowane.
 - Dodatki z kanałami na żywo lub wydarzeniami sportowymi pojawiają się teraz na nowej stronie TV sportowa, z własnym kafelkiem na stronie głównej. Wklejenie adresu strony konfiguracji dodatku (kończącego się na /configure) działa teraz tak samo jak link instalacyjny.
 - Na telewizorze pilot przechodzi teraz w górę i w dół prosto obok pól tekstowych, a klawiatura otwiera się dopiero po naciśnięciu OK.
@@ -5,4 +6,3 @@
 - Telewizja na żywo może najpierw pokazać kanał w małym oknie, z tym, co leci teraz i później. Naciśnij ponownie lub Oglądaj na pełnym ekranie, aby przejść do pełnego ekranu. Wyłączysz to w Ustawienia › Odtwarzanie.
 - Strony ustawień są bardziej przejrzyste: każda sekcja to teraz rozwijane menu, a otwarcie jednej zamyka pozostałe. Ekran startowy pokazuje wersję i numer kompilacji, a VantaView sprawdza aktualizacje przy każdym uruchomieniu.
 - Prawdziwy test prędkości w Ustawienia › Źródła: ping, pobieranie i wysyłanie na żywym wskaźniku, z informacją, co Twoje łącze może odtwarzać.
-- Dodaj playlistę z telefonu: w Źródłach lub podczas konfiguracji wybierz Pokaż kod QR, zeskanuj go telefonem i wklej tam wiadomość od dostawcy, link lub plik M3U albo Xtream Codes. Trafia to prosto na telewizor przez domowe Wi-Fi.

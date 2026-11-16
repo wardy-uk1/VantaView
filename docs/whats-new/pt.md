@@ -1,3 +1,4 @@
+- Quando um complemento só oferece páginas web para um título em vez de um vídeo, botões Abrir no navegador agora as abrem no seu navegador. TV esportiva agora mostra só as fileiras dos complementos, sem gêneros e anos de filmes.
 - A página Listas agora mostra o endereço do servidor e o usuário de cada lista, e quando foi adicionada e carregada pela última vez, para diferenciar listas com o mesmo nome. Listas novas sem nome recebem o nome do servidor. As listas também podem ser desativadas e ativadas: desativadas, ficam ocultas em todo lugar, mas continuam salvas.
 - Complementos com canais ao vivo ou eventos esportivos agora aparecem numa nova página TV esportiva, com seu próprio bloco no Início. Colar o endereço da página de configuração de um complemento (terminando em /configure) agora funciona como o link de instalação.
 - Na TV, o controle agora passa direto pelas caixas de texto com cima e baixo, e o teclado só abre quando você pressiona OK numa delas.
@@ -5,4 +6,3 @@
 - A TV ao vivo pode mostrar um canal primeiro numa janela pequena, com o que passa agora e a seguir. Toque de novo, ou em Assistir em tela cheia, para tela cheia. Desative em Configurações › Reprodução.
 - As páginas de Configurações estão mais organizadas: cada seção agora é um menu suspenso, e abrir uma fecha as outras. A tela de abertura mostra a versão e o número do build, e o VantaView procura atualizações sempre que é iniciado.
 - Um teste de velocidade completo em Configurações › Fontes: ping, download e upload num mostrador ao vivo, com o que sua conexão consegue reproduzir.
-- Adicione uma playlist pelo celular: em Fontes ou na configuração, escolha Mostrar código QR, escaneie com o celular e cole lá a mensagem do provedor, um link ou arquivo M3U, ou Xtream Codes. Vai direto para a TV pelo Wi-Fi de casa.
