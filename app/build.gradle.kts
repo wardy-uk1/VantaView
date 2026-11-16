@@ -36,9 +36,8 @@ val fetchTessData by tasks.registering {
         val f = out.get().asFile
         if (f.exists() && f.length() > 1_000_000) return@doLast
         f.parentFile.mkdirs()
-        java.net.URI("https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata").toURL().openStream().use { input ->
-            f.outputStream().use { input.copyTo(it) }
-        }
+        // (uri() here: "java" in a build script means the java extension, not the package.)
+        f.writeBytes(uri("https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata").toURL().readBytes())
     }
 }
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("Assets") }.configureEach { dependsOn(fetchTessData) }
