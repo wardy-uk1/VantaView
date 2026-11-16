@@ -72,6 +72,11 @@ fun OutlinedTextField(
     var focused by remember { mutableStateOf(false) }
     val keyboard = LocalSoftwareKeyboardController.current
     val focus = LocalFocusManager.current
+    // A tap (touch screen, or a mouse on a TV box) starts typing straight away too.
+    val taps = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    LaunchedEffect(taps) {
+        taps.interactions.collect { if (it is androidx.compose.foundation.interaction.PressInteraction.Release && enabled && !readOnly) typing = true }
+    }
     // Starting to type: the box becomes editable, then the keyboard is asked for.
     LaunchedEffect(typing, focused) {
         if (typing && focused) { kotlinx.coroutines.delay(60); keyboard?.show() }
@@ -107,6 +112,6 @@ fun OutlinedTextField(
         label = label, placeholder = placeholder, leadingIcon = leadingIcon, trailingIcon = trailingIcon,
         supportingText = supportingText, isError = isError, visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions, keyboardActions = keyboardActions, singleLine = singleLine,
-        maxLines = maxLines, minLines = minLines, shape = shape, colors = colors,
+        maxLines = maxLines, minLines = minLines, shape = shape, colors = colors, interactionSource = taps,
     )
 }
