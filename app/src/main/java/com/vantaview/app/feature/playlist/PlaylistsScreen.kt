@@ -57,6 +57,11 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
     val pickFile = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.OpenDocument(),
     ) { uri -> if (uri != null) vm.addFile(uri) }
+    // Smart Add › Choose an image: a screenshot or photo of the provider's message.
+    val pickImage = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument(),
+    ) { uri -> if (uri != null) vm.readImage(uri) }
+    val reading by vm.reading.collectAsStateWithLifecycle()
     var guideFor by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ProviderEntity?>(null) }
     var renaming by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ProviderEntity?>(null) }
     renaming?.let { p -> RenameDialog(p, onSave = { vm.rename(p, it); renaming = null }, onClose = { renaming = null }) }
@@ -109,7 +114,14 @@ fun PlaylistsContent(vm: PlaylistsViewModel = hiltViewModel(), setup: Boolean = 
                     Field("Provider message or link", form.smartText, singleLine = false, minLines = 4) { v ->
                         vm.edit { it.copy(smartText = v) }
                     }
-                    GradientButton("Find details", onClick = vm::detect, enabled = form.smartText.isNotBlank())
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        GradientButton("Find details", onClick = vm::detect, enabled = form.smartText.isNotBlank())
+                        FocusCard(onClick = {
+                            if (!reading) runCatching { pickImage.launch(arrayOf("image/*")) }
+                                .onFailure { vm.fileError(com.vantaview.app.ui.tr("This device has no file picker. Send the picture from your phone with Show QR code instead.")) }
+                        }) { Text(if (reading) "Reading the picture…" else "Choose an image…", color = Vanta.Text, maxLines = 1) }
+                    }
+                    Text("Or pick a screenshot or photo of the message: VantaView reads it on this device.", color = Vanta.TextDim, fontSize = 13.sp)
                     if (!manual) FocusCard(onClick = { manual = true }) { Text("Enter details yourself (M3U, Xtream Codes, Stalker portal)", color = Vanta.Text) }
                 }
                 SourceTab.M3U -> {
@@ -318,7 +330,7 @@ private fun PhoneAddCard(vm: PlaylistsViewModel) {
     val url by vm.phone.collectAsStateWithLifecycle()
     PhoneAddCard(
         url, vm::startPhone, vm::stopPhone,
-        "Type, paste or pick your playlist on your phone instead of with the remote. Works with a provider message, an M3U link or file, Xtream Codes, and add-on links.",
+        "Type, paste or pick your playlist on your phone instead of with the remote. Works with a provider message, a screenshot of it, an M3U link or file, Xtream Codes, and add-on links.",
     )
 }
 

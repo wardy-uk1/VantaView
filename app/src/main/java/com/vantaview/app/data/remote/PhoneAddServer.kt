@@ -31,6 +31,8 @@ class PhoneAddServer(
         data class M3u(val name: String, val url: String, val guide: String) : Received
         data class Xtream(val name: String, val server: String, val username: String, val password: String, val guide: String) : Received
         data class M3uFile(val name: String, val file: File) : Received
+        /** A screenshot or photo of the provider's message, to read the details from. */
+        data class Image(val file: File) : Received
         /** A Stremio add-on's install link (manifest.json, stremio:// or its set-up page). */
         data class Addon(val url: String) : Received
     }
@@ -110,6 +112,22 @@ class PhoneAddServer(
                 val msg = onReceive(received)
                 text(msg.removePrefix("!"), !msg.startsWith("!"))
             }
+            method == "POST" && path.startsWith("/$token/image") -> {
+                if (length <= 0 || length > 25L * 1024 * 1024) return text(tr("That picture is too big to send (up to 25 MB)."), false)
+                inbox.mkdirs()
+                val f = File(inbox, "picture-${System.currentTimeMillis()}")
+                f.outputStream().use { o ->
+                    val b = ByteArray(64 * 1024)
+                    var left = length
+                    while (left > 0) {
+                        val n = input.read(b, 0, minOf(b.size.toLong(), left).toInt())
+                        if (n < 0) break
+                        o.write(b, 0, n); left -= n
+                    }
+                }
+                val msg = try { onReceive(Received.Image(f)) } finally { f.delete() }
+                text(msg.removePrefix("!"), !msg.startsWith("!"))
+            }
             method == "POST" && path.startsWith("/$token/file") -> {
                 if (length <= 0 || length > MAX_FILE) return text(tr("That file is too big to send (up to 200 MB)."), false)
                 inbox.mkdirs()
@@ -160,11 +178,12 @@ textarea{min-height:140px}.go{margin-top:18px;width:100%;background:linear-gradi
 small{display:block;color:#6f7890;margin-top:24px}
 </style></head><body><main>
 <h1>${t(if (startTab == "a") "Add an add-on" else "Add a playlist")}</h1><p>${t("This goes straight to VantaView on your other device, over your home network. Nothing passes through the internet.")}</p>
-<div class="tabs"><button data-t="s"${on("s")}>${t("Paste message")}</button><button data-t="m"${on("m")}>${t("M3U link")}</button><button data-t="x"${on("x")}>${t("Xtream Codes")}</button><button data-t="f"${on("f")}>${t("M3U file")}</button><button data-t="a"${on("a")}>${t("Add-on")}</button></div>
+<div class="tabs"><button data-t="s"${on("s")}>${t("Paste message")}</button><button data-t="m"${on("m")}>${t("M3U link")}</button><button data-t="x"${on("x")}>${t("Xtream Codes")}</button><button data-t="f"${on("f")}>${t("M3U file")}</button><button data-t="i"${on("i")}>${t("Screenshot")}</button><button data-t="a"${on("a")}>${t("Add-on")}</button></div>
 <section id="s"${on("s")}><label>${t("Provider message or link")}</label><textarea id="text"></textarea><button class="go" data-kind="message">${t("Send")}</button></section>
 <section id="m"${on("m")}><label>${t("Playlist name (optional)")}</label><input id="mname"><label>${t("M3U link")}</label><input id="url" inputmode="url" autocapitalize="off"><label>${t("TV guide link (optional)")}</label><input id="mguide" inputmode="url" autocapitalize="off"><button class="go" data-kind="m3u">${t("Send")}</button></section>
 <section id="x"${on("x")}><label>${t("Playlist name (optional)")}</label><input id="xname"><label>${t("Server address")}</label><input id="server" inputmode="url" autocapitalize="off"><label>${t("Username")}</label><input id="username" autocapitalize="off"><label>${t("Password")}</label><input id="password" type="password"><label>${t("TV guide link (optional)")}</label><input id="xguide" inputmode="url" autocapitalize="off"><button class="go" data-kind="xtream">${t("Send")}</button></section>
 <section id="f"${on("f")}><label>${t("M3U file")}</label><input id="file" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/x-mpegurl,text/plain"><button class="go" data-kind="file">${t("Send")}</button></section>
+<section id="i"${on("i")}><label>${t("A screenshot or photo of your provider's message")}</label><input id="picture" type="file" accept="image/*"><p>${t("Your TV reads the details from the picture, then shows them for you to check.")}</p><button class="go" data-kind="image">${t("Send")}</button></section>
 <section id="a"${on("a")}><label>${t("Add-on install link")}</label><input id="addon" inputmode="url" autocapitalize="off" placeholder="https://…/manifest.json"><p>${t("Copy the install link from the add-on's page (or its Copy link button) and paste it here. Set-up page addresses work too.")}</p><button class="go" data-kind="addon">${t("Send")}</button></section>
 <div id="msg"></div><small>VantaView</small></main><script>
 var q=function(i){return document.getElementById(i)};
@@ -173,6 +192,8 @@ function show(r){var m=q('msg');m.textContent=r.message;m.className=r.ok?'ok':'b
 function sending(){var m=q('msg');m.textContent=${js("Sending…")};m.className='ok'}
 document.querySelectorAll('.go').forEach(function(b){b.onclick=function(){
 var k=b.dataset.kind,base=location.pathname.replace(/\/$/,'');
+if(k==='image'){var g=q('picture').files[0];if(!g){show({ok:false,message:${js("Choose a picture…")}});return}sending();
+fetch(base+'/image',{method:'POST',body:g}).then(function(r){return r.json()}).then(show).catch(function(){show({ok:false,message:${js("Couldn't reach VantaView. Check this phone is on the same Wi-Fi.")}})});return}
 if(k==='file'){var f=q('file').files[0];if(!f){show({ok:false,message:${js("Choose a file…")}});return}sending();
 fetch(base+'/file?name='+encodeURIComponent(f.name),{method:'POST',body:f}).then(function(r){return r.json()}).then(show).catch(function(){show({ok:false,message:${js("Couldn't reach VantaView. Check this phone is on the same Wi-Fi.")}})});return}
 var d={kind:k};if(k==='message')d.text=q('text').value;

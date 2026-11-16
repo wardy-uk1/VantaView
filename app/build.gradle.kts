@@ -27,11 +27,28 @@ val copyWhatsNew by tasks.registering(Copy::class) {
 }
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("Assets") }.configureEach { dependsOn(copyWhatsNew) }
 
+// Smart Add › Choose an image: Tesseract's English text model (tessdata_fast, Apache-2.0), fetched when building.
+val tessDir = layout.buildDirectory.dir("generated/tessdata")
+val fetchTessData by tasks.registering {
+    val out = tessDir.map { it.file("tessdata/eng.traineddata") }
+    outputs.file(out)
+    doLast {
+        val f = out.get().asFile
+        if (f.exists() && f.length() > 1_000_000) return@doLast
+        f.parentFile.mkdirs()
+        java.net.URI("https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata").toURL().openStream().use { input ->
+            f.outputStream().use { input.copyTo(it) }
+        }
+    }
+}
+tasks.matching { it.name.startsWith("merge") && it.name.endsWith("Assets") }.configureEach { dependsOn(fetchTessData) }
+
 android {
     namespace = "com.vantaview.app"
     compileSdk = 35
 
     sourceSets["main"].assets.srcDir(whatsNewDir)
+    sourceSets["main"].assets.srcDir(tessDir)
 
     defaultConfig {
         applicationId = "com.vantaview.app"
@@ -139,6 +156,8 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.5.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.5.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
+    // Reading playlist details from a picture (Smart Add), on the device. Apache-2.0.
+    implementation("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
     implementation("androidx.media3:media3-datasource-okhttp:1.5.1")
     implementation("androidx.media3:media3-ui:1.5.1")
 

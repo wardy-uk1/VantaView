@@ -54,7 +54,39 @@ class PlaylistsViewModel @Inject constructor(
     private val db: com.vantaview.app.data.db.VantaDb,
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
     private val phoneHandler: com.vantaview.app.data.remote.PhoneAddHandler,
+    private val imageText: com.vantaview.app.data.remote.ImageText,
 ) : ViewModel() {
+    /** Reading a picture now (Smart Add › Choose an image). */
+    private val _reading = MutableStateFlow(false)
+    val reading: StateFlow<Boolean> = _reading
+
+    /** Smart Add › Choose an image: reads the picture on this device, then fills in the form to check. */
+    fun readImage(uri: android.net.Uri) {
+        if (_reading.value) return
+        _reading.value = true
+        _form.update { it.copy(message = tr("Reading the picture…"), isError = false) }
+        viewModelScope.launch {
+            try {
+                fillFromText(imageText.read(uri))
+            } catch (e: Exception) {
+                _form.update { it.copy(message = e.message ?: tr("That picture couldn't be read."), isError = true) }
+            } finally {
+                _reading.value = false
+            }
+        }
+    }
+
+    /** Puts text read from a picture into Smart Add and looks for the details; the text stays there to fix by hand. */
+    private fun fillFromText(text: String) {
+        val clean = text.lines().map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\n")
+        if (clean.isBlank()) {
+            _form.update { it.copy(message = tr("No text found in that picture. Try a sharper screenshot."), isError = true) }
+            return
+        }
+        _form.update { it.copy(tab = SourceTab.SMART, smartText = clean) }
+        detect()
+    }
+
     val providers: StateFlow<List<ProviderEntity>> =
         repo.observeEvery().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val sync: StateFlow<Map<Long, SyncState>> = repo.syncStates
@@ -161,6 +193,14 @@ class PlaylistsViewModel @Inject constructor(
 
     /** Adds what the phone sent; the answer is shown on the phone ("!" first for a problem). */
     private fun receive(r: PhoneAddServer.Received): String = kotlinx.coroutines.runBlocking {
+        // A picture from the phone: read here, and the details shown on the TV to check.
+        if (r is PhoneAddServer.Received.Image) {
+            return@runBlocking try {
+                fillFromText(phoneHandler.readPicture(r))
+                if (_form.value.isError) "!" + (_form.value.message ?: tr("No details found in that picture."))
+                else tr("Read it. Check the details on your TV, then press Add playlist.")
+            } catch (e: Exception) { "!" + (e.message ?: tr("That picture couldn't be read.")) }
+        }
         phoneHandler.receive(r) { added ->
             _form.update {
                 it.copy(

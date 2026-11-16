@@ -17,13 +17,18 @@ class PhoneAddHandler @Inject constructor(
     private val providers: ProviderRepository,
     private val addons: AddonRepository,
     private val session: ProfileSession,
+    private val imageText: ImageText,
 ) {
+    /** The text read from a picture the phone sent. */
+    suspend fun readPicture(r: PhoneAddServer.Received.Image): String = imageText.read(android.net.Uri.fromFile(r.file))
+
     /** What was added, for the TV to show: true for an add-on, false for a playlist. */
     data class Added(val addon: Boolean, val name: String)
 
     suspend fun receive(r: PhoneAddServer.Received, onAdded: (Added) -> Unit): String = try {
         when (r) {
             is PhoneAddServer.Received.Addon -> installAddon(r.url, onAdded)
+            is PhoneAddServer.Received.Image -> receive(PhoneAddServer.Received.Message(readPicture(r)), onAdded)
             is PhoneAddServer.Received.Message -> when (val s = SmartAdd.parse(r.text)) {
                 is SmartAddResult.Xtream -> playlist(providers.addXtream("", s.server, s.username, s.password, ""), onAdded)
                 is SmartAddResult.M3u -> if (looksLikeAddon(s.url)) installAddon(s.url, onAdded) else playlist(providers.addM3u("", s.url, ""), onAdded)

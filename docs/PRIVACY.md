@@ -36,6 +36,10 @@ Your playlist provider login is only ever sent to that provider.
 
 The QR code on Sources opens a page served by VantaView itself, on your home network. What you type or pick on your phone goes straight from the phone to your TV over your Wi-Fi, never through the internet. The page only answers its own secret address, and stops after 15 minutes or when you leave the page.
 
+## Reading a screenshot
+
+When Smart Add reads a screenshot or photo of your provider's message, the text is read on your device (with Tesseract, an open-source text reader). The picture isn't sent anywhere, and it isn't kept.
+
 ## Two things to know
 
 - **Plain `http://` providers.** Many IPTV providers use plain `http://` addresses. On those, the login travels unencrypted between your device and the provider, as it would in any app, so people on the same network or your internet provider could in principle see it. Ask your provider for an `https://` address if they have one.
