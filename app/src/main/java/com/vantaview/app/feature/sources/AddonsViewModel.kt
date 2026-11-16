@@ -45,7 +45,49 @@ data class AddonForm(
 class AddonsViewModel @Inject constructor(
     private val repo: AddonRepository,
     private val nuvio: com.vantaview.app.data.backup.NuvioRestore,
+    private val phoneHandler: com.vantaview.app.data.remote.PhoneAddHandler,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
+    // ---- Add from your phone: the phone page opens on its Add-on tab ----
+
+    private val _phone = MutableStateFlow<String?>(null)
+    val phone: StateFlow<String?> = _phone
+    private var phoneServer: com.vantaview.app.data.remote.PhoneAddServer? = null
+    private var phoneTimer: kotlinx.coroutines.Job? = null
+
+    fun startPhone() {
+        if (phoneServer != null) return
+        val server = com.vantaview.app.data.remote.PhoneAddServer(java.io.File(context.cacheDir, "phone-add"), startTab = "a") { r ->
+            kotlinx.coroutines.runBlocking {
+                phoneHandler.receive(r) { added ->
+                    _form.update {
+                        it.copy(
+                            busy = false, isError = false,
+                            message = if (added.addon) com.vantaview.app.ui.tr("Installed {0} from your phone.", added.name)
+                            else com.vantaview.app.ui.tr("Playlist added from your phone. Loading channels…"),
+                        )
+                    }
+                }
+            }
+        }
+        val url = runCatching { server.start() }.getOrNull()
+        if (url == null) {
+            _form.update { it.copy(message = com.vantaview.app.ui.tr("Connect this device to Wi-Fi or a network cable first."), isError = true) }
+            return
+        }
+        phoneServer = server
+        _phone.value = url
+        phoneTimer = viewModelScope.launch { kotlinx.coroutines.delay(15 * 60_000L); stopPhone() }
+    }
+
+    fun stopPhone() {
+        phoneTimer?.cancel(); phoneTimer = null
+        phoneServer?.stop(); phoneServer = null
+        _phone.value = null
+    }
+
+    override fun onCleared() = stopPhone()
+
     val addons: StateFlow<List<InstalledAddon>> =
         repo.observe().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

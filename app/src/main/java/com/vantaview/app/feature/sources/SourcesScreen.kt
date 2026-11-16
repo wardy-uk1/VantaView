@@ -99,6 +99,8 @@ private fun AddonsContent(vm: AddonsViewModel = hiltViewModel()) {
         GradientButton("Install add-on", onClick = { vm.install() }, enabled = form.url.isNotBlank() && !form.busy)
         form.message?.let { Text(it, color = if (form.isError) Vanta.Error else Vanta.Cyan) }
         form.untrusted?.let { u -> TrustButton(u, onTrust = vm::trustAndInstall) }
+        val phone by vm.phone.collectAsStateWithLifecycle()
+        com.vantaview.app.feature.playlist.PhoneAddCard(phone, vm::startPhone, vm::stopPhone, "Paste an add-on's install link on your phone instead of typing it with the remote. Copy it from the add-on's page on your phone, then send it here.")
 
         if (addons.none { it.entity.manifestUrl == AddonsViewModel.CINEMETA }) {
             Column(

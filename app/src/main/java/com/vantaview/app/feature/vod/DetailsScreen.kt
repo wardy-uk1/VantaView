@@ -112,6 +112,10 @@ fun DetailsScreen(
                         Text(name, color = Vanta.Text, fontSize = if (wide) 30.sp else 22.sp, fontWeight = FontWeight.Black, maxLines = 3, overflow = TextOverflow.Ellipsis)
                         val facts = listOfNotNull(meta?.year, meta?.runtime, meta?.rating?.let { "IMDb $it" }).joinToString("  ·  ")
                         if (facts.isNotEmpty()) Text(facts, color = Vanta.TextDim, fontSize = 14.sp)
+                        // Films: when it would end if started now (or resumed, from where it was left), in this device's time.
+                        if (!isSeries) endsIfStarted(meta?.runtime, ui.progress?.takeIf { it.resumable }?.remainingMs)?.let {
+                            Text(it, color = Vanta.Cyan, fontSize = 13.sp)
+                        }
                         if (!meta?.genres.isNullOrEmpty()) Text(meta!!.genres.joinToString(", "), color = Vanta.TextDim, fontSize = 13.sp)
                         // Which of the provider's groups it's in, so the language or country is clear ("DE - FILME 2025/2026").
                         meta?.group?.let { g -> Text(com.vantaview.app.ui.tr("In your playlist: {0}", g), color = Vanta.Cyan, fontSize = 13.sp) }
@@ -376,4 +380,20 @@ private fun WebLinks(links: List<Pair<String, String>>) {
         }
         if (noBrowser) Text("This device has no web browser to open it with.", color = Vanta.Error, fontSize = 13.sp)
     }
+}
+
+/** "Ends at 22:41 if you start now" (or "if you carry on now", for a film part watched), from a runtime like "1h 47m" or "107 min". */
+@Composable
+private fun endsIfStarted(runtime: String?, remainingMs: Long?): String? {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val minutes = remainingMs?.let { it / 60_000 } ?: runtime?.let { r ->
+        val h = Regex("(\\d+)\\s*h").find(r)?.groupValues?.get(1)?.toLongOrNull() ?: 0
+        val m = Regex("(\\d+)\\s*m").find(r)?.groupValues?.get(1)?.toLongOrNull() ?: 0
+        (h * 60 + m).takeIf { it > 0 }
+    } ?: return null
+    var now by androidx.compose.runtime.remember { androidx.compose.runtime.mutableLongStateOf(System.currentTimeMillis()) }
+    androidx.compose.runtime.LaunchedEffect(Unit) { while (true) { kotlinx.coroutines.delay(30_000); now = System.currentTimeMillis() } }
+    val fmt = java.text.SimpleDateFormat(if (android.text.format.DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a", com.vantaview.app.ui.I18n.locale)
+    val at = fmt.format(java.util.Date(now + minutes * 60_000))
+    return if (remainingMs != null) com.vantaview.app.ui.tr("Ends at {0} if you carry on now", at) else com.vantaview.app.ui.tr("Ends at {0} if you start now", at)
 }

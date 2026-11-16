@@ -111,6 +111,9 @@ data class Manifest(
     }
 }
 
+/** A subtitle file from a Stremio subtitle add-on. */
+data class AddonSubtitle(val url: String, val lang: String?, val rawLang: String, val addonName: String)
+
 /** A title in a catalog row. */
 data class MetaPreview(
     val id: String,

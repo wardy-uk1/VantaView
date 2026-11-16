@@ -23,6 +23,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -153,6 +154,11 @@ class VodPlayerViewModel @Inject constructor(
             season = req.season
             episode = req.episode
             request = req
+            // Subtitles from subtitle add-ons, fetched alongside the stream (for the languages in Settings).
+            subsJob = viewModelScope.async {
+                val id = if (req.type == "series" && req.videoId.isNotBlank()) req.videoId else req.metaId
+                if (id.isBlank()) emptyList() else runCatching { pickSubtitles(addons.subtitles(req.type, id)) }.getOrDefault(emptyList())
+            }
             playIndex(req.startIndex.coerceIn(0, req.streams.lastIndex), req.startPositionMs, explicit = req.chosen)
             // Save progress every 10 seconds while playing.
             viewModelScope.launch {
@@ -387,6 +393,20 @@ class VodPlayerViewModel @Inject constructor(
         }
     }
 
+    private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
+
+    /**
+     * The add-on subtitles to offer: the chosen subtitle language (or the device's), Croatian, Serbian and
+     * Bosnian standing in for each other, two of each at most, and one English as a spare.
+     */
+    private fun pickSubtitles(all: List<com.vantaview.app.data.addon.AddonSubtitle>): List<com.vantaview.app.data.addon.AddonSubtitle> {
+        val first = settings.subtitleLanguage.ifEmpty { java.util.Locale.getDefault().language }
+        val wanted = listOf(first) + com.vantaview.app.data.relatedLanguages(first)
+        val mine = wanted.flatMap { l -> all.filter { it.lang == l }.take(2) }
+        val english = if ("en" in wanted) emptyList() else all.filter { it.lang == "en" }.take(1)
+        return mine + english
+    }
+
     /** The address playing now and its headers (stream info, and opening in another player). */
     var currentUrl: String? = null; private set
     var currentHeaders: Map<String, String> = emptyMap(); private set
@@ -394,6 +414,14 @@ class VodPlayerViewModel @Inject constructor(
     private fun playUrl(url: String, headers: Map<String, String>, positionMs: Long) {
         currentUrl = url
         currentHeaders = headers
+        viewModelScope.launch {
+            // Add-on subtitles join the stream when they've arrived (waiting a few seconds at most).
+            val subs = kotlinx.coroutines.withTimeoutOrNull(4_000) { subsJob?.await() }.orEmpty()
+            if (currentUrl == url) prepareUrl(url, headers, positionMs, subs)
+        }
+    }
+
+    private fun prepareUrl(url: String, headers: Map<String, String>, positionMs: Long, subs: List<com.vantaview.app.data.addon.AddonSubtitle>) {
         val ua = headers.entries.firstOrNull { it.key.equals("User-Agent", true) }?.value ?: "VantaView/${BuildConfig.VERSION_NAME}"
         // A torrent may pause while pieces arrive, so its local address gets a long wait before giving up.
         val client = if (com.vantaview.app.data.torrent.TorrentEngine.isLocal(url))
@@ -403,6 +431,20 @@ class VodPlayerViewModel @Inject constructor(
             .setDefaultRequestProperties(headers.filterKeys { !it.equals("User-Agent", true) })
         val item = MediaItem.Builder().setUri(url).apply {
             if (url.substringBefore('?').endsWith(".m3u8", true)) setMimeType(MimeTypes.APPLICATION_M3U8)
+            if (subs.isNotEmpty()) setSubtitleConfigurations(subs.map { s ->
+                val path = s.url.substringBefore('?').lowercase()
+                MediaItem.SubtitleConfiguration.Builder(android.net.Uri.parse(s.url))
+                    .setMimeType(
+                        when {
+                            path.endsWith(".vtt") -> MimeTypes.TEXT_VTT
+                            path.endsWith(".ass") || path.endsWith(".ssa") -> MimeTypes.TEXT_SSA
+                            else -> MimeTypes.APPLICATION_SUBRIP
+                        }
+                    )
+                    .setLanguage(s.lang)
+                    .setLabel(listOfNotNull(s.lang?.let { l -> java.util.Locale(l).getDisplayLanguage(com.vantaview.app.ui.I18n.locale) }, s.addonName).joinToString(" · "))
+                    .build()
+            })
         }.build()
         player.setMediaSource(DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http)).createMediaSource(item))
         player.prepare()

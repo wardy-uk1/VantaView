@@ -30,12 +30,39 @@ enum class StreamSize(val label: String, val mode: Int) {
 enum class SubtitleMode(val label: String) { OFF("Off"), FOREIGN("When the audio isn't my language"), ALWAYS("Always") }
 enum class SubtitleSize(val label: String, val scale: Float) { SMALL("Small", 0.8f), MEDIUM("Medium", 1f), LARGE("Large", 1.3f) }
 
+/**
+ * Languages close enough to stand in for each other when there's nothing in the one chosen: Croatian, Serbian
+ * and Bosnian are understood by speakers of all three.
+ */
+fun relatedLanguages(code: String): List<String> = when (code) {
+    "hr" -> listOf("bs", "sr")
+    "sr" -> listOf("hr", "bs")
+    "bs" -> listOf("hr", "sr")
+    else -> emptyList()
+}
+
+/** A language as an ISO 639-1 code ("hrv", "scc", "Croatian" and "hr-HR" all become "hr"), or null when unknown. */
+fun normalizeLanguage(raw: String?): String? {
+    val t = raw?.trim()?.lowercase()?.takeIf { it.isNotEmpty() } ?: return null
+    when (t) {
+        "scr", "hrv" -> return "hr"; "scc", "srp" -> return "sr"; "bos" -> return "bs"; "pob", "pb" -> return "pt"
+        "ze", "zht", "zhs", "chi" -> return "zh"; "gre" -> return "el"; "ger" -> return "de"; "fre" -> return "fr"; "dut" -> return "nl"
+        "cze" -> return "cs"; "rum" -> return "ro"; "per" -> return "fa"; "slo" -> return "sk"; "mac" -> return "mk"; "alb" -> return "sq"
+    }
+    if (t.length == 2) return t
+    t.substringBefore('-').substringBefore('_').takeIf { it.length == 2 }?.let { return it }
+    java.util.Locale.getISOLanguages().firstOrNull { runCatching { java.util.Locale(it).isO3Language }.getOrNull() == t }?.let { return it }
+    TRACK_LANGUAGES.firstOrNull { it.second.equals(raw.trim(), true) }?.first?.takeIf { it.isNotEmpty() }?.let { return it }
+    return java.util.Locale.getISOLanguages().firstOrNull { java.util.Locale(it).getDisplayLanguage(java.util.Locale.ENGLISH).equals(raw.trim(), true) }
+}
+
 /** Languages offered in Settings › Subtitles and audio (ISO 639-1 codes). Empty code = the stream's own choice. */
 val TRACK_LANGUAGES = listOf(
     "" to "Stream default", "en" to "English", "es" to "Spanish", "fr" to "French", "de" to "German", "it" to "Italian",
     "pt" to "Portuguese", "nl" to "Dutch", "pl" to "Polish", "ro" to "Romanian", "el" to "Greek", "tr" to "Turkish",
     "ar" to "Arabic", "hi" to "Hindi", "ur" to "Urdu", "pa" to "Punjabi", "ru" to "Russian", "uk" to "Ukrainian",
     "sv" to "Swedish", "da" to "Danish", "no" to "Norwegian", "fi" to "Finnish", "hu" to "Hungarian", "cs" to "Czech",
+    "hr" to "Croatian", "sr" to "Serbian", "bs" to "Bosnian", "sl" to "Slovenian", "mk" to "Macedonian", "bg" to "Bulgarian",
     "ja" to "Japanese", "ko" to "Korean", "zh" to "Chinese",
 )
 

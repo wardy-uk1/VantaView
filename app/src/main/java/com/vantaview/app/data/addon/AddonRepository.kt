@@ -231,6 +231,26 @@ class AddonRepository @Inject constructor(
         AddonJson.rank(jobs.awaitAll().flatten().distinctBy { it.key })
     }
 
+    /**
+     * Subtitles from every enabled subtitle add-on for a film or episode ([id] is the IMDb id, or "tt…:s:e").
+     * [filename] helps add-ons that match by the video's file name.
+     */
+    suspend fun subtitles(type: String, id: String, filename: String? = null): List<AddonSubtitle> = coroutineScope {
+        enabled().filter { it.manifest.serves("subtitles", type, id) }.map { a ->
+            async {
+                val extra = filename?.takeIf { it.isNotBlank() }?.let { "/filename=" + enc(it) }.orEmpty()
+                withTimeoutOrNull(12_000) { json("${a.base}/subtitles/${enc(type)}/${enc(id)}$extra.json", maxAgeMs = 3_600_000L) }
+                    ?.optJSONArray("subtitles")?.let { arr ->
+                        (0 until arr.length()).mapNotNull { arr.optJSONObject(it) }.mapNotNull { s ->
+                            val url = s.optString("url").takeIf { it.startsWith("http") } ?: return@mapNotNull null
+                            val raw = s.optString("lang")
+                            AddonSubtitle(url, com.vantaview.app.data.normalizeLanguage(raw), raw, a.manifest.name)
+                        }
+                    }.orEmpty()
+            }
+        }.awaitAll().flatten().distinctBy { it.url }
+    }
+
     /** Web pages the add-ons link to for [id] instead of a video ("Open in browser"), with the add-on's name. */
     suspend fun externalLinks(type: String, id: String): List<Pair<String, String>> = coroutineScope {
         enabled().filter { it.manifest.serves("stream", type, id) }.map { a ->

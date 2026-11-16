@@ -53,6 +53,7 @@ class PlaylistsViewModel @Inject constructor(
     private val guide: com.vantaview.app.data.guide.GuideRepository,
     private val db: com.vantaview.app.data.db.VantaDb,
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
+    private val phoneHandler: com.vantaview.app.data.remote.PhoneAddHandler,
 ) : ViewModel() {
     val providers: StateFlow<List<ProviderEntity>> =
         repo.observeEvery().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -139,7 +140,7 @@ class PlaylistsViewModel @Inject constructor(
 
     fun startPhone() {
         if (phoneServer != null) return
-        val server = PhoneAddServer(java.io.File(context.cacheDir, "phone-add"), ::receive)
+        val server = PhoneAddServer(java.io.File(context.cacheDir, "phone-add"), onReceive = ::receive)
         val url = runCatching { server.start() }.getOrNull()
         if (url == null) {
             _form.update { it.copy(message = tr("Connect this device to Wi-Fi or a network cable first."), isError = true) }
@@ -160,28 +161,13 @@ class PlaylistsViewModel @Inject constructor(
 
     /** Adds what the phone sent; the answer is shown on the phone ("!" first for a problem). */
     private fun receive(r: PhoneAddServer.Received): String = kotlinx.coroutines.runBlocking {
-        try {
-            val id = when (r) {
-                is PhoneAddServer.Received.Message -> when (val s = SmartAdd.parse(r.text)) {
-                    is SmartAddResult.Xtream -> repo.addXtream("", s.server, s.username, s.password, "")
-                    is SmartAddResult.M3u -> repo.addM3u("", s.url, "")
-                    is SmartAddResult.Stalker -> repo.addStalker("", s.portal, s.mac, "MAG250", "", "", "", "")
-                    SmartAddResult.None -> return@runBlocking "!" + tr("Couldn't find a playlist link or login in that text.")
-                }
-                is PhoneAddServer.Received.M3u -> repo.addM3u(r.name, r.url, r.guide)
-                is PhoneAddServer.Received.Xtream -> {
-                    if (r.server.isBlank() || r.username.isBlank() || r.password.isBlank()) {
-                        return@runBlocking "!" + tr("Fill in the server address, username and password.")
-                    }
-                    repo.addXtream(r.name, r.server, r.username, r.password, r.guide)
-                }
-                is PhoneAddServer.Received.M3uFile -> repo.addM3uFile(r.name.ifBlank { "My playlist" }, android.net.Uri.fromFile(r.file), "")
+        phoneHandler.receive(r) { added ->
+            _form.update {
+                it.copy(
+                    message = if (added.addon) tr("Installed {0} from your phone.", added.name) else tr("Playlist added from your phone. Loading channels…"),
+                    isError = false,
+                )
             }
-            session.setLastProvider(id)
-            _form.update { it.copy(message = tr("Playlist added from your phone. Loading channels…"), isError = false) }
-            tr("Added. Loading channels…")
-        } catch (e: Exception) {
-            "!" + (e.message ?: tr("Could not add the playlist"))
         }
     }
 

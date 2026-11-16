@@ -316,7 +316,16 @@ private fun offsetLabel(m: Int) = if (m < 60) "$m min" else "${m / 60} h" + if (
 @Composable
 private fun PhoneAddCard(vm: PlaylistsViewModel) {
     val url by vm.phone.collectAsStateWithLifecycle()
-    androidx.compose.runtime.DisposableEffect(Unit) { onDispose { vm.stopPhone() } }
+    PhoneAddCard(
+        url, vm::startPhone, vm::stopPhone,
+        "Type, paste or pick your playlist on your phone instead of with the remote. Works with a provider message, an M3U link or file, Xtream Codes, and add-on links.",
+    )
+}
+
+/** The QR code card for "Add from your phone": [url] while it's on; [intro] says what can be sent. */
+@Composable
+fun PhoneAddCard(url: String?, onStart: () -> Unit, onStop: () -> Unit, intro: String) {
+    androidx.compose.runtime.DisposableEffect(Unit) { onDispose { onStop() } }
     Column(
         Modifier.fillMaxWidth().background(Vanta.Surface, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -324,11 +333,8 @@ private fun PhoneAddCard(vm: PlaylistsViewModel) {
         Text("Add from your phone", color = Vanta.Text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         val u = url
         if (u == null) {
-            Text(
-                "Type, paste or pick your playlist on your phone instead of with the remote. Works with a provider message, an M3U link or file, and Xtream Codes.",
-                color = Vanta.TextDim,
-            )
-            GradientButton("Show QR code", onClick = vm::startPhone)
+            Text(intro, color = Vanta.TextDim)
+            GradientButton("Show QR code", onClick = onStart)
         } else {
             // Side by side on a TV or tablet; on a phone held upright the code sits above the words.
             androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
@@ -345,7 +351,7 @@ private fun PhoneAddCard(vm: PlaylistsViewModel) {
                             "It only works on your home network, and stops after 15 minutes or when you leave this page.",
                             color = Vanta.TextDim, fontSize = 12.sp,
                         )
-                        FocusCard(onClick = vm::stopPhone) { Text("Stop", color = Vanta.Text) }
+                        FocusCard(onClick = onStop) { Text("Stop", color = Vanta.Text) }
                     }
                 }
                 if (narrow) {

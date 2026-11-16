@@ -147,6 +147,9 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Subtitles: Croatian, Serbian and Bosnian (standing in for each other), plus Slovenian, Macedonian and Bulgarian; subtitles from installed Stremio subtitle add-ons in your language
+- [x] "Ends at" time in this device's time zone: player controls, the paused screen and the details page
+- [x] Add-ons from your phone: QR code on Sources › Add-ons and setup step 5; the phone page has an Add-on tab (add-on links pasted anywhere on it work too)
 - [x] Live TV and TV Guide: "All playlists" in the playlist picker shows every playlist's channels together (groups with the same name merged, each channel marked with its playlist; not on Kids profiles)
 - [x] Show or hide channels in bulk (Live TV › Channels ✎, and Settings › Channels): tick channels or a whole group, then Hide or Show; hidden everywhere and kept through refreshes
 - [x] DRM channels: M3U channels protected with ClearKey (keys or licence server) or Widevine (licence server), from Kodi #KODIPROP lines; DASH (.mpd) streams

@@ -119,6 +119,36 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
             modifier = Modifier.fillMaxSize(),
         )
 
+        // When it ends, in this device's time: from the time left (and the playing speed), updated every few seconds.
+        var endsAt by remember { mutableStateOf<String?>(null) }
+        var paused by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            val fmt = java.text.SimpleDateFormat(if (android.text.format.DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm a", com.vantaview.app.ui.I18n.locale)
+            while (true) {
+                val p = vm.player
+                val dur = p.duration
+                endsAt = if (dur > 0 && dur != androidx.media3.common.C.TIME_UNSET) {
+                    val left = ((dur - p.currentPosition).coerceAtLeast(0) / p.playbackParameters.speed.coerceAtLeast(0.25f)).toLong()
+                    val mins = left / 60_000
+                    com.vantaview.app.ui.tr("Ends at {0}", fmt.format(java.util.Date(System.currentTimeMillis() + left))) + "  ·  " +
+                        if (mins >= 60) com.vantaview.app.ui.tr("{0} h {1} min left", mins / 60, mins % 60) else com.vantaview.app.ui.tr("{0} min left", mins)
+                } else null
+                paused = !p.playWhenReady && p.playbackState == androidx.media3.common.Player.STATE_READY
+                delay(2000)
+            }
+        }
+        // Paused: when it would end if it carried on now, even with the controls hidden.
+        if (paused && !controls && !locked && !pip) endsAt?.let {
+            Column(
+                Modifier.align(Alignment.TopEnd).padding(20.dp)
+                    .background(Color(0xCC000000), androidx.compose.foundation.shape.RoundedCornerShape(12.dp)).padding(horizontal = 14.dp, vertical = 10.dp),
+                horizontalAlignment = Alignment.End,
+            ) {
+                Text("Paused", color = Vanta.Cyan, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text(it, color = Color.White, fontSize = 15.sp)
+            }
+        }
+
         // AI subtitles (beta), kept clear of the playback controls.
         if (showInfo) StreamInfoOverlay(vm.player, vm.currentUrl, Modifier.align(Alignment.CenterStart).padding(start = 16.dp))
         vm.ai?.let { AiCaption(it, vm.settings, Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = if (controls) 120.dp else 28.dp)) }
@@ -169,6 +199,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     Column(Modifier.weight(1f)) {
                         Text(ui.title, color = Color.White, fontSize = if (compact) 16.sp else 19.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         ui.subtitle?.let { Text(it, color = Vanta.TextDim, fontSize = if (compact) 13.sp else 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                        endsAt?.let { Text(it, color = Vanta.Cyan, fontSize = if (compact) 12.sp else 13.sp, maxLines = 1) }
                     }
                     if (!compact) buttons()
                 }

@@ -112,6 +112,8 @@ fun SetupAddonsScreen(onDone: () -> Unit, vm: AddonsViewModel = hiltViewModel())
         )
         FocusCard(onClick = { vm.install() }) { Text(if (form.busy) "Installing…" else "Install add-on", color = Vanta.Text) }
         form.message?.let { Text(it, color = if (form.isError) Vanta.Error else Vanta.Cyan, fontSize = 14.sp) }
+        val phone by vm.phone.collectAsStateWithLifecycle()
+        com.vantaview.app.feature.playlist.PhoneAddCard(phone, vm::startPhone, vm::stopPhone, "Paste an add-on's install link on your phone instead of typing it with the remote. Copy it from the add-on's page on your phone, then send it here.")
         addons.filter { it.entity.manifestUrl != AddonsViewModel.CINEMETA }.forEach { a ->
             Text("✓ ${a.manifest.name}", color = Vanta.Cyan, fontSize = 14.sp)
         }

@@ -1,3 +1,4 @@
+- Napisy po chorwacku, serbsku i bośniacku (każdy zastępuje pozostałe) oraz napisy z zainstalowanych dodatków napisów Stremio w Twoim języku. Odtwarzacz pokazuje, o której kończy się film lub odcinek, a dodatki wyślesz z telefonu kodem QR w Źródła › Dodatki.
 - TV na żywo i przewodnik mogą teraz pokazywać wszystkie playlisty razem: wybierz Wszystkie playlisty w wyborze playlisty u góry TV na żywo. Grupy o tej samej nazwie są łączone, a przy każdym kanale widać, z której playlisty pochodzi.
 - Pokazuj lub ukrywaj kanały hurtowo: TV na żywo › Kanały ✎ (lub Ustawienia › Kanały). Zaznacz kanały lub całą grupę i ukryj lub pokaż je naraz. Kanały M3U chronione ClearKey lub Widevine są teraz odtwarzane, a nazwę playlisty zmienisz na jej karcie.
 - W przewodniku TV przytrzymaj Wstecz na pilocie, aby od razu wrócić na pełnym ekranie do oglądanego kanału. Krótkie naciśnięcie działa jak dotąd.
@@ -5,4 +6,3 @@
 - Filmy i seriale z playlisty pokazują teraz oznaczenie kraju lub języka (np. DE) z grup dostawcy, a strona szczegółów podaje grupę. Nazwy grup pisane maleńkimi literami (np. ⁴ᴷ ³⁸⁴⁰ᴾ) są teraz czytelne. Po aktualizacji z aplikacji VantaView sam się ponownie otwiera.
 - Gdy dodatek oferuje dla tytułu tylko strony internetowe zamiast wideo, przyciski Otwórz w przeglądarce otwierają je teraz w przeglądarce. TV sportowa pokazuje teraz tylko rzędy dodatków, bez gatunków i lat filmów.
 - Strona Playlisty pokazuje teraz adres serwera i nazwę użytkownika każdej playlisty oraz kiedy ją dodano i ostatnio wczytano, by odróżnić playlisty o tej samej nazwie. Nowe playlisty bez nazwy dostają nazwę serwera. Playlisty można też wyłączać i włączać: wyłączone są wszędzie ukryte, ale zachowane.
-- Dodatki z kanałami na żywo lub wydarzeniami sportowymi pojawiają się teraz na nowej stronie TV sportowa, z własnym kafelkiem na stronie głównej. Wklejenie adresu strony konfiguracji dodatku (kończącego się na /configure) działa teraz tak samo jak link instalacyjny.
