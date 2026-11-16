@@ -38,9 +38,9 @@ data class TrackChoice(val label: String, val selected: Boolean, val group: Trac
 object TrackPrefs {
     fun apply(player: Player, s: PlaybackSettings) {
         val b = player.trackSelectionParameters.buildUpon()
-            .setPreferredAudioLanguages(*listOfNotNull(s.audioLanguage.ifEmpty { null }).let { l -> (l + l.flatMap(com.vantaview.app.data::relatedLanguages)) }.toTypedArray())
+            .setPreferredAudioLanguages(*listOfNotNull(s.audioLanguage.ifEmpty { null }).let { l -> (l + l.flatMap { c -> com.vantaview.app.data.relatedLanguages(c) }) }.toTypedArray())
             // Croatian, Serbian and Bosnian stand in for each other when the one chosen isn't there.
-            .setPreferredTextLanguages(*listOfNotNull(s.subtitleLanguage.ifEmpty { null }).let { l -> (l + l.flatMap(com.vantaview.app.data::relatedLanguages)) }.toTypedArray())
+            .setPreferredTextLanguages(*listOfNotNull(s.subtitleLanguage.ifEmpty { null }).let { l -> (l + l.flatMap { c -> com.vantaview.app.data.relatedLanguages(c) }) }.toTypedArray())
             .setSelectUndeterminedTextLanguage(true)
             .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, s.subtitleMode == SubtitleMode.OFF)
         if (s.subtitleMode == SubtitleMode.ALWAYS) b.setIgnoredTextSelectionFlags(0) // pick a subtitle even if not forced

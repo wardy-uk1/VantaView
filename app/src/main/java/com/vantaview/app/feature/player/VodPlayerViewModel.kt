@@ -142,6 +142,8 @@ class VodPlayerViewModel @Inject constructor(
     fun trackChoices(type: Int) = TrackPrefs.choices(player, type)
     fun pickTrack(type: Int, c: TrackChoice) { pickedTracks = true; TrackPrefs.pick(player, type, c) }
 
+    private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
+
     init {
         player.addListener(listener)
         TrackPrefs.apply(player, settings)
@@ -392,8 +394,6 @@ class VodPlayerViewModel @Inject constructor(
             _ui.update { it.copy(preparing = null, failed = failed) }
         }
     }
-
-    private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
 
     /**
      * The add-on subtitles to offer: the chosen subtitle language (or the device's), Croatian, Serbian and
