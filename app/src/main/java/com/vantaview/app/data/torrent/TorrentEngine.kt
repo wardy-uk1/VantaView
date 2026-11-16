@@ -59,7 +59,9 @@ class TorrentEngine @Inject constructor(@ApplicationContext private val context:
 
     @Synchronized
     private fun session(): SessionManager = session?.takeIf { it.isRunning } ?: SessionManager().also {
-        it.start()
+        // Low-memory mode: fewer connections at once (each needs its own buffers).
+        if (com.vantaview.app.data.LowMemory.active) it.start(org.libtorrent4j.SessionParams(org.libtorrent4j.SettingsPack().connectionsLimit(60)))
+        else it.start()
         session = it
     }
 

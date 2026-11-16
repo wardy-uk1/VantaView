@@ -121,6 +121,26 @@ fun AppearanceSection(s: AppearanceSettings) {
         }
     }
 
+    Section("Memory") {
+        val lm = com.vantaview.app.data.LowMemory
+        Text(
+            "Low-memory mode helps TVs and sticks with about 1 GB of memory: lighter effects (no blur, fades or moving backgrounds), smaller artwork and a smaller player buffer. Auto turns it on when this device needs it.",
+            color = Vanta.TextDim, fontSize = 13.sp,
+        )
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            lm.Mode.entries.forEach { m ->
+                Box(Modifier.weight(1f)) { Pick(m.label, lm.mode == m, Modifier.fillMaxWidth()) { lm.set(m) } }
+            }
+        }
+        Text(
+            com.vantaview.app.ui.tr(
+                if (lm.active) "On now. This device has {0} MB of memory." else "Off now. This device has {0} MB of memory.",
+                lm.totalMb,
+            ),
+            color = Vanta.Text, fontSize = 14.sp,
+        )
+    }
+
     Section("Language") {
         val dev = com.vantaview.app.ui.I18n.deviceLang
         val devName = com.vantaview.app.ui.I18n.languages.firstOrNull { it.first == dev }?.second

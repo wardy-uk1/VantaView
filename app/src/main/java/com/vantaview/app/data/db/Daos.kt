@@ -470,6 +470,32 @@ interface VodDao {
         episodes.chunked(500).forEach { insertEpisodes(it) }
     }
 
+    // ---- A fresh list saved as it downloads ----
+    // Rows are written under the playlist's id made negative (nothing shows those), then swapped in at the
+    // end, so a big list never has to be held in memory and a failed download keeps the old one.
+
+    /** Saves rows as they arrive (called from the download thread). */
+    @Insert
+    fun insertNow(items: List<VodEntity>)
+
+    @Query("DELETE FROM vod WHERE providerId = -:providerId")
+    suspend fun dropStaged(providerId: Long)
+
+    @Query("UPDATE vod SET imdb = (SELECT o.imdb FROM vod o WHERE o.providerId = :providerId AND o.kind = vod.kind AND o.remoteId = vod.remoteId AND o.imdb IS NOT NULL LIMIT 1) WHERE providerId = -:providerId AND imdb IS NULL")
+    suspend fun keepImdbForStaged(providerId: Long)
+
+    @Query("UPDATE vod SET providerId = :providerId WHERE providerId = -:providerId")
+    suspend fun adoptStaged(providerId: Long)
+
+    /** Swaps the staged rows in for the playlist's films and series, keeping IMDb ids already matched. */
+    @Transaction
+    suspend fun swapInStaged(providerId: Long) {
+        keepImdbForStaged(providerId)
+        deleteFor(providerId)
+        deleteEpisodesFor(providerId)
+        adoptStaged(providerId)
+    }
+
     data class KnownImdb(val remoteId: String, val imdb: String?)
 
     @Query("SELECT remoteId, imdb FROM vod WHERE providerId = :providerId AND imdb IS NOT NULL")

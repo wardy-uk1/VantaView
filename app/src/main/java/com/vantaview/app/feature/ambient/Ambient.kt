@@ -110,10 +110,11 @@ fun AmbientHost(lastInput: StateFlow<Long>, allowed: Boolean, vm: AmbientViewMod
                 .focusable()
                 .pointerInput(Unit) { detectTapGestures { showing = false } },
         ) {
-            Crossfade(pics.getOrNull(i), label = "art") { p ->
+            val low = com.vantaview.app.data.LowMemory.active
+            Crossfade(pics.getOrNull(i), animationSpec = androidx.compose.animation.core.tween(if (low) 0 else 300), label = "art") { p ->
                 if (p != null) AsyncImage(
                     model = p.first, contentDescription = null, contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().graphicsLayer { scaleX = scale; scaleY = scale; alpha = 0.75f },
+                    modifier = Modifier.fillMaxSize().graphicsLayer { val k = if (low) 1f else scale; scaleX = k; scaleY = k; alpha = 0.75f },
                 )
             }
             Box(Modifier.fillMaxSize().background(Brush.verticalGradient(0.5f to Color.Transparent, 1f to Color(0xCC000000))))

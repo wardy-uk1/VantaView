@@ -115,11 +115,12 @@ private fun ActionsBackdrop(image: String?, onDismiss: () -> Unit, content: @Com
             contentAlignment = Alignment.Center,
         ) {
             // The picture itself, heavily blurred, behind everything (blur needs Android 12; older ones just dim it).
-            if (image != null) AsyncImage(
+            val blur = Build.VERSION.SDK_INT >= 31 && !com.vantaview.app.data.LowMemory.active
+            if (image != null && blur) AsyncImage(
                 model = image, contentDescription = null, contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().then(if (Build.VERSION.SDK_INT >= 31) Modifier.blur(60.dp) else Modifier),
+                modifier = Modifier.fillMaxSize().blur(60.dp),
             )
-            Box(Modifier.fillMaxSize().background(Color(if (Build.VERSION.SDK_INT >= 31) 0xB3000000 else 0xE6000000)))
+            Box(Modifier.fillMaxSize().background(Color(if (blur) 0xB3000000 else 0xE6000000)))
             val wide = maxWidth > maxHeight
             Column(
                 Modifier.verticalScroll(rememberScrollState()).padding(24.dp)

@@ -62,7 +62,7 @@ class ImageText @Inject constructor(@ApplicationContext private val context: Con
         context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
         val longest = maxOf(opts.outWidth, opts.outHeight).takeIf { it > 0 } ?: return null
         var sample = 1
-        while (longest / sample > 2400) sample *= 2
+        while (longest / sample > (if (com.vantaview.app.data.LowMemory.active) 1600 else 2400)) sample *= 2
         val raw = context.contentResolver.openInputStream(uri)?.use {
             BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply { inSampleSize = sample })
         } ?: return null

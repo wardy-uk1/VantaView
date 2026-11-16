@@ -34,6 +34,15 @@ jobs:
             profile: tv_1080p
             script: smoke.sh
             arch: x86
+          # A 1 GB TV (like a Fire TV Stick), with its memory use logged at each step.
+          - name: android9-tv-1gb
+            api: 28
+            target: android-tv
+            profile: tv_1080p
+            script: smoke.sh
+            arch: x86
+            ram: 1024M
+            heap: 128M
           - name: googletv14
             api: 34
             target: google-tv
@@ -65,6 +74,8 @@ jobs:
           # A real TV screen (1920x1080) for TVs; a Pixel 6 screen for the phone.
           profile: ${{ matrix.profile }}
           force-avd-creation: true
+          ram-size: ${{ matrix.ram || '' }}
+          heap-size: ${{ matrix.heap || '' }}
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: false
           script: bash .github/tv/${{ matrix.script }}

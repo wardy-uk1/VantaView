@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Low-memory mode for 1 GB TVs (Auto/On/Off in Settings › Appearance › Memory): lighter effects, smaller artwork and picture cache, smaller player buffer, fewer torrent connections; big Xtream lists saved as they download
 - [x] Smart Add from a picture: Choose an image (or the phone page's Screenshot tab) reads a provider's message on the device (Tesseract, Apache-2.0) and fills the form to check
 - [x] Smoother playback: decoder fallback, live streams at exactly normal speed, tolerant MPEG-TS reading; players cover the camera notch in full screen; Size (Fit, Fill, Zoom) in the films and series player too
 - [x] Merge the same channel (Settings › Channels: off, within each playlist, across playlists, or both; on by default): same guide ID or same name without quality tags and country prefixes; best source plays, the next takes over by itself when one fails; Source button in the player

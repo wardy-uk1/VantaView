@@ -183,10 +183,11 @@ class PlaybackSettings @Inject constructor(
         get() = sp.getBoolean("auto_buffer", true)
         set(v) { sp.edit().putBoolean("auto_buffer", v).apply() }
 
-    /** Small-memory devices (1 GB Fire TV Sticks and the like) never go above Medium. */
-    private val lowMemory: Boolean by lazy {
+    /** Small-memory devices (1 GB Fire TV Sticks and the like, or low-memory mode) never go above Medium. */
+    private val lowMemory: Boolean get() = LowMemory.active || smallHeap
+    private val smallHeap: Boolean by lazy {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
-        am.isLowRamDevice || am.memoryClass < 192
+        am.memoryClass < 192
     }
 
     /** The buffer actually used: the chosen one, or the one automatic buffering has settled on. */
@@ -219,6 +220,8 @@ class PlaybackSettings @Inject constructor(
         DefaultLoadControl.Builder().setBufferDurationsMs(it.minMs, it.maxMs, it.startMs, it.rebufferMs)
             // Keep a little behind the play position so short rewinds don't reload (less on small devices).
             .setBackBuffer(if (lowMemory) 10_000 else 30_000, true)
+            // Low-memory mode: at most 40 MB of video waiting (the player's own limit is over 100 MB).
+            .apply { if (LowMemory.active) setTargetBufferBytes(40 * 1024 * 1024) }
             .build()
     }
 

@@ -56,7 +56,8 @@ fun HeroBanner(label: String, items: List<MetaPreview>, focused: MetaPreview?, h
     }
     val shown = focused ?: items.getOrNull(index % items.size.coerceAtLeast(1)) ?: return
     Box(Modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(18.dp)).background(Vanta.SurfaceHigh)) {
-        Crossfade(shown, label = "hero") { m ->
+        // Low-memory mode swaps pictures straight away (a fade holds two big pictures at once).
+        Crossfade(shown, animationSpec = androidx.compose.animation.core.tween(if (com.vantaview.app.data.LowMemory.active) 0 else 300), label = "hero") { m ->
             Box(Modifier.fillMaxSize()) {
                 AsyncImage(model = backdropOf(m), contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                 Box(Modifier.fillMaxSize().background(Brush.horizontalGradient(0f to Color(0xEE07080F), 0.65f to Color(0x6607080F), 1f to Color.Transparent)))

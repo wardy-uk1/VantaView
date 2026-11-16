@@ -39,6 +39,19 @@ fun RippleBackground(
     speed: Float = 1f,
     center: Offset? = null,
 ) {
+    if (com.vantaview.app.data.LowMemory.active) {
+        // Low-memory mode: a still glow instead of an OpenGL surface (which needs its own memory).
+        androidx.compose.foundation.Canvas(modifier) {
+            val c = center ?: androidx.compose.ui.geometry.Offset(size.width / 2, size.height / 2)
+            drawRect(
+                androidx.compose.ui.graphics.Brush.radialGradient(
+                    listOf(androidx.compose.ui.graphics.Color(0x5500E5FF), androidx.compose.ui.graphics.Color(0x33C2369F), androidx.compose.ui.graphics.Color.Transparent),
+                    center = c, radius = size.maxDimension * 0.6f * brightness.coerceIn(0.5f, 1.5f),
+                ),
+            )
+        }
+        return
+    }
     val context = LocalContext.current
     val moving = remember { animationsOn(context) }
     val renderer = remember { RippleRenderer() }

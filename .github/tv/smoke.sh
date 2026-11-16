@@ -36,9 +36,15 @@ PY
 }
 # Whether the on-screen keyboard is up (it should only open when OK is pressed on a text box).
 kb() { echo "   keyboard: $(adb shell dumpsys input_method | grep -o 'mInputShown=[a-z]*' | head -1)"; }
-crashes() { adb logcat -d | grep -E "FATAL EXCEPTION|AndroidRuntime: |ANR in com.vantaview" > $OUT/crashes.txt || true; }
+# The app's memory use now (PSS, in MB), logged with a label to memory.txt.
+mem() {
+  kb=$(adb shell dumpsys meminfo com.vantaview.app | grep -m1 -E "TOTAL( PSS)?:? +[0-9]+" | grep -oE "[0-9]+" | head -1)
+  echo "$1: $(( ${kb:-0} / 1024 )) MB" | tee -a $OUT/memory.txt
+}
+crashes() { adb logcat -d | grep -E "FATAL EXCEPTION|AndroidRuntime: |ANR in com.vantaview|OutOfMemoryError|lowmemorykiller.*vantaview|Kill.*com\.vantaview" > $OUT/crashes.txt || true; }
 
 adb install -r VantaView-test.apk || exit 1
+echo "device memory: $(adb shell grep MemTotal /proc/meminfo)" | tee $OUT/memory.txt
 adb logcat -c
 echo "---- start-up time ----"; adb shell am start -W -n com.vantaview.app/.MainActivity
 sleep 3; shot splash
@@ -55,10 +61,10 @@ tap_text "Continue"; sleep 35; shot setup-connection
 tap_text "Continue"; sleep 3; shot setup-films
 tap_text "Skip for now"; sleep 4
 home() { for i in 1 2 3 4; do dump; grep -q "Good morning\|Good afternoon\|Good evening" $OUT/ui.xml && break; key BACK; sleep 1; done; }
-home; shot home
+home; shot home; mem home
 # Every section from the sidebar.
 for section in "Search" "Live TV" "TV Guide" "Movies" "Library" "Sources" "Settings"; do
-  home; tap_text "$section"; sleep 5; shot "section-$section"
+  home; tap_text "$section"; sleep 5; shot "section-$section"; mem "$section"
 done
 # Settings with the remote: the list on the left, the options on the right.
 home; tap_text "Settings"; sleep 3
@@ -68,7 +74,7 @@ key DPAD_RIGHT; sleep 1; shot settings-into-pane
 # Live TV with the remote: down the list, play, controls, the Audio/Subtitles/Size buttons, number keys.
 home; tap_text "Live TV"; sleep 6
 key DPAD_DOWN DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot live-focus
-key DPAD_CENTER; sleep 12; shot player
+key DPAD_CENTER; sleep 12; shot player; mem "playing a channel"
 key DPAD_CENTER; sleep 1; shot player-controls
 key DPAD_RIGHT; sleep 1; shot player-buttons
 key DPAD_CENTER; sleep 2; shot player-audio-picker
@@ -78,7 +84,7 @@ key BACK BACK; sleep 2; shot after-player
 # TV Guide with the remote.
 home; tap_text "TV Guide"; sleep 8
 key DPAD_DOWN DPAD_DOWN DPAD_RIGHT DPAD_RIGHT; sleep 1; shot guide-remote
-key DPAD_CENTER; sleep 6; shot guide-play
+key DPAD_CENTER; sleep 6; shot guide-play; mem "guide, playing"
 key BACK; sleep 2
 # Search with the remote keyboard.
 home; tap_text "Search"; sleep 2; adb shell input text BBC; sleep 6; shot search-bbc
@@ -118,9 +124,14 @@ key DPAD_CENTER; sleep 2; shot sources-ok-on-box; kb; key BACK; sleep 1
 echo "---- remote: Show QR code ----"
 tap_text "Show QR code"; sleep 2; shot sources-qr
 key BACK; sleep 1
+echo "---- Settings › Appearance › Memory (low-memory mode) ----"
+home; tap_text "Settings"; sleep 3; tap_text "Appearance"; sleep 2; tap_text "Memory"; sleep 2; shot settings-memory
+dump; grep -o 'text="[^"]*now. This device has[^"]*"' $OUT/ui.xml | tee -a $OUT/memory.txt
+mem "settings"
 # Back twice on Home leaves the app.
 home; key BACK; sleep 1; shot back-once; key BACK; sleep 2; shot back-twice
 crashes
 adb logcat -d -t 2000 > $OUT/logcat.txt
 echo "---- crashes ----"; cat $OUT/crashes.txt
+echo "---- memory ----"; cat $OUT/memory.txt
 echo "done"

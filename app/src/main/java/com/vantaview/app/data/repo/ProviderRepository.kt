@@ -433,7 +433,12 @@ class ProviderRepository @Inject constructor(
                 true
             }
         }.getOrDefault(false)
-        val items = ArrayList<VodEntity>()
+        // Saved in batches as they download (big lists can be 100,000 titles), then swapped in at the end.
+        val dao = db.vod()
+        dao.dropStaged(p.id)
+        val batch = ArrayList<VodEntity>(1000)
+        var total = 0
+        fun flush() { if (batch.isNotEmpty()) { dao.insertNow(batch.map { it.copy(providerId = -p.id) }); total += batch.size; batch.clear() } }
         for ((kind, cats, list) in listOf(
             Triple("movie", "get_vod_categories", "get_vod_streams"),
             Triple("series", "get_series_categories", "get_series"),
@@ -447,12 +452,13 @@ class ProviderRepository @Inject constructor(
                 val pos = (order[o["category_id"]] ?: g.size) * 1_000_000 + i++
                 val v = if (kind == "movie") com.vantaview.app.data.vod.VodImport.xtreamFilm(p.id, o, names, pos)
                     else com.vantaview.app.data.vod.VodImport.xtreamSeries(p.id, o, names, pos)
-                if (v != null) items += v
+                if (v != null) { batch += v; if (batch.size >= 1000) flush() }
             }
-            if (!ok) return db.vod().count(p.id, "movie") + db.vod().count(p.id, "series")
+            if (!ok) { dao.dropStaged(p.id); return dao.count(p.id, "movie") + dao.count(p.id, "series") }
+            runCatching { flush() }.onFailure { dao.dropStaged(p.id); return dao.count(p.id, "movie") + dao.count(p.id, "series") }
         }
-        db.vod().replace(p.id, items, emptyList())
-        return items.size
+        dao.swapInStaged(p.id)
+        return total
     }
 
     private fun hideLogin(url: String, u: String, pw: String): String {
@@ -524,12 +530,38 @@ class ProviderRepository @Inject constructor(
         }
     }
 
+    /**
+     * An Xtream channel list, read as it downloads and keeping only the fields VantaView uses (a big
+     * provider's list is tens of MB as text, too much for a 1 GB TV to hold at once).
+     */
+    private fun liveItems(url: String, ua: String?): List<JSONObject> {
+        val b = Request.Builder().url(url)
+        if (ua != null) b.header("User-Agent", ua)
+        return http.newCall(b.build()).execute().use { r ->
+            if (!r.isSuccessful) throw IllegalStateException("The server answered with error ${r.code}")
+            val out = ArrayList<JSONObject>()
+            r.body?.charStream()?.buffered()?.let { reader ->
+                // Some servers start with a byte-order mark.
+                reader.mark(1); if (reader.read() != 0xFEFF) reader.reset()
+                com.vantaview.app.data.vod.VodImport.readItems(reader) { m ->
+                    out += JSONObject().apply { LIVE_KEYS.forEach { k -> m[k]?.let { v -> put(k, v) } } }
+                }
+            }
+            out
+        }
+    }
+
     private fun streamId(o: JSONObject): String = o.optString("stream_id").ifBlank { o.optString("id") }
 
     /**
      * App identities tried in turn. Some providers only answer apps they recognise, and many block
      * the HTTP library's default identity.
      */
+    private val LIVE_KEYS = listOf(
+        "stream_id", "id", "num", "name", "stream_type", "stream_icon", "category_id", "epg_channel_id",
+        "is_adult", "tv_archive", "tv_archive_duration",
+    )
+
     private val xtreamAgents: List<String?> = listOf(
         userAgent,
         "IPTVSmartersPro",
@@ -562,7 +594,7 @@ class ProviderRepository @Inject constructor(
                     position = i,
                 )
             }
-            val all = runCatching { jsonItems(text(xtreamApi(p, "get_live_streams"), ua)) }
+            val all = runCatching { liveItems(xtreamApi(p, "get_live_streams"), ua) }
                 .getOrDefault(emptyList())
                 .filter { streamId(it).isNotBlank() }
             if (all.isNotEmpty() || categories.isEmpty()) return categories to all
@@ -571,7 +603,7 @@ class ProviderRepository @Inject constructor(
             categories.forEachIndexed { i, c ->
                 setState(p.id, SyncState.Running("Loading channels, category ${i + 1} of ${categories.size}"))
                 val url = xtreamApi(p, "get_live_streams") + "&category_id=" + URLEncoder.encode(c.remoteId, "UTF-8")
-                runCatching { jsonItems(text(url, ua)) }.getOrDefault(emptyList())
+                runCatching { liveItems(url, ua) }.getOrDefault(emptyList())
                     .filter { streamId(it).isNotBlank() }
                     .forEach { o ->
                         if (o.optString("category_id").isBlank()) o.put("category_id", c.remoteId)
