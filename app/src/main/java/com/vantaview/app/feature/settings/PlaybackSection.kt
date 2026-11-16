@@ -38,6 +38,7 @@ fun PlaybackSection(s: PlaybackSettings) {
     var auto by remember { mutableStateOf(s.autoBuffer) }
     var skipIntro by remember { mutableStateOf(s.skipIntro) }
     var torrents by remember { mutableStateOf(s.playTorrents) }
+    var maxQuality by remember { mutableStateOf(s.maxQuality) }
     var nextEp by remember { mutableStateOf(s.nextEpisode) }
     var autoTrailers by remember { mutableStateOf(s.autoTrailers) }
     var trailerSound by remember { mutableStateOf(s.trailerSound) }
@@ -65,6 +66,9 @@ fun PlaybackSection(s: PlaybackSettings) {
             autoTrailers = it; s.autoTrailers = it
         }
         if (autoTrailers) Toggle("Trailers with sound", "Off starts them muted; you can unmute on the page.", trailerSound) { trailerSound = it; s.trailerSound = it }
+        Text("Try streams up to this quality first", color = Vanta.Text)
+        Text("Bigger streams are still tried if nothing else plays. A speed test can set this for you (Settings › Sources).", color = Vanta.TextDim, fontSize = 13.sp)
+        Choices(listOf(0, 2160, 1080, 720, 480), maxQuality, { if (it == 0) com.vantaview.app.ui.tr("Best") else "${it}p" }) { maxQuality = it; s.maxQuality = it }
         Toggle(
             "Play torrents in VantaView",
             "Torrent results play here when no debrid account has them ready. While it plays, a torrent shares the parts you have with other people, and they can see your IP address; it stops sharing and deletes the file when you close the player.",

@@ -137,7 +137,7 @@ fun ProfileEditScreen(
             horizontalAlignment = if (first) Alignment.CenterHorizontally else Alignment.Start,
         ) {
             if (first) {
-                Text("Step 2 of 4 · Profile", color = Vanta.TextDim, fontSize = 13.sp)
+                Text("Step 2 of 5 · Profile", color = Vanta.TextDim, fontSize = 13.sp)
                 Text("Who's watching?", color = Vanta.Text, fontSize = 30.sp, fontWeight = FontWeight.Black)
                 Text("Create your profile. You can add more people later.", color = Vanta.TextDim, textAlign = TextAlign.Center)
             } else {

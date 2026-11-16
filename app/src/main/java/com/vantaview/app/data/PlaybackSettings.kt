@@ -89,6 +89,11 @@ class PlaybackSettings @Inject constructor(
         get() = sp.getBoolean("live_preview", true)
         set(v) { sp.edit().putBoolean("live_preview", v).apply() }
 
+    /** The best quality to try first (2160, 1080, 720, 480), or 0 for no limit: set from a speed test, or by hand. */
+    var maxQuality: Int
+        get() = sp.getInt("max_quality", 0)
+        set(v) { sp.edit().putInt("max_quality", v).apply() }
+
     var miniPlayer: Boolean
         get() = sp.getBoolean("mini_player", true)
         set(v) { sp.edit().putBoolean("mini_player", v).apply() }

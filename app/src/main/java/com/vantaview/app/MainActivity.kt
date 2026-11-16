@@ -240,9 +240,12 @@ private fun AppNav(
                     onBack = null,
                 )
             }
-            // First launch, steps 3 and 4: live TV, then films and series (both can be skipped).
+            // First launch, steps 3 to 5: live TV, the connection check, then films and series (all can be skipped).
             composable("setup/playlist") {
-                com.vantaview.app.feature.setup.SetupPlaylistScreen(onNext = { nav.navigate("setup/addons") })
+                com.vantaview.app.feature.setup.SetupPlaylistScreen(onNext = { nav.navigate("setup/connection") })
+            }
+            composable("setup/connection") {
+                com.vantaview.app.feature.setup.SetupConnectionScreen(onNext = { nav.navigate("setup/addons") })
             }
             composable("setup/addons") {
                 com.vantaview.app.feature.setup.SetupAddonsScreen(onDone = {

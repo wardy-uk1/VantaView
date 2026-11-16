@@ -80,6 +80,8 @@ data class SpeedUi(
     val error: Boolean = false,
     /** The last test was from a playlist channel (download only). */
     val playlist: Boolean = false,
+    /** What "Adjust my settings" changed, one line each, once it's been used. */
+    val tuned: List<String>? = null,
 )
 
 /**
@@ -92,7 +94,17 @@ class SpeedTestViewModel @Inject constructor(
     private val db: com.vantaview.app.data.db.VantaDb,
     private val repo: com.vantaview.app.data.repo.ProviderRepository,
     private val session: com.vantaview.app.data.profile.ProfileSession,
+    private val playback: com.vantaview.app.data.PlaybackSettings,
 ) : ViewModel() {
+    /** After a full test: sets the buffer, stream quality, torrents and mini player to suit this connection. */
+    fun adjust() {
+        val u = _ui.value
+        val down = u.down ?: return
+        if (u.playlist) return
+        val lines = com.vantaview.app.data.ConnectionTuning.apply(com.vantaview.app.data.ConnectionTuning.advise(down, u.jitter), playback)
+        _ui.update { it.copy(tuned = lines) }
+    }
+
     private val client = http.newBuilder()
         .connectTimeout(10, TimeUnit.SECONDS).readTimeout(15, TimeUnit.SECONDS).writeTimeout(15, TimeUnit.SECONDS)
         .cache(null).build()
@@ -315,7 +327,14 @@ fun SpeedTestSection(vm: SpeedTestViewModel = hiltViewModel()) {
             ResultTile("Upload", ui.up?.let(::mbps), "Mbit/s", null, ui.phase == SpeedPhase.UP)
         }
         ui.status?.let { Text(it, color = if (ui.error) Vanta.Error else Vanta.Cyan, fontSize = 14.sp) }
+        ui.tuned?.let { lines ->
+            Text("Settings adjusted for this connection:", color = Vanta.Text, fontSize = 14.sp)
+            lines.forEach { Text("• $it", color = Vanta.TextDim, fontSize = 13.sp) }
+        }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (!ui.running && ui.down != null && !ui.playlist && ui.tuned == null) {
+                FocusCard(onClick = vm::adjust) { Text("Adjust my settings for this connection", color = Vanta.Cyan, maxLines = 1, softWrap = false) }
+            }
             if (ui.running) {
                 FocusCard(onClick = vm::stop) { Text("Stop", color = Vanta.Text, maxLines = 1, softWrap = false) }
             } else {
@@ -327,10 +346,10 @@ fun SpeedTestSection(vm: SpeedTestViewModel = hiltViewModel()) {
     }
 }
 
-private fun mbps(v: Double) = if (v >= 100) "%.0f".format(v) else "%.1f".format(v)
+internal fun mbps(v: Double) = if (v >= 100) "%.0f".format(v) else "%.1f".format(v)
 
 @Composable
-private fun ResultTile(label: String, value: String?, unit: String, extra: String?, active: Boolean) {
+internal fun ResultTile(label: String, value: String?, unit: String, extra: String?, active: Boolean) {
     Column(
         Modifier.widthIn(min = 120.dp).background(if (active) Vanta.Cyan.copy(alpha = 0.12f) else Vanta.Panel, RoundedCornerShape(12.dp))
             .padding(horizontal = 14.dp, vertical = 10.dp),
@@ -345,7 +364,7 @@ private fun ResultTile(label: String, value: String?, unit: String, extra: Strin
 
 /** The dial: 0 to 1000 Mbit/s on a log scale (so slow and fast lines both move it), or the ping while that's measured. */
 @Composable
-private fun SpeedDial(ui: SpeedUi) {
+internal fun SpeedDial(ui: SpeedUi) {
     val pingPhase = ui.phase == SpeedPhase.PING
     val target = when {
         !ui.running -> 0f

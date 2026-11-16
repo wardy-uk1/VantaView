@@ -220,7 +220,9 @@ class DetailsViewModel @Inject constructor(
                 }
                 choose -> _ui.update { it.copy(finding = null, choice = StreamChoice(title, subtitle, streams, season, episode, video)) }
                 else -> {
-                    session.current = request(streams, 0, video, subtitle, chosen = false)
+                    // Settings: streams that fit the connection are tried first (the bigger ones are still there after).
+                    val ordered = com.vantaview.app.data.ConnectionTuning.preferFitting(streams, playback.maxQuality) { it.quality }
+                    session.current = request(ordered, 0, video, subtitle, chosen = false)
                     _ui.update { it.copy(finding = null) }
                     _play.send(Unit)
                 }

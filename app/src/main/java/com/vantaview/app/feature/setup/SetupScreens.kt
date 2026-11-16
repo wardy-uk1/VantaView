@@ -74,7 +74,7 @@ private fun SetupPage(
 fun SetupPlaylistScreen(onNext: () -> Unit, vm: PlaylistsViewModel = hiltViewModel()) {
     val providers by vm.providers.collectAsStateWithLifecycle()
     SetupPage(
-        step = "Step 3 of 4 · Live TV",
+        step = "Step 3 of 5 · Live TV",
         title = "Add your TV",
         text = "Paste the message or link your provider sent you, or try free channels. You can add more later on the Sources page.",
         canContinue = providers.isNotEmpty(), onContinue = onNext, onSkip = onNext,
@@ -90,7 +90,7 @@ fun SetupAddonsScreen(onDone: () -> Unit, vm: AddonsViewModel = hiltViewModel())
     val form by vm.form.collectAsStateWithLifecycle()
     val hasCinemeta = addons.any { it.entity.manifestUrl == AddonsViewModel.CINEMETA }
     SetupPage(
-        step = "Step 4 of 4 · Films and series",
+        step = "Step 5 of 5 · Films and series",
         title = "Films and series",
         text = "VantaView uses Stremio and Nuvio add-ons for films and series. Cinemeta adds posters, details and episode lists; " +
             "streams come from add-ons you choose. You can skip this and add them later on the Sources page.",
@@ -115,5 +115,47 @@ fun SetupAddonsScreen(onDone: () -> Unit, vm: AddonsViewModel = hiltViewModel())
         addons.filter { it.entity.manifestUrl != AddonsViewModel.CINEMETA }.forEach { a ->
             Text("✓ ${a.manifest.name}", color = Vanta.Cyan, fontSize = 14.sp)
         }
+    }
+}
+
+/**
+ * First launch, step 4: a speed test, then the buffer, stream quality, torrents and Home mini player are set to
+ * suit the connection. Skippable; Settings › Sources › Speed test can do it again later.
+ */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+fun SetupConnectionScreen(onNext: () -> Unit, vm: com.vantaview.app.feature.settings.SpeedTestViewModel = hiltViewModel()) {
+    val ui by vm.ui.collectAsStateWithLifecycle()
+    androidx.compose.runtime.LaunchedEffect(Unit) { if (ui.down == null && !ui.running) vm.start() }
+    // Finished: adjust the settings straight away.
+    androidx.compose.runtime.LaunchedEffect(ui.running, ui.down) { if (!ui.running && ui.down != null && ui.tuned == null) vm.adjust() }
+    SetupPage(
+        step = "Step 4 of 5 · Connection",
+        title = "Check your connection",
+        text = "VantaView tests your internet speed and sets itself up to play as smoothly as it can on it. It takes about 25 seconds.",
+        canContinue = !ui.running, onContinue = { vm.stop(); onNext() }, onSkip = { vm.stop(); onNext() },
+    ) {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) { com.vantaview.app.feature.settings.SpeedDial(ui) }
+        FlowRow(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            com.vantaview.app.feature.settings.ResultTile("Ping", ui.ping?.let { "%.0f".format(it) }, "ms", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.PING)
+            com.vantaview.app.feature.settings.ResultTile("Download", ui.down?.let(com.vantaview.app.feature.settings::mbps), "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.DOWN)
+            com.vantaview.app.feature.settings.ResultTile("Upload", ui.up?.let(com.vantaview.app.feature.settings::mbps), "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.UP)
+        }
+        ui.status?.let { Text(it, color = if (ui.error) Vanta.Error else Vanta.Cyan, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
+        ui.tuned?.let { lines ->
+            Column(
+                Modifier.fillMaxWidth().background(Vanta.Surface, androidx.compose.foundation.shape.RoundedCornerShape(14.dp)).padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text("Set up for your connection", color = Vanta.Text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                lines.forEach { Text("✓ $it", color = Vanta.TextDim) }
+                Text("You can change any of these in Settings › Playback, or test again in Settings › Sources.", color = Vanta.TextDim, fontSize = 13.sp)
+            }
+        }
+        if (ui.error && !ui.running) FocusCard(onClick = vm::start) { Text("Try again", color = Vanta.Text) }
     }
 }
