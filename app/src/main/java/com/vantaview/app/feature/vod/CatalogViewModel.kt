@@ -138,7 +138,8 @@ class CatalogViewModel @Inject constructor(
         // Trakt rows: reloaded when the profile changes, Trakt is linked or unlinked, or a sync finishes.
         viewModelScope.launch {
             kotlinx.coroutines.flow.combine(trakt.storeVersion, profiles.observeCurrent()) { _, p -> p }.collect { p ->
-                val rows = if (p?.isKids == true) emptyList() else runCatching { trakt.rows(type) }.getOrDefault(emptyList())
+                val rows = if (p?.isKids == true || type == com.vantaview.app.data.addon.AddonRepository.TV) emptyList()
+                    else runCatching { trakt.rows(type) }.getOrDefault(emptyList())
                 _ui.update { it.copy(traktRows = rows) }
             }
         }

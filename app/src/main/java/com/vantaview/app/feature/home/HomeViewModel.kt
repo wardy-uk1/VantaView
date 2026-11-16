@@ -222,6 +222,11 @@ class HomeViewModel @Inject constructor(
                 posters,
             )
         }
+        // Sports TV, when an add-on has live channel or event rows.
+        if (!kids && runCatching { addons.hasTv() }.getOrDefault(false)) {
+            val rows = addons.catalogs(com.vantaview.app.data.addon.AddonRepository.TV)
+            out += "sportstv" to Tile("SPORTS TV", "${rows.size} catalogue" + if (rows.size == 1) "" else "s", emptyList())
+        }
         _tiles.value = out
     }
 

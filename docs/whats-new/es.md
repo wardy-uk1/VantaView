@@ -1,3 +1,4 @@
+- Los complementos con canales en directo o eventos deportivos ahora aparecen en una nueva página TV deportiva, con su propio mosaico en Inicio. Pegar la dirección de la página de configuración de un complemento (terminada en /configure) ahora funciona igual que su enlace de instalación.
 - En una TV, el mando ahora pasa directamente por los cuadros de texto con arriba y abajo, y el teclado solo se abre al pulsar OK en uno.
 - Subir y bajar canal, y deslizar, ahora recorren la lista desde la que abriste el canal: desde Favoritos pasas por tus favoritos. Deslizar hacia abajo o el nuevo botón Actualizar en Inicio recarga tus listas, la guía y el tiempo. Ajustes › Apariencia tiene un nuevo Tamaño de pantalla (Automático adapta la app a tu dispositivo).
 - TV en directo puede previsualizar un canal en una ventana pequeña, con lo que se emite ahora y después. Vuelve a pulsarlo, o Ver a pantalla completa, para pantalla completa. Desactívalo en Ajustes › Reproducción.
@@ -5,4 +6,3 @@
 - Una prueba de velocidad completa en Ajustes › Fuentes: ping, descarga y subida en un indicador en directo, con lo que tu conexión puede reproducir.
 - Añade una lista desde el móvil: en Fuentes o durante la configuración, elige Mostrar código QR, escanéalo con el móvil y pega allí el mensaje de tu proveedor, un enlace o archivo M3U, o Xtream Codes. Llega directamente a la TV por la Wi-Fi de casa.
 - La imagen en imagen ahora se puede desactivar en Ajustes › Reproducción, para que pulsar Inicio ya no reduzca el reproductor a una ventana pequeña.
-- A la carta ahora tiene su propio mosaico en Inicio, junto a TV en directo y la Guía de TV, cuando tu lista tiene canales que guardan programas emitidos. El botón A la carta ya no está en la Guía de TV.

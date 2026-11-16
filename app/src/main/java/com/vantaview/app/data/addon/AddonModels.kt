@@ -88,12 +88,18 @@ data class Manifest(
             )
         }
 
-        /** "stremio://host/x/manifest.json" or a base address becomes "https://host/x/manifest.json". */
+        /**
+         * "stremio://host/x/manifest.json", "nuvio://host/x/manifest.json", a base address, or an add-on's own
+         * set-up page ("…/configure") becomes "https://host/x/manifest.json".
+         */
         fun normalizeUrl(input: String): String {
             var url = input.trim()
-            if (url.startsWith("stremio://", true)) url = "https://" + url.substring("stremio://".length)
+            for (scheme in listOf("stremio://", "nuvio://")) {
+                if (url.startsWith(scheme, true)) url = "https://" + url.substring(scheme.length)
+            }
             if (!url.startsWith("http://", true) && !url.startsWith("https://", true)) url = "https://$url"
             url = url.substringBefore('#').trimEnd('/')
+            if (url.endsWith("/configure", true)) url = url.dropLast("/configure".length)
             if (!url.endsWith("/manifest.json")) url += "/manifest.json"
             return url
         }

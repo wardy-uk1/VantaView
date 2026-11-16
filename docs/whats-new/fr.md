@@ -1,3 +1,4 @@
+- Les add-ons avec des chaînes en direct ou des événements sportifs apparaissent maintenant sur une nouvelle page TV sport, avec sa propre tuile sur l'Accueil. Coller l'adresse de la page de configuration d'un add-on (se terminant par /configure) fonctionne désormais comme son lien d'installation.
 - Sur une TV, la télécommande passe maintenant directement les zones de texte avec haut et bas, et le clavier ne s'ouvre que si vous appuyez sur OK.
 - Chaîne suivante et précédente, et le balayage, parcourent maintenant la liste d'où vous avez ouvert la chaîne : depuis les Favoris, vous passez d'un favori à l'autre. Tirer vers le bas ou le nouveau bouton Actualiser sur l'Accueil recharge vos playlists, le guide et la météo. Réglages › Apparence propose une nouvelle Taille d'écran (Auto adapte l'app à votre appareil).
 - TV en direct peut d'abord afficher une chaîne dans une petite fenêtre, avec le programme actuel et le suivant. Appuyez à nouveau, ou sur Regarder en plein écran, pour le plein écran. Désactivable dans Réglages › Lecture.
@@ -5,4 +6,3 @@
 - Un vrai test de débit dans Réglages › Sources : ping, téléchargement et envoi sur un cadran en direct, avec ce que votre connexion peut lire.
 - Ajoutez une playlist depuis votre téléphone : dans Sources ou pendant la configuration, choisissez Afficher le QR code, scannez-le et collez-y le message de votre fournisseur, un lien ou fichier M3U, ou Xtream Codes. Tout arrive directement sur la TV par le Wi-Fi de la maison.
 - L'image dans l'image peut maintenant être désactivée dans Réglages › Lecture, pour qu'appuyer sur Accueil ne réduise plus le lecteur dans une petite fenêtre.
-- Le Replay a maintenant sa propre tuile sur l'accueil, à côté de TV en direct et du Guide TV, quand votre playlist a des chaînes qui gardent les programmes passés. Le bouton Replay a quitté le Guide TV.

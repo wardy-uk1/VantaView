@@ -1,3 +1,4 @@
+- Complementos com canais ao vivo ou eventos esportivos agora aparecem numa nova página TV esportiva, com seu próprio bloco no Início. Colar o endereço da página de configuração de um complemento (terminando em /configure) agora funciona como o link de instalação.
 - Na TV, o controle agora passa direto pelas caixas de texto com cima e baixo, e o teclado só abre quando você pressiona OK numa delas.
 - Canal acima e abaixo, e deslizar, agora seguem a lista de onde você abriu o canal: dos Favoritos você passa pelos seus favoritos. Puxar para baixo ou o novo botão Atualizar no Início recarrega suas listas, o guia e o clima. Configurações › Aparência tem um novo Tamanho da tela (Automático ajusta o app ao seu dispositivo).
 - A TV ao vivo pode mostrar um canal primeiro numa janela pequena, com o que passa agora e a seguir. Toque de novo, ou em Assistir em tela cheia, para tela cheia. Desative em Configurações › Reprodução.
@@ -5,4 +6,3 @@
 - Um teste de velocidade completo em Configurações › Fontes: ping, download e upload num mostrador ao vivo, com o que sua conexão consegue reproduzir.
 - Adicione uma playlist pelo celular: em Fontes ou na configuração, escolha Mostrar código QR, escaneie com o celular e cole lá a mensagem do provedor, um link ou arquivo M3U, ou Xtream Codes. Vai direto para a TV pelo Wi-Fi de casa.
 - O picture-in-picture agora pode ser desativado em Configurações › Reprodução, para que tocar em Início não reduza mais o player a uma janelinha.
-- O Catch-up agora tem seu próprio bloco no Início, ao lado de TV ao vivo e do Guia de TV, quando sua lista tem canais que guardam programas passados. O botão Catch-up saiu do Guia de TV.

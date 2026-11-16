@@ -196,6 +196,7 @@ private fun AppNav(
         route == "home" -> Section.HOME
         route == "live" -> Section.LIVE
         route == "catchup" -> Section.LIVE // Catch-up sits under Live TV in the menu
+        route == "sportstv" -> Section.HOME // Sports TV opens from its tile on Home
         route == "guide" -> Section.GUIDE
         route == "search" -> Section.SEARCH
         route.startsWith("library") -> Section.LIBRARY
@@ -342,10 +343,11 @@ private fun AppNav(
                 com.vantaview.app.feature.guide.GuideScreen(onPlay = { id -> nav.navigate("player/$id") }, onCatchUp = { nav.navigate("vod") }, onCatchUpPage = { nav.navigate("catchup") })
             }
             // Movies and TV Series are separate destinations so each keeps its own page and state.
-            listOf("movies" to "movie", "series" to "series").forEach { (route, kind) ->
+            // Sports TV: add-on rows of Stremio's "tv" and "channel" types (live channels and events).
+            listOf("movies" to "movie", "series" to "series", "sportstv" to "tv").forEach { (route, kind) ->
                 composable(route, arguments = listOf(navArgument("type") { type = NavType.StringType; defaultValue = kind })) {
                     CatalogScreen(
-                        title = if (kind == "series") "TV Series" else "Movies",
+                        title = when (kind) { "series" -> "TV Series"; "tv" -> "Sports TV"; else -> "Movies" },
                         onOpen = { m ->
                             nav.navigate(
                                 "details/${Uri.encode(m.type)}?id=${Uri.encode(m.id)}&name=${Uri.encode(m.name)}&poster=${Uri.encode(m.poster.orEmpty())}"

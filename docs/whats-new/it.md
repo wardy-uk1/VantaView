@@ -1,3 +1,4 @@
+- Gli add-on con canali in diretta o eventi sportivi ora compaiono in una nuova pagina TV sportiva, con un proprio riquadro nella Home. Incollare l'indirizzo della pagina di configurazione di un add-on (che termina con /configure) ora funziona come il suo link di installazione.
 - Sulla TV, il telecomando ora supera direttamente le caselle di testo con su e giù, e la tastiera si apre solo premendo OK su una casella.
 - Canale su e giù, e lo scorrimento, ora seguono l'elenco da cui hai aperto il canale: dai Preferiti scorri i tuoi preferiti. Trascinare in basso o il nuovo pulsante Aggiorna nella Home ricarica playlist, guida e meteo. Impostazioni › Aspetto ha una nuova Dimensione schermo (Auto adatta l'app al tuo dispositivo).
 - TV in diretta può mostrare prima un canale in una piccola finestra, con il programma in corso e il successivo. Premi di nuovo, o Guarda a schermo intero, per lo schermo intero. Disattivalo in Impostazioni › Riproduzione.
@@ -5,4 +6,3 @@
 - Un vero test di velocità in Impostazioni › Sorgenti: ping, download e upload su un indicatore in tempo reale, con ciò che la tua connessione può riprodurre.
 - Aggiungi una playlist dal telefono: in Sorgenti o durante la configurazione scegli Mostra codice QR, inquadralo col telefono e incolla lì il messaggio del provider, un link o file M3U o Xtream Codes. Arriva direttamente alla TV tramite la Wi-Fi di casa.
 - Il picture-in-picture ora si può disattivare in Impostazioni › Riproduzione, così premere Home non riduce più il lettore in una piccola finestra.
-- Il Replay ora ha il suo riquadro nella Home, accanto a TV in diretta e Guida TV, quando la tua playlist ha canali che conservano i programmi passati. Il pulsante Replay non è più nella Guida TV.

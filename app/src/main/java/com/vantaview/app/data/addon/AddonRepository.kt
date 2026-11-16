@@ -127,16 +127,19 @@ class AddonRepository @Inject constructor(
 
     /** Rows for a page: every catalog of [type] that works without a required extra. */
     suspend fun catalogs(type: String): List<CatalogRef> =
-        enabled().flatMap { a -> a.manifest.catalogs.filter { it.type == type && !it.needsExtra }.map { CatalogRef(a, it) } } +
-            portalVod.catalogs(portals(), type, parental.hiding) +
-            playlistVod.catalogs(playlists(), type, parental.hiding)
+        enabled().flatMap { a -> a.manifest.catalogs.filter { typeOk(it.type, type) && !it.needsExtra }.map { CatalogRef(a, it) } } +
+            if (type == TV) emptyList() else
+                portalVod.catalogs(portals(), type, parental.hiding) + playlistVod.catalogs(playlists(), type, parental.hiding)
+
+    /** Whether any add-on has rows for the Sports TV page (Stremio's "tv" and "channel" types). */
+    suspend fun hasTv(): Boolean = catalogs(TV).isNotEmpty()
 
     /**
      * Rows for a Kids profile: each catalogue filtered to a family genre where it offers one, plus catalogues
      * that are themselves for children.
      */
     suspend fun kidsCatalogs(type: String): List<CatalogRef> = enabled().flatMap { a ->
-        a.manifest.catalogs.filter { it.type == type }.mapNotNull { c ->
+        a.manifest.catalogs.filter { typeOk(it.type, type) }.mapNotNull { c ->
             val family = c.genres.firstOrNull { com.vantaview.app.data.profile.KidsFilter.isFamilyGenre(it) }
             val onlyGenreRequired = c.requiredExtras.all { it == "genre" }
             when {
@@ -166,9 +169,9 @@ class AddonRepository @Inject constructor(
     suspend fun search(type: String, query: String): List<MetaPreview> = coroutineScope {
         val q = query.trim()
         if (q.isEmpty()) return@coroutineScope emptyList()
-        val fromPortals = async { runCatching { portalVod.search(portals(), type, q) }.getOrDefault(emptyList()) }
-        val fromPlaylists = async { runCatching { playlistVod.search(playlists(), type, q) }.getOrDefault(emptyList()) }
-        val fromAddons = enabled().flatMap { a -> a.manifest.catalogs.filter { it.type == type && it.searchable }.map { a to it } }
+        val fromPortals = async { if (type == TV) emptyList() else runCatching { portalVod.search(portals(), type, q) }.getOrDefault(emptyList()) }
+        val fromPlaylists = async { if (type == TV) emptyList() else runCatching { playlistVod.search(playlists(), type, q) }.getOrDefault(emptyList()) }
+        val fromAddons = enabled().flatMap { a -> a.manifest.catalogs.filter { typeOk(it.type, type) && it.searchable }.map { a to it } }
             .map { (a, c) ->
                 async {
                     val url = "${a.base}/catalog/${enc(c.type)}/${enc(c.id)}/search=${enc(q)}.json"
@@ -332,5 +335,11 @@ class AddonRepository @Inject constructor(
     private suspend fun json(url: String, maxAgeMs: Long): JSONObject? = withContext(Dispatchers.IO) {
         if (maxAgeMs > 0) cache[url]?.let { (at, j) -> if (System.currentTimeMillis() - at < maxAgeMs) return@withContext j }
         runCatching { JSONObject(getText(url)) }.getOrNull()?.also { if (maxAgeMs > 0) cache[url] = System.currentTimeMillis() to it }
+    }
+
+    companion object {
+        /** The Sports TV page's type: it shows add-on rows of Stremio's "tv" and "channel" types. */
+        const val TV = "tv"
+        fun typeOk(catalogType: String, page: String) = catalogType == page || (page == TV && catalogType == "channel")
     }
 }

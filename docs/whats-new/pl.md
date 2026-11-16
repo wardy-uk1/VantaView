@@ -1,3 +1,4 @@
+- Dodatki z kanałami na żywo lub wydarzeniami sportowymi pojawiają się teraz na nowej stronie TV sportowa, z własnym kafelkiem na stronie głównej. Wklejenie adresu strony konfiguracji dodatku (kończącego się na /configure) działa teraz tak samo jak link instalacyjny.
 - Na telewizorze pilot przechodzi teraz w górę i w dół prosto obok pól tekstowych, a klawiatura otwiera się dopiero po naciśnięciu OK.
 - Kanał w górę i w dół oraz przesuwanie przechodzą teraz przez listę, z której otwarto kanał: z Ulubionych przechodzisz przez ulubione. Pociągnięcie w dół lub nowy przycisk Odśwież na stronie głównej wczytuje ponownie playlisty, przewodnik i pogodę. W Ustawienia › Wygląd jest nowy Rozmiar ekranu (Auto dopasowuje aplikację do urządzenia).
 - Telewizja na żywo może najpierw pokazać kanał w małym oknie, z tym, co leci teraz i później. Naciśnij ponownie lub Oglądaj na pełnym ekranie, aby przejść do pełnego ekranu. Wyłączysz to w Ustawienia › Odtwarzanie.
@@ -5,4 +6,3 @@
 - Prawdziwy test prędkości w Ustawienia › Źródła: ping, pobieranie i wysyłanie na żywym wskaźniku, z informacją, co Twoje łącze może odtwarzać.
 - Dodaj playlistę z telefonu: w Źródłach lub podczas konfiguracji wybierz Pokaż kod QR, zeskanuj go telefonem i wklej tam wiadomość od dostawcy, link lub plik M3U albo Xtream Codes. Trafia to prosto na telewizor przez domowe Wi-Fi.
 - Obraz w obrazie można teraz wyłączyć w Ustawienia › Odtwarzanie, aby Ekran główny nie zmniejszał już odtwarzacza do małego okna.
-- Archiwum ma teraz własny kafelek na stronie Start, obok TV na żywo i Programu TV, gdy Twoja playlista ma kanały z minionymi audycjami. Przycisk Archiwum zniknął z Programu TV.

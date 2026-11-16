@@ -1,3 +1,4 @@
+- Add-ons met livezenders of sportevenementen staan nu op een nieuwe pagina Sport-tv, met een eigen tegel op Start. Het adres van de instelpagina van een add-on plakken (eindigend op /configure) werkt nu net als de installatielink.
 - Op een tv gaat de afstandsbediening nu met omhoog en omlaag gewoon langs tekstvakken, en het toetsenbord opent pas als je op OK drukt.
 - Zender omhoog en omlaag, en vegen, gaan nu door de lijst waaruit je de zender opende: vanuit Favorieten ga je door je favorieten. Omlaag trekken of de nieuwe knop Vernieuwen op Start laadt je playlists, gids en weer opnieuw. Instellingen › Weergave heeft een nieuwe Schermgrootte (Auto past de app aan je apparaat aan).
 - Live-tv kan een zender eerst in een klein venster tonen, met wat er nu en straks op is. Druk nogmaals, of op Volledig scherm kijken, voor volledig scherm. Uit te zetten in Instellingen › Afspelen.
@@ -5,4 +6,3 @@
 - Een echte snelheidstest in Instellingen › Bronnen: ping, download en upload op een live meter, met wat je verbinding kan afspelen.
 - Voeg een playlist toe vanaf je telefoon: kies bij Bronnen of tijdens het instellen QR-code tonen, scan hem met je telefoon en plak daar het bericht van je provider, een M3U-link of -bestand, of Xtream Codes. Het gaat rechtstreeks via je wifi naar de tv.
 - Beeld-in-beeld kun je nu uitzetten bij Instellingen › Afspelen, zodat Home de speler niet meer tot een klein venster verkleint.
-- Terugkijken heeft nu een eigen tegel op Home, naast Live-tv en de tv-gids, als je playlist zenders heeft die eerdere programma's bewaren. De knop Terugkijken staat niet meer in de tv-gids.

@@ -173,7 +173,8 @@ fun HomeScreen(
 
             // The big tiles: Catch-up joins them when a playlist has channels that keep past programmes.
             val byRoute = tiles.toMap()
-            val order = listOf("live", "guide", "movies", "series") + listOfNotNull("catchup".takeIf { it in byRoute })
+            val order = listOf("live", "guide", "movies", "series") +
+                listOfNotNull("catchup".takeIf { it in byRoute }, "sportstv".takeIf { it in byRoute })
             if (wide) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth().height(150.dp)) {
                     order.forEach { r -> BigTile(r, byRoute[r]?.subtitle, Modifier.weight(1f).fillMaxHeight()) { onSection(r) } }
@@ -537,6 +538,7 @@ private val tileLook = mapOf(
     "movies" to Triple("Movies", Icons.Filled.Star, listOf(Color(0xFFFF5A14), Color(0xFFFFC81A))),
     "series" to Triple("TV Series", Icons.Filled.List, listOf(Color(0xFF19E57A), Color(0xFF0F8C78))),
     "catchup" to Triple("Catch-up", Icons.Filled.Refresh, listOf(Color(0xFFE5197A), Color(0xFF8C2FFF))),
+    "sportstv" to Triple("Sports TV", Icons.Filled.PlayArrow, listOf(Color(0xFF00A86B), Color(0xFF1E5BFF))),
 )
 
 /** A big coloured tile with an icon, the section name and a short line. */

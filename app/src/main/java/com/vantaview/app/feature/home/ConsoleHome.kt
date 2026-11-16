@@ -234,7 +234,8 @@ private fun BladesHome(d: Dash) {
             d.favs.take(4).forEach { ch -> add(ChannelNames.display(ch.name) to { com.vantaview.app.feature.player.ZapList.set(d.favs.map { it.id }); d.onPlayChannel(ch.id) }) }
         }, "live"))
         add(Blade("MOVIES & SERIES", listOf(
-            "Movies" to { d.onSection("movies") }, "TV Series" to { d.onSection("series") }, "Library" to { d.onSection("library") },
+            "Movies" to { d.onSection("movies") }, "TV Series" to { d.onSection("series") }, "Sports TV" to { d.onSection("sportstv") },
+            "Library" to { d.onSection("library") },
         ), "cards"))
         add(Blade("SYSTEM", buildList {
             if (d.sections.any { it == Section.SETTINGS }) add("Settings" to { d.onSection("settings") })

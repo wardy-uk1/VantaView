@@ -1,3 +1,4 @@
+- Add-ons mit Live-Sendern oder Sportereignissen erscheinen jetzt auf einer neuen Seite Sport-TV, mit eigener Kachel auf der Startseite. Die Adresse der Einrichtungsseite eines Add-ons (endet auf /configure) funktioniert jetzt genauso wie sein Installationslink.
 - Am Fernseher springt die Fernbedienung mit hoch und runter jetzt direkt über Textfelder, und die Tastatur öffnet sich erst, wenn du OK drückst.
 - Sender hoch und runter sowie Wischen gehen jetzt durch die Liste, aus der du den Sender geöffnet hast – aus den Favoriten also durch deine Favoriten. Herunterziehen oder der neue Aktualisieren-Knopf auf der Startseite lädt Playlists, TV-Guide und Wetter neu. Einstellungen › Darstellung hat eine neue Bildschirmgröße (Auto passt die App an dein Gerät an).
 - Live-TV kann einen Sender zuerst in einem kleinen Fenster zeigen, mit dem, was gerade und danach läuft. Nochmal drücken oder „Im Vollbild ansehen“ für Vollbild. Abschaltbar unter Einstellungen › Wiedergabe.
@@ -5,4 +6,3 @@
 - Ein richtiger Speedtest unter Einstellungen › Quellen: Ping, Download und Upload auf einer Live-Anzeige, dazu, was deine Verbindung abspielen kann.
 - Playlist vom Handy hinzufügen: Unter Quellen oder bei der Einrichtung „QR-Code zeigen“ wählen, mit dem Handy scannen und dort die Anbieter-Nachricht, einen M3U-Link oder eine M3U-Datei oder Xtream Codes eingeben. Alles geht direkt über dein WLAN an den Fernseher.
 - Bild-in-Bild lässt sich jetzt unter Einstellungen › Wiedergabe ausschalten, damit Home den Player nicht mehr zu einem kleinen Fenster verkleinert.
-- Catch-up hat jetzt eine eigene Kachel auf der Startseite, neben Live-TV und dem TV-Programm, wenn deine Playlist Sender mit vergangenen Sendungen hat. Die Catch-up-Schaltfläche ist aus dem TV-Programm verschwunden.
