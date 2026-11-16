@@ -89,7 +89,8 @@ key DPAD_RIGHT; sleep 1; shot home-right-1
 key DPAD_LEFT; sleep 1; shot home-left
 echo "---- remote: Live TV preview, then full screen, then channel up/down ----"
 home; tap_text "Live TV"; sleep 6
-key DPAD_RIGHT DPAD_DOWN DPAD_DOWN; sleep 1; shot live2-focus
+# From the groups on the left: right to the star, right again to the channel, then down two channels.
+key DPAD_DOWN DPAD_UP; sleep 1; key DPAD_RIGHT DPAD_RIGHT DPAD_DOWN DPAD_DOWN; sleep 1; shot live2-focus
 key DPAD_CENTER; sleep 10; shot live2-preview
 key DPAD_CENTER; sleep 10; shot live2-full
 key DPAD_UP; sleep 8; shot live2-ch-up
@@ -106,9 +107,12 @@ key DPAD_DOWN DPAD_DOWN DPAD_DOWN; sleep 1; shot settings2-down
 key DPAD_UP DPAD_UP DPAD_UP DPAD_UP DPAD_DOWN; sleep 1; key DPAD_CENTER; sleep 1; shot settings2-second-opened
 echo "---- remote: text boxes on Sources (down should pass them, no keyboard) ----"
 home; tap_text "Sources"; sleep 4
+key BACK; sleep 1
 for i in 1 2 3 4 5 6 7 8 9 10 11 12; do key DPAD_DOWN; done; sleep 1; shot sources-down; kb
 for i in 1 2 3 4 5 6; do key DPAD_DOWN; done; sleep 1; shot sources-down-more; kb
 key DPAD_UP DPAD_UP DPAD_UP; sleep 1; shot sources-up; kb
+# OK on a text box should start typing and open the keyboard.
+key DPAD_CENTER; sleep 2; shot sources-ok-on-box; kb; key BACK; sleep 1
 echo "---- remote: Show QR code ----"
 tap_text "Show QR code"; sleep 2; shot sources-qr
 key BACK; sleep 1

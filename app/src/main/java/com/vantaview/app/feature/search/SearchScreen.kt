@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.search
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import android.content.Context
 import android.content.Intent
 import android.speech.RecognizerIntent
@@ -32,7 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -212,7 +209,8 @@ fun SearchScreen(
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = { vm.remember() }),
-                    modifier = (Modifier.weight(1f).focusRequester(field)).then(Modifier.tvTextField()),
+                    modifier = Modifier.weight(1f).focusRequester(field),
+                    keyboardOnFocus = true,
                 )
                 if (voiceOk) FocusCard(onClick = {
                     runCatching {

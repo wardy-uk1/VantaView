@@ -3,9 +3,6 @@
 
 package com.vantaview.app.feature.settings
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import androidx.compose.material3.Switch
 import com.vantaview.app.ui.Text
 import androidx.compose.material3.TextButton
@@ -185,9 +182,9 @@ private fun NewPin(button: String, onSet: (String) -> Unit) {
 private fun PinBox(label: String, value: String, modifier: Modifier, onChange: (String) -> Unit) {
     OutlinedTextField(
         value = value, onValueChange = { v -> onChange(v.filter { it.isDigit() }.take(4)) },
-        label = { Text(label) }, singleLine = true, modifier = (modifier).then(Modifier.tvTextField()),
+        label = { Text(label) }, singleLine = true, modifier = modifier,
         visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.NumberPassword)).tvSafe(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
     )
 }
 
@@ -232,8 +229,7 @@ private fun CategoryTicks(vm: ParentalViewModel, providerId: Long) {
     val all = cats ?: run { Text("Loading…", color = Vanta.TextDim); return }
     OutlinedTextField(
         value = query, onValueChange = { query = it }, singleLine = true,
-        label = { Text("Find a category") }, modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
-        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
+        label = { Text("Find a category") }, modifier = Modifier.fillMaxWidth(),
     )
     // Adult ones first, so they're easy to check.
     val shown = all.filter { query.isBlank() || it.name.contains(query.trim(), true) }

@@ -123,6 +123,7 @@ fun HomeScreen(
     }
 
     val refreshing by vm.refreshing.collectAsStateWithLifecycle()
+    val pullState = androidx.compose.material3.pulltorefresh.rememberPullToRefreshState()
     var now by remember { mutableStateOf(Date()) }
     LaunchedEffect(Unit) { while (true) { now = Date(); delay(15_000) } }
 
@@ -140,7 +141,13 @@ fun HomeScreen(
                 ),
             )
         } else androidx.compose.material3.pulltorefresh.PullToRefreshBox(
-            isRefreshing = refreshing, onRefresh = vm::refreshAll, modifier = Modifier.fillMaxSize(),
+            isRefreshing = refreshing, onRefresh = vm::refreshAll, modifier = Modifier.fillMaxSize(), state = pullState,
+            // Pulling is for touch screens; on a TV the Refresh button shows its own spinner.
+            indicator = {
+                if (!com.vantaview.app.ui.TvInput.isTv) androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator(
+                    state = pullState, isRefreshing = refreshing, modifier = Modifier.align(Alignment.TopCenter),
+                )
+            },
         ) { Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

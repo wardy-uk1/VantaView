@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.sources
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -96,8 +93,8 @@ private fun AddonsContent(vm: AddonsViewModel = hiltViewModel()) {
             onValueChange = vm::editUrl,
             label = { Text("Add-on install link") },
             singleLine = true,
-            keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Uri)).tvSafe(),
-            modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            modifier = Modifier.fillMaxWidth(),
         )
         GradientButton("Install add-on", onClick = { vm.install() }, enabled = form.url.isNotBlank() && !form.busy)
         form.message?.let { Text(it, color = if (form.isError) Vanta.Error else Vanta.Cyan) }

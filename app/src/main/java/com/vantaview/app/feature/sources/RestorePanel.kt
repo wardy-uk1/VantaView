@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.sources
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import android.content.ActivityNotFoundException
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,7 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -156,12 +153,12 @@ private fun StremioLoginDialog(state: RestoreUi.StremioLogin, onSignIn: (String,
                 )
                 OutlinedTextField(
                     value = email, onValueChange = { email = it }, label = { Text("Stremio email") }, singleLine = true,
-                    keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Email)).tvSafe(), modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
                     value = password, onValueChange = { password = it }, label = { Text("Password") }, singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = (KeyboardOptions(keyboardType = KeyboardType.Password)).tvSafe(), modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth(),
                 )
                 state.error?.let { Text(it, color = Vanta.Error, fontSize = 13.sp) }
             }

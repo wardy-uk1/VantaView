@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.setup
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -111,8 +108,7 @@ fun SetupAddonsScreen(onDone: () -> Unit, vm: AddonsViewModel = hiltViewModel())
         Text("Have an add-on link?", color = Vanta.Text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
         OutlinedTextField(
             value = form.url, onValueChange = vm::editUrl, singleLine = true,
-            label = { Text("Add-on install link") }, modifier = (Modifier.fillMaxWidth()).then(Modifier.tvTextField()),
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
+            label = { Text("Add-on install link") }, modifier = Modifier.fillMaxWidth(),
         )
         FocusCard(onClick = { vm.install() }) { Text(if (form.busy) "Installing…" else "Install add-on", color = Vanta.Text) }
         form.message?.let { Text(it, color = if (form.isError) Vanta.Error else Vanta.Cyan, fontSize = 14.sp) }

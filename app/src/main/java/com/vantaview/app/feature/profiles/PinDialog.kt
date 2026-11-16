@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.profiles
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import com.vantaview.app.ui.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,11 +44,12 @@ fun PinDialog(title: String, message: String, check: (String) -> Boolean, onOk: 
                     },
                     label = { Text("PIN") },
                     singleLine = true,
+                    keyboardOnFocus = true,
                     isError = wrong,
                     supportingText = { if (wrong) Text("Wrong PIN, try again") },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                    modifier = (Modifier.fillMaxWidth().focusRequester(focus)).then(Modifier.tvTextField()),
+                    modifier = Modifier.fillMaxWidth().focusRequester(focus),
                 )
             }
         },

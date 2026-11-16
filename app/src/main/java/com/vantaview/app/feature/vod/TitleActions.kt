@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package com.vantaview.app.feature.vod
 
-import com.vantaview.app.ui.tvTextField
-import com.vantaview.app.ui.tvSafe
-
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -221,10 +218,9 @@ private fun ShareDialog(
                         Text(p.name, color = if (to?.id == p.id) Vanta.Cyan else Vanta.Text)
                     }
                 }
-                androidx.compose.material3.OutlinedTextField(
+                com.vantaview.app.ui.OutlinedTextField(
                     value = msg, onValueChange = { if (it.length <= 140) msg = it }, singleLine = false, maxLines = 3,
-                    label = { Text("Message (optional)") }, modifier = Modifier.fillMaxWidth().then(Modifier.tvTextField()),
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.tvSafe(),
+                    label = { Text("Message (optional)") }, modifier = Modifier.fillMaxWidth(),
                 )
             }
         },

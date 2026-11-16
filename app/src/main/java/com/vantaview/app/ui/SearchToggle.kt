@@ -10,7 +10,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import com.vantaview.app.ui.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +43,8 @@ fun SearchToggle(query: String, onQuery: (String) -> Unit, label: String, modifi
             trailingIcon = {
                 IconButton(onClick = { onQuery(""); open = false }) { Icon(Icons.Filled.Close, contentDescription = "Close search") }
             },
-            modifier = (modifier.fillMaxWidth().focusRequester(focus)).then(Modifier.tvTextField()),
+            modifier = modifier.fillMaxWidth().focusRequester(focus),
+            keyboardOnFocus = true,
         )
         LaunchedEffect(justOpened) { if (justOpened) { runCatching { focus.requestFocus() }; justOpened = false } }
     } else {
