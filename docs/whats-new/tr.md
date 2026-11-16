@@ -1,3 +1,4 @@
+- TV Rehberi'nde kumandadaki Geri'yi basılı tutarak izlediğin kanala tam ekran olarak hemen dön. Kısa basış eskisi gibi geri gider.
 - İlk kurulum artık bağlantını kontrol edip VantaView'u ona göre ayarlıyor: arabellek boyutu, önce hangi kalitenin deneneceği, torrentler ve Ana sayfadaki mini oynatıcı. İstediğin zaman Ayarlar › Kaynaklar'daki hız testinin altındaki Ayarlarımı ayarla ile tekrarla.
 - Oynatma listendeki film ve diziler artık sağlayıcının gruplarından gelen bir ülke veya dil etiketi (DE gibi) gösteriyor; ayrıntı sayfası hangi grupta olduğunu söylüyor. Minik harflerle yazılmış grup adları (⁴ᴷ ³⁸⁴⁰ᴾ gibi) artık normal okunuyor. Uygulama içinden güncellemeden sonra VantaView kendiliğinden yeniden açılıyor.
 - Bir eklenti bir başlık için video yerine yalnızca web sayfası sunduğunda, Tarayıcıda aç düğmeleri artık bunları tarayıcında açıyor. Spor TV artık film türleri ve yılları olmadan yalnızca eklentilerin satırlarını gösteriyor.
@@ -5,4 +6,3 @@
 - Canlı kanal veya spor etkinliği sunan eklentiler artık Ana sayfada kendi kutucuğu olan yeni Spor TV sayfasında görünüyor. Bir eklentinin kurulum sayfası adresini (/configure ile biten) yapıştırmak artık kurulum bağlantısı gibi çalışıyor.
 - TV'de kumanda artık yukarı ve aşağı ile metin kutularının yanından doğrudan geçiyor; klavye yalnızca birinde OK'a basınca açılıyor.
 - Kanal yukarı/aşağı ve kaydırma artık kanalı açtığın listeyi izliyor: Favoriler'den açtıysan favorilerin arasında gezersin. Ana sayfada aşağı çekmek veya yeni Yenile düğmesi oynatma listelerini, rehberi ve hava durumunu yeniler. Ayarlar › Görünüm'de yeni bir Ekran boyutu var (Otomatik, uygulamayı cihazına uydurur).
-- Canlı TV bir kanalı önce küçük bir pencerede, şimdi ve sonra ne olduğuyla birlikte gösterebilir. Tam ekran için tekrar bas veya Tam ekran izle'yi seç. Ayarlar › Oynatma'dan kapatılabilir.

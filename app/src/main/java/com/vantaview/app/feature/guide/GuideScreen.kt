@@ -38,6 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.onFocusChanged
@@ -95,7 +98,26 @@ fun GuideScreen(onPlay: (Long) -> Unit, onCatchUp: () -> Unit = {}, onCatchUpPag
     val dayStart = remember(day) { XmltvTime.dayStart(day) }
     var picked by remember { mutableStateOf<Picked?>(null) }
 
-    BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Page)) {
+    // Hold Back (a TV remote): straight back to the channel last watched, full screen. A short press is still Back.
+    var backHeld by remember { mutableStateOf(false) }
+    val holdBack = Modifier.onPreviewKeyEvent { e ->
+        if (e.key != androidx.compose.ui.input.key.Key.Back) return@onPreviewKeyEvent false
+        val native = e.nativeKeyEvent
+        when {
+            e.type == androidx.compose.ui.input.key.KeyEventType.KeyDown && native.repeatCount > 0 -> {
+                if (!backHeld) {
+                    val last = vm.lastChannelId()
+                    if (last > 0) { backHeld = true; onPlay(last) }
+                }
+                backHeld
+            }
+            // The Back released after a hold mustn't also close the page the player returns to.
+            e.type == androidx.compose.ui.input.key.KeyEventType.KeyUp && backHeld -> { backHeld = false; true }
+            else -> false
+        }
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Page).then(holdBack)) {
         val wide = maxWidth >= 720.dp
         val density = LocalDensity.current
         val minutePx = with(density) { (if (wide) 5.dp else 4.dp).toPx() }
@@ -128,6 +150,10 @@ fun GuideScreen(onPlay: (Long) -> Unit, onCatchUp: () -> Unit = {}, onCatchUpPag
                         maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f),
                     )
                 } else Spacer(Modifier.weight(1f))
+                // On a TV, a reminder of the hold-Back shortcut.
+                if (com.vantaview.app.ui.TvInput.isTv && remember { vm.lastChannelId() } > 0) {
+                    Text("Hold Back for full screen", color = Vanta.TextDim, fontSize = 13.sp, maxLines = 1, modifier = Modifier.padding(end = 10.dp))
+                }
                 if (providers.isNotEmpty()) {
                     FocusCard(onClick = vm::refreshGuide, padding = PaddingValues(10.dp), contentAlignment = Alignment.Center) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Reload the TV guide", tint = Vanta.Text)

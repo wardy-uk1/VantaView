@@ -1,3 +1,4 @@
+- Nella guida TV, tieni premuto Indietro sul telecomando per tornare subito al canale che guardavi, a schermo intero. Una pressione breve funziona come prima.
 - La prima configurazione ora controlla la connessione e regola VantaView di conseguenza: dimensione del buffer, quale qualità provare per prima, torrent e mini player nella Home. Ripetilo quando vuoi con Adatta le mie impostazioni sotto il test di velocità in Impostazioni › Sorgenti.
 - Film e serie della tua playlist ora mostrano un'etichetta di paese o lingua (come DE) dai gruppi del provider, e la pagina dei dettagli indica il gruppo. I nomi dei gruppi scritti in lettere minuscole (come ⁴ᴷ ³⁸⁴⁰ᴾ) ora si leggono normalmente. Dopo un aggiornamento dall'app, VantaView si riapre da solo.
 - Quando un add-on offre solo pagine web per un titolo invece di un video, i pulsanti Apri nel browser ora le aprono nel browser. TV sportiva ora mostra solo le righe degli add-on, senza generi e anni dei film.
@@ -5,4 +6,3 @@
 - Gli add-on con canali in diretta o eventi sportivi ora compaiono in una nuova pagina TV sportiva, con un proprio riquadro nella Home. Incollare l'indirizzo della pagina di configurazione di un add-on (che termina con /configure) ora funziona come il suo link di installazione.
 - Sulla TV, il telecomando ora supera direttamente le caselle di testo con su e giù, e la tastiera si apre solo premendo OK su una casella.
 - Canale su e giù, e lo scorrimento, ora seguono l'elenco da cui hai aperto il canale: dai Preferiti scorri i tuoi preferiti. Trascinare in basso o il nuovo pulsante Aggiorna nella Home ricarica playlist, guida e meteo. Impostazioni › Aspetto ha una nuova Dimensione schermo (Auto adatta l'app al tuo dispositivo).
-- TV in diretta può mostrare prima un canale in una piccola finestra, con il programma in corso e il successivo. Premi di nuovo, o Guarda a schermo intero, per lo schermo intero. Disattivalo in Impostazioni › Riproduzione.

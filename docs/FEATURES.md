@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] TV Guide: hold Back on the remote to go straight back to the last channel full screen
 - [x] First-launch connection check (step 4 of 5): speed test, then buffer size, stream quality tried first, torrents and Home mini player set to suit the line; "Adjust my settings for this connection" under the speed test; "Try streams up to this quality first" in Settings › Playback
 - [x] Playlist films and series show the country or language from the provider's group (a "DE" tag on posters, the group on the details page)
 - [x] Providers' tiny decorative letters (superscripts, small capitals) shown as ordinary text

@@ -1,3 +1,4 @@
+- In the TV Guide, hold Back on your remote to go straight back to the channel you were watching, full screen. A short press still goes back as before.
 - First setup now checks your connection and sets VantaView up to suit it: buffer size, which stream quality to try first, torrents and the Home mini player. Do it again any time with Adjust my settings under the speed test in Settings › Sources.
 - Playlist films and series now show a country or language tag (like DE) from your provider's groups, and the details page says which group they're in. Group names written in tiny letters (like ⁴ᴷ ³⁸⁴⁰ᴾ) now read normally. After an update from inside the app, VantaView opens again by itself.
 - When an add-on only offers web pages for a title instead of a video, Open in browser buttons now open them in your browser. Sports TV now shows just the add-ons' rows, without the film genres and years.
@@ -5,4 +6,3 @@
 - Add-ons with live channels or sports events now show on a new Sports TV page, with its own tile on Home. Pasting an add-on's set-up page address (ending in /configure) now works as well as its install link.
 - On a TV, the remote now moves straight past text boxes with up and down, and the keyboard only opens when you press OK on one.
 - Channel up and down, and swiping, now move through the list you opened the channel from, so from Favourites you go through your favourites. A pull-down or the new Refresh button on Home reloads your playlists, guide and weather. Settings › Appearance has a new Screen size (Auto fits the app to your device).
-- Live TV can preview a channel in a small window first, with what's on now and next. Press it again, or Watch full screen, to go full screen. Turn this off in Settings › Playback.

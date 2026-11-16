@@ -264,6 +264,9 @@ class LiveViewModel @Inject constructor(
         viewModelScope.launch { repo.setFavourite(row.channel, !row.isFav) }
     }
 
+    /** The channel last watched full screen (0 when none), for holding Back in the TV Guide. */
+    fun lastChannelId(): Long = session.lastChannel()
+
     fun refresh() {
         active.value?.let { repo.sync(it.id) }
     }

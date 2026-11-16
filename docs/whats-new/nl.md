@@ -1,3 +1,4 @@
+- Houd in de tv-gids Terug op je afstandsbediening ingedrukt om meteen terug te gaan naar de zender die je keek, volledig scherm. Kort drukken werkt zoals altijd.
 - De eerste installatie controleert nu je verbinding en stelt VantaView daarop in: buffergrootte, welke kwaliteit eerst wordt geprobeerd, torrents en de minispeler op Start. Doe het opnieuw wanneer je wilt met Mijn instellingen aanpassen onder de snelheidstest in Instellingen › Bronnen.
 - Films en series uit je playlist tonen nu een land- of taallabel (zoals DE) uit de groepen van je provider, en de detailpagina noemt de groep. Groepsnamen in piepkleine letters (zoals ⁴ᴷ ³⁸⁴⁰ᴾ) zijn nu gewoon leesbaar. Na een update vanuit de app opent VantaView vanzelf weer.
 - Als een add-on voor een titel alleen webpagina's biedt in plaats van een video, openen knoppen Openen in browser ze nu in je browser. Sport-tv toont nu alleen de rijen van add-ons, zonder filmgenres en jaren.
@@ -5,4 +6,3 @@
 - Add-ons met livezenders of sportevenementen staan nu op een nieuwe pagina Sport-tv, met een eigen tegel op Start. Het adres van de instelpagina van een add-on plakken (eindigend op /configure) werkt nu net als de installatielink.
 - Op een tv gaat de afstandsbediening nu met omhoog en omlaag gewoon langs tekstvakken, en het toetsenbord opent pas als je op OK drukt.
 - Zender omhoog en omlaag, en vegen, gaan nu door de lijst waaruit je de zender opende: vanuit Favorieten ga je door je favorieten. Omlaag trekken of de nieuwe knop Vernieuwen op Start laadt je playlists, gids en weer opnieuw. Instellingen › Weergave heeft een nieuwe Schermgrootte (Auto past de app aan je apparaat aan).
-- Live-tv kan een zender eerst in een klein venster tonen, met wat er nu en straks op is. Druk nogmaals, of op Volledig scherm kijken, voor volledig scherm. Uit te zetten in Instellingen › Afspelen.

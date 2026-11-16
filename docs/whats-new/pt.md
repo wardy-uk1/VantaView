@@ -1,3 +1,4 @@
+- No guia de TV, segure Voltar no controle para voltar direto ao canal que você assistia, em tela cheia. Um toque curto continua voltando como antes.
 - A primeira configuração agora verifica sua conexão e ajusta o VantaView a ela: tamanho do buffer, qual qualidade tentar primeiro, torrents e o miniplayer do Início. Refaça quando quiser com Ajustar minhas configurações abaixo do teste de velocidade em Configurações › Fontes.
 - Filmes e séries da sua lista agora mostram uma etiqueta de país ou idioma (como DE) vinda dos grupos do provedor, e a página de detalhes diz em qual grupo estão. Nomes de grupo em letrinhas minúsculas (como ⁴ᴷ ³⁸⁴⁰ᴾ) agora aparecem normais. Depois de uma atualização pelo app, o VantaView abre de novo sozinho.
 - Quando um complemento só oferece páginas web para um título em vez de um vídeo, botões Abrir no navegador agora as abrem no seu navegador. TV esportiva agora mostra só as fileiras dos complementos, sem gêneros e anos de filmes.
@@ -5,4 +6,3 @@
 - Complementos com canais ao vivo ou eventos esportivos agora aparecem numa nova página TV esportiva, com seu próprio bloco no Início. Colar o endereço da página de configuração de um complemento (terminando em /configure) agora funciona como o link de instalação.
 - Na TV, o controle agora passa direto pelas caixas de texto com cima e baixo, e o teclado só abre quando você pressiona OK numa delas.
 - Canal acima e abaixo, e deslizar, agora seguem a lista de onde você abriu o canal: dos Favoritos você passa pelos seus favoritos. Puxar para baixo ou o novo botão Atualizar no Início recarrega suas listas, o guia e o clima. Configurações › Aparência tem um novo Tamanho da tela (Automático ajusta o app ao seu dispositivo).
-- A TV ao vivo pode mostrar um canal primeiro numa janela pequena, com o que passa agora e a seguir. Toque de novo, ou em Assistir em tela cheia, para tela cheia. Desative em Configurações › Reprodução.
