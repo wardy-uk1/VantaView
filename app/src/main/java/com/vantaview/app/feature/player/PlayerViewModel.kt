@@ -83,7 +83,7 @@ class PlayerViewModel @Inject constructor(
     val ai: com.vantaview.app.data.aisubs.AiSubtitleEngine? =
         if (aiSubs.active) com.vantaview.app.data.aisubs.AiSubtitleEngine(aiSubs) else null
 
-    val player: ExoPlayer = (ai?.let { ExoPlayer.Builder(context, it.renderers(context)) } ?: ExoPlayer.Builder(context))
+    val player: ExoPlayer = com.vantaview.app.data.player.PlayerTuning.builder(context, ai?.renderers(context), live = true)
         .setLoadControl(settings.loadControl())
         .build()
 
@@ -528,7 +528,7 @@ class PlayerViewModel @Inject constructor(
                 hls -> setMimeType(MimeTypes.APPLICATION_M3U8)
             }
         }
-        val factory = DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http))
+        val factory = DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http), com.vantaview.app.data.player.PlayerTuning.extractors())
         // ClearKey or Widevine channels: the keys or licence server from the playlist.
         drm?.let { com.vantaview.app.data.player.Drm.apply(it, builder, factory, http) }
         val source = factory.createMediaSource(builder.build())

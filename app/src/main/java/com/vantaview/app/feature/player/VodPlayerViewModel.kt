@@ -72,7 +72,7 @@ class VodPlayerViewModel @Inject constructor(
     val ai: com.vantaview.app.data.aisubs.AiSubtitleEngine? =
         if (aiSubs.active) com.vantaview.app.data.aisubs.AiSubtitleEngine(aiSubs) else null
 
-    val player: ExoPlayer = (ai?.let { ExoPlayer.Builder(context, it.renderers(context)) } ?: ExoPlayer.Builder(context))
+    val player: ExoPlayer = com.vantaview.app.data.player.PlayerTuning.builder(context, ai?.renderers(context), live = false)
         .setLoadControl(settings.loadControl())
         .setSeekBackIncrementMs(10_000)
         .setSeekForwardIncrementMs(10_000)
@@ -141,6 +141,11 @@ class VodPlayerViewModel @Inject constructor(
     val tracksVersion: StateFlow<Int> = _tracksVersion
     fun trackChoices(type: Int) = TrackPrefs.choices(player, type)
     fun pickTrack(type: Int, c: TrackChoice) { pickedTracks = true; TrackPrefs.pick(player, type, c) }
+
+    /** How the picture fills the screen (Fit, Fill or Zoom), shared with live TV. */
+    private val _size = kotlinx.coroutines.flow.MutableStateFlow(settings.size)
+    val size: kotlinx.coroutines.flow.StateFlow<com.vantaview.app.data.StreamSize> = _size
+    fun cycleSize() { _size.value = _size.value.next(); settings.size = _size.value }
 
     private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
 
@@ -446,7 +451,7 @@ class VodPlayerViewModel @Inject constructor(
                     .build()
             })
         }.build()
-        player.setMediaSource(DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http)).createMediaSource(item))
+        player.setMediaSource(DefaultMediaSourceFactory(DefaultDataSource.Factory(context, http), com.vantaview.app.data.player.PlayerTuning.extractors()).createMediaSource(item))
         player.prepare()
         if (positionMs > 0) player.seekTo(positionMs)
         player.playWhenReady = true

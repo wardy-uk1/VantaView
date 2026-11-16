@@ -47,6 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import kotlin.math.roundToInt
@@ -156,7 +159,9 @@ fun PlayerScreen(onBack: () -> Unit, vm: PlayerViewModel = hiltViewModel()) {
             controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             if (portrait) controller?.show(WindowInsetsCompat.Type.systemBars())
             else controller?.hide(WindowInsetsCompat.Type.systemBars())
-            onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()) }
+            // Full screen covers the camera notch too.
+            com.vantaview.app.ui.FullScreen.cover(window, !portrait)
+            onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()); com.vantaview.app.ui.FullScreen.cover(window, false) }
         }
 
         val video: @Composable (Modifier) -> Unit = { m ->
@@ -420,6 +425,7 @@ private fun VideoArea(
                 Column(
                     Modifier.fillMaxWidth()
                         .background(Brush.verticalGradient(listOf(Color(0xCC000000), Color.Transparent)))
+                        .windowInsetsPadding(WindowInsets.displayCutout)
                         .padding(horizontal = pad, vertical = if (compact) 8.dp else 16.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
@@ -452,6 +458,7 @@ private fun VideoArea(
                 Column(
                     Modifier.fillMaxWidth()
                         .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC000000))))
+                        .windowInsetsPadding(WindowInsets.displayCutout)
                         .padding(horizontal = pad, vertical = if (compact) 8.dp else 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {

@@ -33,6 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +65,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
     val ui by vm.ui.collectAsStateWithLifecycle()
     var playerView by remember { mutableStateOf<PlayerView?>(null) }
     val context = LocalContext.current
+    val size by vm.size.collectAsStateWithLifecycle()
     val activity = context as? Activity
     val isTv = remember { context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) }
     var controls by remember { mutableStateOf(true) }
@@ -87,7 +91,9 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
         val controller = window?.let { WindowCompat.getInsetsController(it, it.decorView) }
         controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         controller?.hide(WindowInsetsCompat.Type.systemBars())
-        onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()) }
+        // Full screen covers the camera notch too.
+        com.vantaview.app.ui.FullScreen.cover(window, true)
+        onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()); com.vantaview.app.ui.FullScreen.cover(window, false) }
     }
 
     // Back: the first press hides the controls, the next one leaves the player.
@@ -108,6 +114,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     setShowSubtitleButton(true)
                     TrackPrefs.style(this, vm.settings)
                     // Settings › Playback: how long the controls stay (0 = until hidden).
+                    resizeMode = vm.size.value.mode
                     controllerShowTimeoutMs = vm.settings.controlsSeconds.let { if (it <= 0) 0 else it * 1000 }
                     setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { v -> controls = v == android.view.View.VISIBLE })
                     player = vm.player
@@ -115,6 +122,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     playerView = this
                 }
             },
+            update = { it.resizeMode = size.mode },
             onRelease = { it.player = null },
             modifier = Modifier.fillMaxSize(),
         )
@@ -171,6 +179,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     modifier = Modifier.horizontalScroll(rememberScrollState()),
                 ) {
                     if (ui.isSeries) FocusCard(onClick = { vm.loadEpisodes(); episodesOpen = true }) { Text("Episodes", color = Vanta.Text, maxLines = 1) }
+                    FocusCard(onClick = vm::cycleSize) { Text(com.vantaview.app.ui.tr("Size: {0}", com.vantaview.app.ui.tr(size.label)), color = Vanta.Text, maxLines = 1) }
                     FocusCard(onClick = { speedOpen = true }) { Text(if (ui.speed == 1f) "Speed" else "${ui.speed}×", color = Vanta.Text, maxLines = 1) }
                     FocusCard(onClick = { moreOpen = true }) { Text("⋯ More", color = Vanta.Text, maxLines = 1) }
                     if (ui.streams.size > 1) {
@@ -188,6 +197,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
             Column(
                 Modifier.fillMaxWidth()
                     .background(Brush.verticalGradient(listOf(Color(0xCC000000), Color.Transparent)))
+                    .windowInsetsPadding(WindowInsets.displayCutout)
                     .padding(horizontal = if (compact) 12.dp else 20.dp, vertical = if (compact) 8.dp else 14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {

@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Smoother playback: decoder fallback, live streams at exactly normal speed, tolerant MPEG-TS reading; players cover the camera notch in full screen; Size (Fit, Fill, Zoom) in the films and series player too
 - [x] Merge the same channel (Settings › Channels: off, within each playlist, across playlists, or both; on by default): same guide ID or same name without quality tags and country prefixes; best source plays, the next takes over by itself when one fails; Source button in the player
 - [x] Subtitles: Croatian, Serbian and Bosnian (standing in for each other), plus Slovenian, Macedonian and Bulgarian; subtitles from installed Stremio subtitle add-ons in your language
 - [x] "Ends at" time in this device's time zone: player controls, the paused screen and the details page
