@@ -129,7 +129,7 @@ class CatalogViewModel @Inject constructor(
                     // Portals and playlists with films or series count as sources: their titles are rows too
                     // (not on Kids profiles). A playlist's rows are read again, as a refresh may have changed them.
                     val sources = addons.count { a -> a.entity.enabled } + rows.count { r -> r.addon.entity.id < 0 }
-                    it.copy(loaded = true, kids = kids, addonCount = sources, rows = rows, tiles = browse.tiles(type, kids),
+                    it.copy(loaded = true, kids = kids, addonCount = sources, rows = rows, tiles = if (type == com.vantaview.app.data.addon.AddonRepository.TV) emptyList() else browse.tiles(type, kids),
                         rowStates = it.rowStates.filterKeys { k -> rows.any { r -> r.key == k && r.addon.entity.id > -1_000_000_000L } })
                 }
                 rows.forEach { load(it) }

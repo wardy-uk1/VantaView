@@ -51,6 +51,8 @@ fun CatalogScreen(
     vm: CatalogViewModel = hiltViewModel(),
 ) {
     val wide = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >= 720
+    // Sports TV: just the add-ons' own rows, without the film and series browsing (tiles, genres, years, order).
+    val sports = vm.type == com.vantaview.app.data.addon.AddonRepository.TV
     val ui by vm.ui.collectAsStateWithLifecycle()
     val query by vm.query.collectAsStateWithLifecycle()
 
@@ -65,7 +67,8 @@ fun CatalogScreen(
         // Only when there's truly nothing: no add-ons, and no portal or playlist with films or series.
         if (ui.loaded && ui.addonCount == 0 && ui.rows.isEmpty()) {
             Empty(
-                if (vm.type == "series") "No add-ons or portals yet. Install Stremio or Nuvio add-ons, or add a Stalker portal, on the Sources page and their series appear here."
+                if (sports) "No add-ons with live channels or events yet. Install one on the Sources page and its rows appear here."
+                else if (vm.type == "series") "No add-ons or portals yet. Install Stremio or Nuvio add-ons, or add a Stalker portal, on the Sources page and their series appear here."
                 else "No add-ons or portals yet. Install Stremio or Nuvio add-ons, or add a Stalker portal, on the Sources page and their films appear here.",
                 "Add an add-on", onAddAddon,
             )
@@ -88,7 +91,7 @@ fun CatalogScreen(
             item(key = "view") {
                 FocusCard(onClick = { vm.setGrid(!grid) }) { Text(if (grid) "☰ Rows" else "▦ Posters", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
             }
-            items(CatalogSort.entries.toList(), key = { it.name }) { o ->
+            if (!sports) items(CatalogSort.entries.toList(), key = { it.name }) { o ->
                 FocusCard(onClick = { vm.setSort(o) }, selected = o == sort) {
                     Text(o.label, color = if (o == sort) Vanta.Cyan else Vanta.Text, fontSize = 14.sp,
                         fontWeight = if (o == sort) FontWeight.Bold else FontWeight.Normal)
@@ -96,8 +99,8 @@ fun CatalogScreen(
             }
         }
         // Filters: genre, decade and source (add-on or portal).
-        Spacer(Modifier.height(8.dp))
-        androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (!sports) Spacer(Modifier.height(8.dp))
+        if (!sports) androidx.compose.foundation.lazy.LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             item { FocusCard(onClick = { picking = "genre" }, selected = filter.genre != null) { Text("Genre: ${filter.genre ?: "Any"} ▾", color = Vanta.Text, fontSize = 14.sp) } }
             item {
                 FocusCard(onClick = { picking = "year" }, selected = filter.decade != null) {
