@@ -834,6 +834,7 @@
 "Storage": "Armazenamento",
 "Stream default": "Padrão da transmissão",
 "Streams": "Transmissões",
+"Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://), or the address of its set-up page. Their films and series appear on the Movies and TV Series pages, and live channels and events on Sports TV.": "Os complementos do Stremio funcionam aqui exatamente como no Stremio e no Nuvio. Cole o link de instalação de um complemento (termina em manifest.json ou começa com stremio://), ou o endereço da página de configuração. Filmes e séries aparecem nas páginas Filmes e Séries, e canais e eventos ao vivo em TV esportiva.",
 "Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://). Their films and series appear on the Movies and TV Series pages.": "Complementos do Stremio funcionam aqui exatamente como no Stremio e no Nuvio. Cole o link de instalação de um complemento (termina em manifest.json ou começa com stremio://). Os filmes e séries deles aparecem nas páginas Filmes e Séries.",
 "Stremio didn't accept that email or password": "O Stremio não aceitou esse e-mail ou senha",
 "Stremio email": "E-mail do Stremio",

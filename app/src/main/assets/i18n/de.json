@@ -815,6 +815,7 @@
 "Stop": "Stopp",
 "Storage": "Speicher",
 "Stream default": "Wie im Stream",
+"Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://), or the address of its set-up page. Their films and series appear on the Movies and TV Series pages, and live channels and events on Sports TV.": "Stremio-Add-ons funktionieren hier genauso wie in Stremio und Nuvio. Füge den Installationslink eines Add-ons ein (endet auf manifest.json oder beginnt mit stremio://) oder die Adresse seiner Einrichtungsseite. Filme und Serien erscheinen unter Filme und Serien, Live-Sender und -Ereignisse unter Sport-TV.",
 "Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://). Their films and series appear on the Movies and TV Series pages.": "Stremio-Add-ons funktionieren hier genau wie in Stremio und Nuvio. Füge den Installationslink eines Add-ons ein (er endet auf manifest.json oder beginnt mit stremio://). Ihre Filme und Serien erscheinen auf den Seiten Filme und Serien.",
 "Stremio didn't accept that email or password": "Stremio hat diese E-Mail oder dieses Passwort nicht akzeptiert",
 "Stremio email": "Stremio-E-Mail",

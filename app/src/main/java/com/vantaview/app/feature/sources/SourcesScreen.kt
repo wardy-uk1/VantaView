@@ -84,8 +84,8 @@ private fun AddonsContent(vm: AddonsViewModel = hiltViewModel()) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             "Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link " +
-                "(it ends in manifest.json, or starts with stremio://). Their films and series appear on the " +
-                "Movies and TV Series pages.",
+                "(it ends in manifest.json, or starts with stremio://), or the address of its set-up page. Their films and series " +
+                "appear on the Movies and TV Series pages, and live channels and events on Sports TV.",
             color = Vanta.TextDim,
         )
         OutlinedTextField(

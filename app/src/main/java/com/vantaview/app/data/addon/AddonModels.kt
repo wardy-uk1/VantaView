@@ -100,6 +100,11 @@ data class Manifest(
             if (!url.startsWith("http://", true) && !url.startsWith("https://", true)) url = "https://$url"
             url = url.substringBefore('#').trimEnd('/')
             if (url.endsWith("/configure", true)) url = url.dropLast("/configure".length)
+            // Another file of the add-on (a collection list, say): its manifest sits beside it.
+            val last = url.substringAfterLast('/')
+            if (last.endsWith(".json", true) && !last.equals("manifest.json", true) && url.count { it == '/' } > 2) {
+                url = url.substringBeforeLast('/')
+            }
             if (!url.endsWith("/manifest.json")) url += "/manifest.json"
             return url
         }

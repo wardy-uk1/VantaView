@@ -14,6 +14,10 @@ class ManifestUrlTest {
         assertEquals("https://example.org/abc/manifest.json", Manifest.normalizeUrl("https://example.org/abc/configure/"))
     }
 
+    @Test fun otherJsonFileBecomesManifest() {
+        assertEquals("https://example.org/abc/manifest.json", Manifest.normalizeUrl("https://example.org/abc/collections.json"))
+    }
+
     @Test fun appSchemes() {
         assertEquals("https://example.org/x/manifest.json", Manifest.normalizeUrl("stremio://example.org/x/manifest.json"))
         assertEquals("https://example.org/x/manifest.json", Manifest.normalizeUrl("nuvio://example.org/x/manifest.json"))

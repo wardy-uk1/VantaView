@@ -836,6 +836,7 @@
 "Storage": "Pamięć",
 "Stream default": "Domyślne strumienia",
 "Streams": "Strumienie",
+"Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://), or the address of its set-up page. Their films and series appear on the Movies and TV Series pages, and live channels and events on Sports TV.": "Dodatki Stremio działają tu dokładnie tak jak w Stremio i Nuvio. Wklej link instalacyjny dodatku (kończy się na manifest.json lub zaczyna od stremio://) albo adres jego strony konfiguracji. Filmy i seriale pojawiają się na stronach Filmy i Seriale, a kanały i wydarzenia na żywo w TV sportowa.",
 "Stremio add-ons work here exactly as they do in Stremio and Nuvio. Paste an add-on's install link (it ends in manifest.json, or starts with stremio://). Their films and series appear on the Movies and TV Series pages.": "Dodatki Stremio działają tu dokładnie tak jak w Stremio i Nuvio. Wklej link instalacyjny dodatku (kończy się na manifest.json lub zaczyna od stremio://). Jego filmy i seriale pojawią się na stronach Filmy i Seriale.",
 "Stremio didn't accept that email or password": "Stremio nie zaakceptowało tego e-maila lub hasła",
 "Stremio email": "E-mail Stremio",
