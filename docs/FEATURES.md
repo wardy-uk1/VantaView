@@ -201,6 +201,7 @@ This file is ticked off in the same commit that finishes a feature.
 - [x] Console-style looks: Blades, Stack, Tiles, Fluent, Cross and Spotlight, each with its own Home dashboard on wide screens, plus its colours, background, menu, card corners and headings on every page
 - [x] Stalker portals: films and series on the Movies and TV Series pages, the portal's own TV guide, and Smart Add spots a portal address with a MAC address; full MAG sign-in, portal logos, optional box details (credit: Stalker-Portal by Jitendra Unatti)
 - [x] Release 1.0.1: fast non-debug builds (about 3 s to open on the TV emulators), logo shown on launch
+- [x] Release 2.0.1 published (connection check in first setup)
 - [x] Release 2.0.0 published (playlist films and series, eight languages, torrents, Sports TV, add from phone, and more)
 - [x] Press and hold a poster (or the remote's Menu key) for Watchlist and Watched; an episode's "⋯" marks it or its whole season as watched
 
