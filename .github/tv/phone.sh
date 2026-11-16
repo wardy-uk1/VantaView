@@ -114,8 +114,14 @@ sleep 12; shot player-portrait
 s=$(size); w=${s%x*}; h=${s#*x}; adb shell input tap $((w/2)) $((h/6)); sleep 1; shot player-portrait-controls
 rotate 1; shot player-landscape
 adb shell input tap 400 300; sleep 1; shot player-landscape-controls
-# A preview window first? Then the full player (the Size button is there).
-controls; dump; grep -q 'text="Size:' $OUT/ui.xml || { [ -n "$xy" ] && adb shell input tap $xy; sleep 8; }
+# Open a channel straight into the full player (as a reminder notification does), sideways.
+rotate 1; hidekb
+for ch in 20 40 60; do
+  adb shell am start -n com.vantaview.app/.MainActivity --el play_channel $ch >/dev/null; sleep 14; controls; dump
+  grep -q 'text="Size:' $OUT/ui.xml && break
+  adb shell input keyevent KEYCODE_BACK; sleep 2
+done
+shot player-for-sizes
 # Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
 for i in 1 2 3 4 5 6 7; do
   controls; tap_text "Size:"; sleep 2; shot "size-$i"
