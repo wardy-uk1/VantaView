@@ -295,7 +295,9 @@ class LiveViewModel @Inject constructor(
     init {
         // Load the TV guide for the playlist in use when it's missing or old.
         viewModelScope.launch {
-            active.collect { p -> if (p != null) guide.ensureFresh(p) }
+            // All playlists: every playlist's guide is loaded (when it's missing or old).
+            combine(active, showingAll, providers) { p, all, list -> if (all) list else listOfNotNull(p) }
+                .collect { list -> list.forEach { guide.ensureFresh(it) } }
         }
         // A different profile has its own last-used playlist.
         viewModelScope.launch {
