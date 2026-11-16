@@ -52,6 +52,13 @@
         </activity>
         <receiver android:name=".data.library.ReminderReceiver" android:exported="false" />
 
+        <!-- Opens VantaView again after an update it started. -->
+        <receiver android:name=".data.update.UpdatedReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Hands a downloaded update to Android's installer. -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -120,6 +120,8 @@ data class MetaPreview(
     val year: String?,
     val rating: String?,
     val genres: List<String> = emptyList(),
+    /** Playlist films and series: the country or language from the provider's group ("DE"). */
+    val tag: String? = null,
 )
 
 data class Video(
@@ -149,6 +151,8 @@ data class MetaDetail(
     val videos: List<Video>,
     /** A YouTube video id for the trailer, when the add-on gives one. */
     val trailer: String? = null,
+    /** Playlist films and series: the provider's group it's in ("DE - FILME 2025/2026"). */
+    val group: String? = null,
 )
 
 /**

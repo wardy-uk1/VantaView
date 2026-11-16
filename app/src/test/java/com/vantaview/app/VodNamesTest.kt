@@ -21,4 +21,13 @@ class VodNamesTest {
         assertEquals(Triple("Friends", 3, 14), VodNames.episode("Friends 3x14"))
         assertNull(VodNames.episode("The Batman (2022)"))
     }
+
+    @Test fun langTag() {
+        assertEquals("DE", VodNames.langTag("DE - FILME 2025/2026"))
+        assertEquals("EN", VodNames.langTag("|EN| Action"))
+        assertEquals("DE", VodNames.langTag("DE - ²¹⁶⁰ᵖ ᴰⱽ ᴴᴰᴿ¹⁰/ᴾᴸᵁˢ"))
+        assertNull(VodNames.langTag("VOD - Action"))
+        assertNull(VodNames.langTag("Action"))
+        assertNull(VodNames.langTag(null))
+    }
 }

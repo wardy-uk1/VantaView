@@ -113,6 +113,8 @@ fun DetailsScreen(
                         val facts = listOfNotNull(meta?.year, meta?.runtime, meta?.rating?.let { "IMDb $it" }).joinToString("  ·  ")
                         if (facts.isNotEmpty()) Text(facts, color = Vanta.TextDim, fontSize = 14.sp)
                         if (!meta?.genres.isNullOrEmpty()) Text(meta!!.genres.joinToString(", "), color = Vanta.TextDim, fontSize = 13.sp)
+                        // Which of the provider's groups it's in, so the language or country is clear ("DE - FILME 2025/2026").
+                        meta?.group?.let { g -> Text(com.vantaview.app.ui.tr("In your playlist: {0}", g), color = Vanta.Cyan, fontSize = 13.sp) }
                     }
                 }
             }

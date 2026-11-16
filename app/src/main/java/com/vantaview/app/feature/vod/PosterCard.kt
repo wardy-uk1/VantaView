@@ -51,6 +51,15 @@ fun PosterCard(item: MetaPreview, onClick: () -> Unit, modifier: Modifier = Modi
                         contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize(),
                     )
                 }
+                // Playlist titles: the country or language from the provider's group ("DE").
+                item.tag?.let {
+                    Text(
+                        it, color = androidx.compose.ui.graphics.Color.White, fontSize = 11.sp, maxLines = 1,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.TopEnd).padding(6.dp)
+                            .clip(RoundedCornerShape(6.dp)).background(androidx.compose.ui.graphics.Color(0xCC000000)).padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
                 // e.g. "New episode" on a series from the Watchlist.
                 badge?.let {
                     Text(

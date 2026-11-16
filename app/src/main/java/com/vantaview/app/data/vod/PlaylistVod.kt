@@ -91,6 +91,7 @@ class PlaylistVod @Inject constructor(
     private fun preview(v: VodEntity) = MetaPreview(
         id = "pl:${v.providerId}:${v.kind}:${v.remoteId}", type = v.kind, name = v.name, poster = v.poster,
         year = v.year?.toString(), rating = v.rating, genres = listOfNotNull(v.groupName),
+        tag = VodNames.langTag(v.groupName) ?: VodNames.langTag(v.name),
     )
 
     private suspend fun row(id: String): VodEntity? {
@@ -122,6 +123,7 @@ class PlaylistVod @Inject constructor(
             genres = d?.genres ?: listOfNotNull(v.groupName), cast = d?.cast.orEmpty(), director = d?.director.orEmpty(),
             videos = if (v.kind == "series") episodes(v, info) else emptyList(),
             trailer = d?.trailer,
+            group = v.groupName,
         )
     }
 

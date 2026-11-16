@@ -147,6 +147,9 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Playlist films and series show the country or language from the provider's group (a "DE" tag on posters, the group on the details page)
+- [x] Providers' tiny decorative letters (superscripts, small capitals) shown as ordinary text
+- [x] After an in-app update, VantaView opens again by itself (Android 9 and older, including Fire TV), or offers a tap-to-open notification
 - [x] Open in browser: when add-ons only offer web-page links (Stremio's externalUrl) for a title, buttons open them in the device's browser
 - [x] Playlists page shows each playlist's server address, username (Xtream), when it was added and last loaded; new playlists without a name are named after their server; playlists can be switched off (hidden everywhere and not refreshed) and on again
 - [x] Sports TV page (tile on Home when an add-on has them): add-on rows of Stremio's "tv" and "channel" types; add-on links also accepted as a "…/configure" page address or a nuvio:// link

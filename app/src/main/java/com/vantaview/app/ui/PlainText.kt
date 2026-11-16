@@ -17,8 +17,23 @@ object PlainText {
             "ABCDEFGHIJKLMNOPRSTUVWYZ"
     private val map: Map<Char, Char> = FROM.indices.associate { FROM[it] to TO[it] }
 
+    private val capitals: Set<Char> = (FROM.substring(30, 49) + FROM.substring(74)).toSet()
+
     fun of(s: String): String {
         if (s.none { it in map }) return s
-        return buildString(s.length) { s.forEach { c -> append(map[c] ?: c) } }
+        // Runs of tiny letters keep one case: providers mix them up ("ᴾᴸᵁˢ" has a small "s"), so a run with any
+        // capital in it is shown in capitals ("PLUS").
+        val out = StringBuilder(s.length)
+        var i = 0
+        while (i < s.length) {
+            if (s[i] !in map) { out.append(s[i]); i++; continue }
+            var j = i
+            while (j < s.length && s[j] in map) j++
+            val run = s.substring(i, j)
+            val plain = run.map { map.getValue(it) }.joinToString("")
+            out.append(if (run.any { it in capitals }) plain.uppercase() else plain)
+            i = j
+        }
+        return out.toString()
     }
 }

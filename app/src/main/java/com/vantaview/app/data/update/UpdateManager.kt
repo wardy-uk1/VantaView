@@ -228,6 +228,8 @@ class UpdateManager @Inject constructor(
                 val intent = Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "application/vnd.android.package-archive")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                // UpdatedReceiver opens VantaView again once the installer has replaced it.
+                sp.edit().putLong("installing_at", System.currentTimeMillis()).commit()
                 withContext(Dispatchers.Main) { context.startActivity(intent) }
                 _state.value = UpdateState.Available(info)
             } catch (e: Exception) {

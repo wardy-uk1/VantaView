@@ -6,6 +6,19 @@ package com.vantaview.app.data.vod
  * These turn them into a clean name to show, a year, an episode number, and a matching key.
  */
 object VodNames {
+    private val tagRe = Regex("""^\W*([A-Z]{2,3})\W*(?:[-:|\]]|\s)""")
+    private val notLanguage = setOf("VOD", "4K", "HD", "UHD", "FHD", "SD", "TOP", "NEW", "ALL", "THE", "VIP", "PPV", "TV", "DV", "HDR", "BOX")
+
+    /**
+     * The country or language a provider put at the front of a group or title ("DE - FILME 2025/2026" is DE,
+     * "|EN| Action" is EN), for the small tag on playlist films and series. Null when there isn't one.
+     */
+    fun langTag(text: String?): String? {
+        val t = com.vantaview.app.ui.PlainText.of(text ?: return null)
+        val code = tagRe.find(t)?.groupValues?.get(1)?.uppercase() ?: return null
+        return code.takeIf { it !in notLanguage }
+    }
+
     private val prefix = Regex("""^\s*(?:[|\[(]\s*[A-Za-z]{2,4}\s*[|\])]|[A-Z]{2,4}\s*[-:|]|(?:4K|UHD|FHD|HD|VOD|MULTI)\s*[-:|])\s*""")
     private val yearRe = Regex("""[(\[]\s*((?:19\d{2}|20[0-3]\d))\s*[)\]]|[-–]\s*((?:19\d{2}|20[0-3]\d))\s*$|\s((?:19\d{2}|20[0-3]\d))\s*$""")
     private val quality = Regex("""(?i)[\s\-|\[(]*\b(2160p|1080p|720p|480p|4k|uhd|fhd|hdr|hevc|x26[45]|h\.?26[45]|multi(?:-sub)?|vostfr|dual|sub|dubbed)\b[)\]]*""")
