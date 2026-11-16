@@ -128,7 +128,7 @@ fun AppearanceSection(s: AppearanceSettings) {
             color = Vanta.TextDim, fontSize = 13.sp,
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            lm.Mode.entries.forEach { m ->
+            com.vantaview.app.data.LowMemory.Mode.entries.forEach { m ->
                 Box(Modifier.weight(1f)) { Pick(m.label, lm.mode == m, Modifier.fillMaxWidth()) { lm.set(m) } }
             }
         }
