@@ -40,7 +40,8 @@ fun Text(
     style: TextStyle = LocalTextStyle.current,
 ) {
     val lang = I18n.lang
-    val shown = remember(text, lang) { I18n.tr(text) }
+    // Providers' "tiny" decorative letters (ᴬᴷ ³⁸⁴⁰ᴾ) are shown as ordinary ones, which every TV font draws well.
+    val shown = remember(text, lang) { I18n.tr(PlainText.of(text)) }
     androidx.compose.material3.Text(
         shown, modifier, color, fontSize, fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign,
         lineHeight, overflow, softWrap, maxLines, minLines, onTextLayout = onTextLayout ?: {}, style = style,
