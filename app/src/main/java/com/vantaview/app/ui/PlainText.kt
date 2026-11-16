@@ -2,7 +2,7 @@
 package com.vantaview.app.ui
 
 /**
- * Providers often decorate group and title names with "tiny" letters and numbers (superscripts like ᴬᴷ ³⁸⁴⁰ᴾ,
+ * Providers often decorate group and title names with "tiny" letters and numbers (superscripts like ⁴ᴷ ³⁸⁴⁰ᴾ,
  * subscripts and small capitals). Many TV fonts draw those badly or at odd sizes, so they're shown as ordinary
  * letters and numbers: "DE - ²¹⁶⁰ᵖ ᴰⱽ ᴴᴰᴿ¹⁰/ᴾᴸᵁˢ" reads "DE - 2160p DV HDR10/PLUS".
  */
