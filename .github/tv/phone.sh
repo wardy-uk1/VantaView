@@ -110,6 +110,12 @@ sleep 12; shot player-portrait
 s=$(size); w=${s%x*}; h=${s#*x}; adb shell input tap $((w/2)) $((h/6)); sleep 1; shot player-portrait-controls
 rotate 1; shot player-landscape
 adb shell input tap 400 300; sleep 1; shot player-landscape-controls
+# Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
+for i in 1 2 3 4 5 6 7; do
+  tap_text "Size:" || true; sleep 1; shot "size-$i"; dump; grep -q 'text="Size:' $OUT/ui.xml 2>/dev/null || { adb shell input tap 400 300; sleep 1; }
+done
+tap_text "Zoom"; tap_text "Zoom"; tap_text "Zoom"; sleep 1; shot zoom-3-steps
+tap_text "Hold"; sleep 1; shot zoom-hold-top
 rotate 0; key BACK; key BACK; sleep 2
 # Movies: tiles, a tile's page, a film's details.
 menu "Movies"; shot movies
