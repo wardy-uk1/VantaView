@@ -142,8 +142,8 @@ fun SetupConnectionScreen(onNext: () -> Unit, vm: com.vantaview.app.feature.sett
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             com.vantaview.app.feature.settings.ResultTile("Ping", ui.ping?.let { "%.0f".format(it) }, "ms", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.PING)
-            com.vantaview.app.feature.settings.ResultTile("Download", ui.down?.let(com.vantaview.app.feature.settings::mbps), "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.DOWN)
-            com.vantaview.app.feature.settings.ResultTile("Upload", ui.up?.let(com.vantaview.app.feature.settings::mbps), "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.UP)
+            com.vantaview.app.feature.settings.ResultTile("Download", ui.down?.let { com.vantaview.app.feature.settings.mbps(it) }, "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.DOWN)
+            com.vantaview.app.feature.settings.ResultTile("Upload", ui.up?.let { com.vantaview.app.feature.settings.mbps(it) }, "Mbit/s", null, ui.phase == com.vantaview.app.feature.settings.SpeedPhase.UP)
         }
         ui.status?.let { Text(it, color = if (ui.error) Vanta.Error else Vanta.Cyan, fontSize = 14.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
         ui.tuned?.let { lines ->
