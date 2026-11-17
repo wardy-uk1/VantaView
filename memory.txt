@@ -1,0 +1,12 @@
+device memory: MemTotal:        1016364 kB
+home: 105 MB
+Search: 66 MB
+Live TV: 93 MB
+TV Guide: 92 MB
+Movies: 97 MB
+Library: 96 MB
+Sources: 84 MB
+Settings: 85 MB
+playing a channel: 77 MB
+guide, playing: 101 MB
+settings: 88 MB
