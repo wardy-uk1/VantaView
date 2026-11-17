@@ -116,10 +116,11 @@ rotate 1; shot player-landscape
 adb shell input tap 400 300; sleep 1; shot player-landscape-controls
 # Open a channel straight into the full player (as a reminder notification does), sideways.
 rotate 1; hidekb
-for ch in 20 40 60; do
-  adb shell am start --activity-single-top -n com.vantaview.app/.MainActivity --el play_channel $ch; sleep 14; controls; dump
-  grep -q 'text="Size:' $OUT/ui.xml && break
-  adb shell input keyevent KEYCODE_BACK; sleep 2
+# Free channels come and go, so channels are tried until one is actually playing (a picture to size).
+for ch in 3 8 15 25 40 60 90 120 200 300 500 800; do
+  adb shell am start --activity-single-top -n com.vantaview.app/.MainActivity --el play_channel $ch; sleep 16; controls; dump
+  if grep -q 'text="Size:' $OUT/ui.xml && ! grep -qE 'Reconnecting|No connection|Connecting|Nothing is on' $OUT/ui.xml; then echo "playing channel $ch"; break; fi
+  adb shell input keyevent KEYCODE_BACK; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
 done
 shot player-for-sizes
 # Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
