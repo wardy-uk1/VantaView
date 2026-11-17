@@ -124,16 +124,32 @@ for ch in 3 8 15 25 40 60 90 120 200 300 500 800; do
 done
 shot player-for-sizes
 adb logcat -c
-# Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
+# Picture sizes. The controls hide after a few seconds while a channel plays, so the buttons' places are
+# read once and each press is a quick tap to show the controls, then a tap on the button.
+btn() { python3 - "$1" <<'PY'
+import re,sys
+x=open('tv-out/ui.xml',encoding='utf-8',errors='ignore').read()
+for m in re.finditer(r'<node [^>]*>', x):
+    n=m.group(0); t=re.search(r' text="([^"]+)"',n); b=re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',n)
+    if t and b and t.group(1).startswith(sys.argv[1]):
+        a=list(map(int,b.groups())); print((a[0]+a[2])//2,(a[1]+a[3])//2); break
+PY
+}
+s=$(size); W=${s%x*}; H=${s#*x}; [ "$W" -lt "$H" ] && { t=$W; W=$H; H=$t; }
+show() { dump; grep -q 'text="Size:' $OUT/ui.xml || { adb shell input tap $((W/2)) $((H/2)); sleep 0.4; }; }
+show; dump; SIZE_XY=$(btn "Size:"); ZOOM_XY=$(btn "Zoom"); echo "Size at $SIZE_XY, Zoom at $ZOOM_XY"
+# Called with the controls hidden (each press waits for them to go first).
+press() { sleep 6; adb shell input tap $((W/2)) $((H/2)); sleep 0.5; adb shell input tap $1; sleep 0.5; }
+# Each size: pressed, then a picture once the controls have gone.
 for i in 1 2 3 4 5 6 7; do
-  controls; tap_text "Size:"; sleep 2; shot "size-$i"
-  adb shell dumpsys activity top | grep -E "exo_content_frame|PlayerView|SurfaceView" | head -4 >> $OUT/picture-debug.txt
+  press "$SIZE_XY"; sleep 6; shot "size-$i"
+  adb shell dumpsys activity top | grep -E "exo_content_frame" | head -1 >> $OUT/picture-debug.txt
 done
-controls; tap_text "Zoom"; controls; tap_text "Zoom"; controls; tap_text "Zoom"; sleep 2; shot zoom-3-steps
-controls; tap_text "Hold"; sleep 2; shot zoom-hold-top
+press "$ZOOM_XY"; press "$ZOOM_XY"; press "$ZOOM_XY"; sleep 6; shot zoom-3-steps
+show; dump; HOLD_XY=$(btn "Hold"); [ -n "$HOLD_XY" ] && { press "$HOLD_XY"; sleep 6; shot zoom-hold-top; }
 adb logcat -d -s PictureSize >> $OUT/picture-debug.txt
-# Back to 100% (seven presses of Size went round to Fit again) for the rest of the run.
-controls; for i in 1 2 3 4; do tap_text "Zoom"; controls; done
+# Back to 100% for the rest of the run.
+for i in 1 2 3 4; do press "$ZOOM_XY"; done
 rotate 0; key BACK; key BACK; sleep 2
 # Movies: tiles, a tile's page, a film's details.
 menu "Movies"; shot movies
