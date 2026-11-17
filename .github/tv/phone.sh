@@ -123,6 +123,8 @@ for ch in 3 8 15 25 40 60 90 120 200 300 500 800; do
   adb shell input keyevent KEYCODE_BACK; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
 done
 shot player-for-sizes
+# Android's own one-time "Viewing full screen" tip covers the player until it's dismissed.
+tap_text "Got it"; sleep 1
 adb logcat -c
 # Picture sizes. The controls hide after a few seconds while a channel plays, so the buttons' places are
 # read once and each press is a quick tap to show the controls, then a tap on the button.
