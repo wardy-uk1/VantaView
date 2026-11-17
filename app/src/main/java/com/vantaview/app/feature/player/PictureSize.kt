@@ -42,9 +42,8 @@ object PictureSize {
     fun detach(view: PlayerView) { hooks.remove(view)?.let { view.player?.removeListener(it.listener) } }
 
     fun apply(view: PlayerView) {
-        val p = hooks[view]?.picture?.invoke() ?: run { android.util.Log.d("PictureSize", "no hook for $view (${hooks.size} hooks)"); return }
-        val frame = view.findViewById<AspectRatioFrameLayout>(androidx.media3.ui.R.id.exo_content_frame) ?: run { android.util.Log.d("PictureSize", "no content frame"); return }
-        android.util.Log.d("PictureSize", "apply $p view=${view.width}x${view.height} frame=${frame.width}x${frame.height} mode=${view.resizeMode}")
+        val p = hooks[view]?.picture?.invoke() ?: return
+        val frame = view.findViewById<AspectRatioFrameLayout>(androidx.media3.ui.R.id.exo_content_frame) ?: return
         if (view.resizeMode != p.size.mode) view.resizeMode = p.size.mode
         val vs = view.player?.videoSize
         val videoAspect = vs?.takeIf { it.width > 0 && it.height > 0 }?.let { it.width * it.pixelWidthHeightRatio / it.height } ?: 0f

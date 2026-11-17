@@ -94,11 +94,13 @@ fun AppShell(
     profile: com.vantaview.app.data.db.ProfileEntity?,
     onSelect: (Section) -> Unit,
     onProfiles: () -> Unit,
+    /** The players: drawn to every edge, notch included (they keep their own buttons clear of it). */
+    edgeToEdge: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     // Kids profiles can't open Sources.
     val sections = Section.entries.filter { !(profile?.isKids == true && (it == Section.SOURCES || it == Section.SETTINGS)) }
-    BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Bg).safeDrawingPadding()) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Bg).then(if (edgeToEdge) Modifier else Modifier.safeDrawingPadding())) {
         LookBackground(Vanta.Look)
         val wide = maxWidth >= 720.dp
         // Broadcast and Classic put the sections in a bar across the top on TVs and wide screens.

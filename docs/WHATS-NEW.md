@@ -1,3 +1,4 @@
+- Fixed: the picture size and zoom buttons now change the picture straight away, and the full-screen player on phones now fills the notch area too.
 - Sports add-ons that list their rows as "sports" or "events" now show on Sports TV, and protected (ClearKey) streams from add-ons now play, so sports add-ons' encrypted sources work too.
 - Add a Jellyfin server in Sources (username and password, or Quick Connect): its films and series appear on Movies and TV Series, and its Live TV and guide in Live TV. Add-ons with "other" rows (mixed collections) now show them on Movies and TV Series too.
 - More picture sizes in the player: Fit, Stretch, Fill screen, 16:9, 4:3, 21:9 and Original, plus Zoom up to 200% that can hold the middle, top or bottom. Each channel, film and series remembers its own size; set the default in Settings › Playback.
@@ -5,4 +6,3 @@
 - Runs better on TVs and sticks with 1 GB of memory: low-memory mode turns itself on there, with lighter effects, smaller artwork and a smaller player buffer, and big provider lists no longer have to fit in memory at once. Change it in Settings › Appearance › Memory.
 - Smart Add can now read a screenshot or photo of your provider's message: choose an image (or send one from your phone's Screenshot tab), and VantaView fills in the details for you to check. The picture is read on your device; nothing is sent anywhere.
 - Smoother live channels: VantaView now switches decoder when a device's own one struggles, keeps live TV at exactly normal speed, and copes better with broken stream data. Full screen now covers the camera notch on phones, and the films and series player has the Size button (Fit, Fill, Zoom) too.
-- The same channel from several sources is now one line in Live TV and the TV Guide: the best source plays, and if it fails or keeps stopping the next one takes over by itself. A Source button in the player lets you pick, and Settings › Channels turns merging off or limits it to one playlist.

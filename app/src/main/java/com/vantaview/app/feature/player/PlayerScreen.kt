@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -174,7 +175,8 @@ fun PlayerScreen(onBack: () -> Unit, vm: PlayerViewModel = hiltViewModel()) {
             )
         }
         if (portrait) {
-            Column(Modifier.fillMaxSize().background(Vanta.Bg)) {
+            // Upright, the status and navigation bars stay, so the page keeps clear of them.
+            Column(Modifier.fillMaxSize().background(Vanta.Bg).safeDrawingPadding()) {
                 video(Modifier.fillMaxWidth().aspectRatio(16f / 9f))
                 NowStrip(ui)
                 PortraitChannelList(

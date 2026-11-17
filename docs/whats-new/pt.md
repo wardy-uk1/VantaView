@@ -1,3 +1,4 @@
+- Corrigido: os botões de tamanho e zoom agora mudam a imagem na hora, e o player em tela cheia nos celulares agora também preenche a área do notch.
 - Complementos de esportes com fileiras "sports" ou "events" agora aparecem em TV esportiva, e streams protegidos (ClearKey) de complementos agora tocam, então as fontes criptografadas também funcionam.
 - Adicione um servidor Jellyfin em Fontes (usuário e senha, ou Quick Connect): os filmes e séries aparecem em Filmes e Séries, e a TV ao vivo e o guia em TV ao vivo. Complementos com fileiras "other" (coleções mistas) agora também aparecem em Filmes e Séries.
 - Mais tamanhos de imagem no player: Ajustar, Esticar, Preencher tela, 16:9, 4:3, 21:9 e Original, além de Zoom até 200% que pode fixar o centro, o topo ou a base. Cada canal, filme e série lembra seu tamanho; o padrão fica em Configurações › Reprodução.
@@ -5,4 +6,3 @@
 - Funciona melhor em TVs e sticks com 1 GB de memória: o modo pouca memória liga sozinho, com efeitos mais leves, imagens menores e buffer menor, e listas grandes não precisam mais caber na memória de uma vez. Mude em Configurações › Aparência › Memória.
 - O Smart Add agora lê uma captura ou foto da mensagem do provedor: escolha uma imagem (ou envie pela aba Captura do celular) e o VantaView preenche os dados para você conferir. A imagem é lida no seu dispositivo; nada é enviado.
 - Canais ao vivo mais suaves: o VantaView troca de decodificador quando o do aparelho não dá conta, mantém a TV ao vivo em velocidade exatamente normal e lida melhor com dados de stream com defeito. A tela cheia agora cobre o entalhe da câmera nos celulares, e o player de filmes e séries também tem o botão Tamanho (Ajustar, Preencher, Zoom).
-- O mesmo canal de várias fontes agora é uma linha só na TV ao vivo e no guia: toca a melhor fonte e, se falhar ou travar, a próxima assume sozinha. Um botão Fonte no player deixa você escolher, e Configurações › Canais desliga a junção ou limita a uma lista.

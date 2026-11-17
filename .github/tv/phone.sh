@@ -143,7 +143,7 @@ press() { sleep 6; adb shell input tap $((W/2)) $((H/2)); sleep 0.5; adb shell i
 # Each size: pressed, then a picture once the controls have gone.
 for i in 1 2 3 4 5 6 7; do
   press "$SIZE_XY"; sleep 6; shot "size-$i"
-  adb shell dumpsys activity top | grep -E "exo_content_frame" | head -1 >> $OUT/picture-debug.txt
+  adb shell dumpsys activity top | grep -E "exo_content_frame|ui.PlayerView" | head -2 >> $OUT/picture-debug.txt
 done
 press "$ZOOM_XY"; press "$ZOOM_XY"; press "$ZOOM_XY"; sleep 6; shot zoom-3-steps
 show; dump; HOLD_XY=$(btn "Hold"); [ -n "$HOLD_XY" ] && { press "$HOLD_XY"; sleep 6; shot zoom-hold-top; }

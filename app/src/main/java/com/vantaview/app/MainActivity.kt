@@ -214,6 +214,7 @@ private fun AppNav(
         // Choosing the page you're already on starts it over (Settings goes back to its list) instead of navigating.
         onSelect = { if (it == section && route != "catchup") com.vantaview.app.ui.Reselect.events.tryEmit(it) else nav.goTo(it.route) },
         onProfiles = { nav.navigate("profiles") },
+        edgeToEdge = route?.let { it.startsWith("player") || it == "vod" } == true,
     ) {
         NavHost(navController = nav, startDestination = startRoute) {
             composable("terms") {
