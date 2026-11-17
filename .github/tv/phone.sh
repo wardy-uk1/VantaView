@@ -117,7 +117,7 @@ adb shell input tap 400 300; sleep 1; shot player-landscape-controls
 # Open a channel straight into the full player (as a reminder notification does), sideways.
 rotate 1; hidekb
 for ch in 20 40 60; do
-  adb shell am start -n com.vantaview.app/.MainActivity --el play_channel $ch >/dev/null; sleep 14; controls; dump
+  adb shell am start --activity-single-top -n com.vantaview.app/.MainActivity --el play_channel $ch; sleep 14; controls; dump
   grep -q 'text="Size:' $OUT/ui.xml && break
   adb shell input keyevent KEYCODE_BACK; sleep 2
 done
