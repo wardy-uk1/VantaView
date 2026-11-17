@@ -123,12 +123,15 @@ for ch in 3 8 15 25 40 60 90 120 200 300 500 800; do
   adb shell input keyevent KEYCODE_BACK; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
 done
 shot player-for-sizes
+adb logcat -c
 # Picture sizes: each press of Size, then Zoom and Hold (the controls are brought back each time).
 for i in 1 2 3 4 5 6 7; do
   controls; tap_text "Size:"; sleep 2; shot "size-$i"
+  adb shell dumpsys activity top | grep -E "exo_content_frame|PlayerView|SurfaceView" | head -4 >> $OUT/picture-debug.txt
 done
 controls; tap_text "Zoom"; controls; tap_text "Zoom"; controls; tap_text "Zoom"; sleep 2; shot zoom-3-steps
 controls; tap_text "Hold"; sleep 2; shot zoom-hold-top
+adb logcat -d -s PictureSize >> $OUT/picture-debug.txt
 # Back to 100% (seven presses of Size went round to Fit again) for the rest of the run.
 controls; for i in 1 2 3 4; do tap_text "Zoom"; controls; done
 rotate 0; key BACK; key BACK; sleep 2
