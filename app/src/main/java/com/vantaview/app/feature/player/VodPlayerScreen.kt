@@ -66,6 +66,8 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
     var playerView by remember { mutableStateOf<PlayerView?>(null) }
     val context = LocalContext.current
     val picture by vm.picture.collectAsStateWithLifecycle()
+    // Each change of size, zoom or hold is applied to the video straight away.
+    LaunchedEffect(picture, playerView) { playerView?.let { PictureSize.apply(it) } }
     val activity = context as? Activity
     val isTv = remember { context.packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) }
     var controls by remember { mutableStateOf(true) }
@@ -122,7 +124,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     playerView = this
                 }
             },
-            update = { picture.let { _ -> PictureSize.apply(it) } },
+            update = { PictureSize.apply(it) },
             onRelease = { PictureSize.detach(it); it.player = null },
             modifier = Modifier.fillMaxSize(),
         )

@@ -217,6 +217,9 @@ private fun VideoArea(
     val density = LocalDensity.current
     val swipe = with(density) { 60.dp.toPx() }
     val picture by vm.picture.collectAsStateWithLifecycle()
+    var pictureView by remember { mutableStateOf<PlayerView?>(null) }
+    // Each change of size, zoom or hold is applied to the video straight away.
+    LaunchedEffect(picture, pictureView) { pictureView?.let { PictureSize.apply(it) } }
     val gestures = vm.settings.gestures
     var levelShown by remember { mutableStateOf<Level?>(null) }
     // Number keys on the remote: collect digits, then jump after a short pause.
@@ -307,9 +310,10 @@ private fun VideoArea(
                     TrackPrefs.style(this, vm.settings)
                     player = vm.player
                     PictureSize.attach(this) { vm.picture.value }
+                    pictureView = this
                 }
             },
-            update = { picture.let { _ -> PictureSize.apply(it) } },
+            update = { PictureSize.apply(it) },
             onRelease = { PictureSize.detach(it); it.player = null },
             modifier = Modifier.fillMaxSize(),
         )
