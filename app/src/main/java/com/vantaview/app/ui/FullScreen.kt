@@ -24,4 +24,29 @@ object FullScreen {
         }
         WindowCompat.setDecorFitsSystemWindows(window, !on)
     }
+
+    /** Players using full screen now; it's only undone when the last one goes. */
+    private var holders = 0
+
+    /**
+     * A player starts: bars hidden, notch covered. Opening one player from another (a reminder, the guide)
+     * disposes the old one after the new one starts, so each [enter] is matched by a [leave] and full
+     * screen is only undone when no player is left.
+     */
+    fun enter(window: Window?) {
+        window ?: return
+        holders++
+        val c = WindowCompat.getInsetsController(window, window.decorView)
+        c.systemBarsBehavior = androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        c.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+        cover(window, true)
+    }
+
+    fun leave(window: Window?) {
+        window ?: return
+        holders = (holders - 1).coerceAtLeast(0)
+        if (holders > 0) return
+        WindowCompat.getInsetsController(window, window.decorView).show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+        cover(window, false)
+    }
 }

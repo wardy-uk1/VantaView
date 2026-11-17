@@ -89,13 +89,10 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
 
     // Full screen. The screen keeps following the device's own rotation (and its rotation lock).
     DisposableEffect(Unit) {
-        val window = activity?.window
-        val controller = window?.let { WindowCompat.getInsetsController(it, it.decorView) }
-        controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        controller?.hide(WindowInsetsCompat.Type.systemBars())
         // Full screen covers the camera notch too.
-        com.vantaview.app.ui.FullScreen.cover(window, true)
-        onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()); com.vantaview.app.ui.FullScreen.cover(window, false) }
+        val window = activity?.window
+        com.vantaview.app.ui.FullScreen.enter(window)
+        onDispose { com.vantaview.app.ui.FullScreen.leave(window) }
     }
 
     // Back: the first press hides the controls, the next one leaves the player.

@@ -155,14 +155,10 @@ fun PlayerScreen(onBack: () -> Unit, vm: PlayerViewModel = hiltViewModel()) {
         val upright = !isTv && maxHeight > maxWidth && !pip
         val portrait = upright && !full
         DisposableEffect(portrait) {
+            // Full screen (covering the camera notch too), except upright where the channel list shows.
             val window = activity?.window
-            val controller = window?.let { WindowCompat.getInsetsController(it, it.decorView) }
-            controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            if (portrait) controller?.show(WindowInsetsCompat.Type.systemBars())
-            else controller?.hide(WindowInsetsCompat.Type.systemBars())
-            // Full screen covers the camera notch too.
-            com.vantaview.app.ui.FullScreen.cover(window, !portrait)
-            onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()); com.vantaview.app.ui.FullScreen.cover(window, false) }
+            if (!portrait) com.vantaview.app.ui.FullScreen.enter(window)
+            onDispose { if (!portrait) com.vantaview.app.ui.FullScreen.leave(window) }
         }
 
         val video: @Composable (Modifier) -> Unit = { m ->
