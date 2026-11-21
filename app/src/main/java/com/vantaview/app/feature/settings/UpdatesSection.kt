@@ -58,11 +58,15 @@ fun UpdatesSection(m: UpdateManager) {
                 Text("Last checked ${fmt.format(Date(m.lastCheck))}.", color = Vanta.TextDim, fontSize = 13.sp)
             }
         }
-        if (state !is UpdateState.Downloading) FocusCard(onClick = m::checkNow) { Text("Check now", color = Vanta.Text) }
+        // Kept in place while downloading (doing nothing then), so nothing on the page moves under the remote.
+        FocusCard(onClick = { if (state !is UpdateState.Downloading) m.checkNow() }) { Text("Check now", color = Vanta.Text) }
     }
 
-    (state as? UpdateState.Available)?.info?.let { UpdateCard(it, null, m) }
-    (state as? UpdateState.Downloading)?.let { UpdateCard(it.info, it.percent, m) }
+    // One card for "available" and "downloading", so pressing Update now on a TV keeps the remote on it
+    // (two separate cards swapped places, focus fell back to the top of Settings).
+    val card = (state as? UpdateState.Available)?.info?.let { it to null }
+        ?: (state as? UpdateState.Downloading)?.let { it.info to it.percent }
+    card?.let { (info, percent) -> UpdateCard(info, percent, m) }
     (state as? UpdateState.NeedsPermission)?.let { s ->
         Section("Allow VantaView to install updates", alwaysOpen = true) {
             var noPage by remember { mutableStateOf(false) }
@@ -116,21 +120,23 @@ private fun UpdateCard(info: UpdateInfo, percent: Int?, m: UpdateManager) {
             Text("What's new", color = Vanta.Text, fontWeight = FontWeight.Bold)
             Text(info.notes, color = Vanta.TextDim, fontSize = 14.sp, lineHeight = 20.sp)
         }
-        if (percent != null) {
-            // Focusable, and takes focus, so a TV remote stays here while the download runs.
-            val here = androidx.compose.runtime.remember { androidx.compose.ui.focus.FocusRequester() }
-            androidx.compose.runtime.LaunchedEffect(Unit) { kotlinx.coroutines.delay(50); runCatching { here.requestFocus() } }
-            FocusCard(onClick = {}, modifier = Modifier.fillMaxWidth().focusRequester(here)) {
+        // The same button throughout: "Update now", then the download's progress in its place, so a TV
+        // remote's focus stays on it.
+        FocusCard(onClick = { if (percent == null) m.install(info) }, modifier = Modifier.fillMaxWidth()) {
+            if (percent == null) {
+                Text("Update now", color = Vanta.Cyan, fontWeight = FontWeight.Bold)
+            } else {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Downloading… $percent%", color = Vanta.Cyan)
                     LinearProgressIndicator(progress = { percent / 100f }, modifier = Modifier.fillMaxWidth())
-                    Text("Android's installer opens when it's done.", color = Vanta.TextDim, fontSize = 13.sp)
                 }
             }
-        } else {
-            GradientButton("Update now", onClick = { m.install(info) })
-            Text("Android asks you to confirm before installing. Your profiles, playlists and settings stay.", color = Vanta.TextDim, fontSize = 13.sp)
         }
+        Text(
+            if (percent == null) "Android asks you to confirm before installing. Your profiles, playlists and settings stay."
+            else "Android's installer opens when it's done.",
+            color = Vanta.TextDim, fontSize = 13.sp,
+        )
     }
 }
 

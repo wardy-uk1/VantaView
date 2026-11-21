@@ -1,3 +1,4 @@
+- Naprawiono na TV: przycisk Aktualizuj teraz w Ustawienia › Aktualizacje zostawia cię przy pobieraniu zamiast przeskakiwać na górę Ustawień. Dziękujemy u/CrazyDowntown5881 z Reddita za wiele sugestii i zgłoszeń błędów, teraz w Pomoc i informacje › Podziękowania.
 - Naprawiono: przyciski rozmiaru i powiększenia od razu zmieniają obraz, a odtwarzacz pełnoekranowy na telefonach wypełnia teraz także obszar wycięcia (notcha).
 - Dodatki sportowe z wierszami typu "sports" lub "events" pokazują się teraz w TV sportowa, a chronione (ClearKey) strumienie z dodatków są odtwarzane, więc działają też ich zaszyfrowane źródła.
 - Dodaj serwer Jellyfin w Źródłach (nazwa użytkownika i hasło albo Quick Connect): filmy i seriale pojawią się w Filmy i Seriale, a TV na żywo i przewodnik w TV na żywo. Dodatki z wierszami "other" (mieszane kolekcje) pokazują je teraz też w Filmy i Seriale.
@@ -5,4 +6,3 @@
 - Zaloguj się do Stremio w Ustawienia › Stremio, kodem QR lub e-mailem: dodatki, Biblioteka, Kontynuuj oglądanie i obejrzane filmy będą synchronizowane z kontem w obie strony. Każdy profil może mieć własne konto.
 - Działa lepiej na telewizorach i przystawkach z 1 GB pamięci: tryb małej pamięci włącza się tam sam, z lżejszymi efektami, mniejszymi grafikami i mniejszym buforem, a duże listy dostawców nie muszą już mieścić się w pamięci naraz. Zmień w Ustawienia › Wygląd › Pamięć.
 - Smart Add odczyta teraz zrzut ekranu lub zdjęcie wiadomości od dostawcy: wybierz obraz (albo wyślij go z karty Zrzut ekranu w telefonie), a VantaView wypełni dane do sprawdzenia. Obraz jest odczytywany na urządzeniu; nic nie jest wysyłane.
-- Płynniejsze kanały na żywo: VantaView zmienia dekoder, gdy ten w urządzeniu nie nadąża, odtwarza TV na żywo z dokładnie normalną prędkością i lepiej radzi sobie z uszkodzonymi danymi strumienia. Pełny ekran zakrywa teraz wycięcie na aparat w telefonach, a odtwarzacz filmów i seriali też ma przycisk Rozmiar (Dopasuj, Wypełnij, Powiększ).

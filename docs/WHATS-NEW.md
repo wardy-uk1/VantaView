@@ -1,3 +1,4 @@
+- Fixed on TV: pressing Update now in Settings › Updates keeps you on the download instead of jumping back to the top of Settings. Thanks to u/CrazyDowntown5881 on Reddit for lots of suggestions and bug reports, now in Help and about › Credits.
 - Fixed: the picture size and zoom buttons now change the picture straight away, and the full-screen player on phones now fills the notch area too.
 - Sports add-ons that list their rows as "sports" or "events" now show on Sports TV, and protected (ClearKey) streams from add-ons now play, so sports add-ons' encrypted sources work too.
 - Add a Jellyfin server in Sources (username and password, or Quick Connect): its films and series appear on Movies and TV Series, and its Live TV and guide in Live TV. Add-ons with "other" rows (mixed collections) now show them on Movies and TV Series too.
@@ -5,4 +6,3 @@
 - Sign in to Stremio in Settings › Stremio, with a QR code or your email: your add-ons, Library, Continue watching and watched films then stay in step with your Stremio account, both ways. Each profile can use its own account.
 - Runs better on TVs and sticks with 1 GB of memory: low-memory mode turns itself on there, with lighter effects, smaller artwork and a smaller player buffer, and big provider lists no longer have to fit in memory at once. Change it in Settings › Appearance › Memory.
 - Smart Add can now read a screenshot or photo of your provider's message: choose an image (or send one from your phone's Screenshot tab), and VantaView fills in the details for you to check. The picture is read on your device; nothing is sent anywhere.
-- Smoother live channels: VantaView now switches decoder when a device's own one struggles, keeps live TV at exactly normal speed, and copes better with broken stream data. Full screen now covers the camera notch on phones, and the films and series player has the Size button (Fit, Fill, Zoom) too.

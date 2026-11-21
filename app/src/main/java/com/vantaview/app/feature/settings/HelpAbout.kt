@@ -50,6 +50,11 @@ private val services = listOf(
     Credit("Trakt", "Watchlist, history, Continue watching, recommendations and lists sync · trakt.tv. Not made or endorsed by Trakt"),
 )
 
+/** People who helped shape VantaView with ideas and bug reports. */
+private val community = listOf(
+    Credit("u/CrazyDowntown5881 (Reddit)", "Quite a few suggestions and bug reports"),
+)
+
 /** Open-source libraries VantaView is built with, and their licences. */
 private val libraries = listOf(
     Credit("Android Jetpack (Compose, Room, Navigation, Lifecycle, Media3/ExoPlayer)", "Apache 2.0"),
@@ -129,6 +134,8 @@ fun HelpAbout() {
     Section("Credits") {
         Text("Thanks to these services, and the people who run them:", color = Vanta.TextDim, fontSize = 14.sp)
         services.forEach { CreditLine(it) }
+        Text("Thanks to the people who suggest ideas and report bugs:", color = Vanta.TextDim, fontSize = 14.sp)
+        community.forEach { CreditLine(it) }
         Text("Built with these open-source libraries:", color = Vanta.TextDim, fontSize = 14.sp)
         libraries.forEach { CreditLine(it) }
     }

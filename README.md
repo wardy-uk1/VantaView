@@ -49,6 +49,7 @@ logo for modified builds.
 
 ## Credits
 
+- Reddit user u/CrazyDowntown5881: quite a few suggestions and bug reports. Thank you!
 - [Free TV](https://github.com/Free-TV/IPTV): the optional free channels list, fetched from its GitHub page. Thanks to its maintainers and contributors.
 - [epgshare01](https://epgshare01.online): the TV guide used by the Free TV list, fetched only for the countries you pick.
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) and OpenAI's Whisper models (MIT): the optional AI subtitles, run on the device.
