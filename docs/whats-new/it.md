@@ -1,4 +1,4 @@
-- Corretto: negli stili Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic) i pulsanti principali come Aggiorna ora avevano testo bianco su fondo bianco o giallo. Ora il testo è scuro.
+- Corretto: negli stili Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic) i pulsanti principali come Aggiorna ora avevano testo bianco su fondo bianco o giallo. Ora il testo è scuro. Interruttori e scelta dei paesi sono corretti allo stesso modo.
 - TV in diretta ora può raggruppare i canali per argomento (Notizie, Sport, Bambini…) con il nuovo pulsante Gruppi, mettere prima i canali più noti dei tuoi paesi (Ordine › Importanza, paesi in Impostazioni › Canali) e mostrare le versioni regionali e +1 di un canale in una sola riga.
 - Corretto su TV: premendo Aggiorna ora in Impostazioni › Aggiornamenti resti sul download invece di tornare in cima alle Impostazioni. Grazie a u/CrazyDowntown5881 su Reddit per tanti suggerimenti e segnalazioni, ora in Aiuto e informazioni › Riconoscimenti.
 - Corretto: i pulsanti di dimensione e zoom ora cambiano subito l'immagine, e il lettore a schermo intero sui telefoni riempie anche la zona del notch.

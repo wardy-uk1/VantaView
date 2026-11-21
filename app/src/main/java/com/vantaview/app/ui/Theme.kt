@@ -162,6 +162,10 @@ object Vanta {
     )
     /** Focus rings and main buttons; violet unless the accent is changed. */
     val Accent get() = palette.accent
+    /** Writing and marks on an [Accent] fill: dark on the white or yellow accents of some looks, white otherwise. */
+    val OnAccent: Color get() = if (palette.accent.luminance() > 0.45f) Color(0xFF0A1028) else Color.White
+    /** A solid background for pop-ups (some looks' surfaces are see-through glass). */
+    val DialogBg: Color get() = if (palette.surface.alpha < 0.95f) palette.panel else palette.surface
     /** The full logo gradient, kept for the logo itself; the UI uses the solid [Accent] instead. */
     val LogoBrush: Brush get() = Brush.linearGradient(Gradient)
     val GradientBrush: Brush get() = androidx.compose.ui.graphics.SolidColor(Accent)
@@ -207,12 +211,12 @@ fun VantaTheme(appearance: com.vantaview.app.data.Appearance = com.vantaview.app
     val systemFont = if (ui == com.vantaview.app.data.UiSize.AUTO) density.fontScale.coerceAtMost(com.vantaview.app.data.UiSize.AUTO_MAX_FONT) else density.fontScale
     val colors = if (p.light) {
         androidx.compose.material3.lightColorScheme(
-            primary = p.accent, onPrimary = Color.White, secondary = Color(0xFF7C4DFF),
+            primary = p.accent, onPrimary = if (p.accent.luminance() > 0.45f) Color(0xFF0A1028) else Color.White, secondary = Color(0xFF7C4DFF),
             background = p.bg, onBackground = p.text, surface = p.panel, onSurface = p.text,
             surfaceVariant = p.surfaceHigh, onSurfaceVariant = p.textDim, error = p.error,
         )
     } else darkColorScheme(
-        primary = p.accent, onPrimary = Color.White, secondary = Color(0xFF7C4DFF),
+        primary = p.accent, onPrimary = if (p.accent.luminance() > 0.45f) Color(0xFF0A1028) else Color.White, secondary = Color(0xFF7C4DFF),
         background = p.bg, onBackground = p.text, surface = p.panel, onSurface = p.text,
         surfaceVariant = p.surfaceHigh, onSurfaceVariant = p.textDim, error = p.error,
     )
@@ -273,8 +277,7 @@ fun GradientButton(text: String, onClick: () -> Unit, modifier: Modifier = Modif
     var focused by remember { mutableStateOf(false) }
     val shape = RoundedCornerShape(14.dp)
     // Looks with a white or yellow accent (Glass, Wave, Broadcast…) get dark writing, so the label shows.
-    val lightFill = enabled && Vanta.Accent.luminance() > 0.45f
-    val ink = if (lightFill) Color(0xFF0A1028) else Color.White
+    val ink = Vanta.OnAccent
     Box(
         modifier = modifier
             .onFocusChanged { focused = it.isFocused }

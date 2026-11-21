@@ -164,7 +164,7 @@ private fun CountryChooser(
     val total = p.scan.counts.values.sum()
     Column(
         Modifier.padding(16.dp).widthIn(max = 760.dp).fillMaxWidth()
-            .background(Vanta.Surface, RoundedCornerShape(24.dp)).padding(24.dp),
+            .background(Vanta.DialogBg, RoundedCornerShape(24.dp)).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(if (wide) 10.dp else 14.dp),
     ) {
         Text(
@@ -220,6 +220,6 @@ private fun Switch(on: Boolean) {
             .background(if (on) Vanta.Accent else Vanta.SurfaceHigh).padding(3.dp),
         contentAlignment = if (on) Alignment.CenterEnd else Alignment.CenterStart,
     ) {
-        Box(Modifier.size(20.dp).clip(CircleShape).background(if (on) Color.White else Vanta.TextDim))
+        Box(Modifier.size(20.dp).clip(CircleShape).background(if (on) Vanta.OnAccent else Vanta.TextDim))
     }
 }

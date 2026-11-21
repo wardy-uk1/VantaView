@@ -1,4 +1,4 @@
-- Naprawiono: w wyglądach Glass, Wave, Fluent, Cross i Spotlight (oraz Broadcast i Classic) główne przyciski, np. Aktualizuj teraz, miały biały napis na białym lub żółtym tle. Teraz napis jest ciemny.
+- Naprawiono: w wyglądach Glass, Wave, Fluent, Cross i Spotlight (oraz Broadcast i Classic) główne przyciski, np. Aktualizuj teraz, miały biały napis na białym lub żółtym tle. Teraz napis jest ciemny. Przełączniki i wybór krajów poprawiono tak samo.
 - TV na żywo może teraz grupować kanały według tematów (Wiadomości, Sport, Dla dzieci…) nowym przyciskiem Grupy, stawiać najpierw najbardziej znane kanały twoich krajów (Kolejność › Ważność, kraje w Ustawienia › Kanały) i pokazywać regionalne wersje oraz +1 kanału w jednym wierszu.
 - Naprawiono na TV: przycisk Aktualizuj teraz w Ustawienia › Aktualizacje zostawia cię przy pobieraniu zamiast przeskakiwać na górę Ustawień. Dziękujemy u/CrazyDowntown5881 z Reddita za wiele sugestii i zgłoszeń błędów, teraz w Pomoc i informacje › Podziękowania.
 - Naprawiono: przyciski rozmiaru i powiększenia od razu zmieniają obraz, a odtwarzacz pełnoekranowy na telefonach wypełnia teraz także obszar wycięcia (notcha).

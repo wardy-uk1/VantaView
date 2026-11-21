@@ -1,4 +1,4 @@
-- Opgelost: in de looks Glass, Wave, Fluent, Cross en Spotlight (en Broadcast en Classic) hadden hoofdknoppen zoals Nu bijwerken witte tekst op een witte of gele knop. De tekst is nu donker.
+- Opgelost: in de looks Glass, Wave, Fluent, Cross en Spotlight (en Broadcast en Classic) hadden hoofdknoppen zoals Nu bijwerken witte tekst op een witte of gele knop. De tekst is nu donker. Schakelaars en de landenkeuze zijn op dezelfde manier opgelost.
 - Live tv kan zenders nu per onderwerp groeperen (Nieuws, Sport, Kinderen…) met de nieuwe knop Groepen, de bekendste zenders van je landen eerst zetten (Volgorde › Belangrijkheid, landen in Instellingen › Zenders) en regionale en +1-versies van een zender als één regel tonen.
 - Opgelost op tv: Nu bijwerken in Instellingen › Updates houdt je nu bij de download in plaats van terug te springen naar de bovenkant van Instellingen. Dank aan u/CrazyDowntown5881 op Reddit voor veel suggesties en bugmeldingen, nu bij Hulp en info › Credits.
 - Opgelost: de knoppen voor beeldgrootte en zoom veranderen het beeld nu meteen, en de schermvullende speler op telefoons vult nu ook het notch-gebied.

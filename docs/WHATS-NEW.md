@@ -1,4 +1,4 @@
-- Fixed: in the Glass, Wave, Fluent, Cross and Spotlight looks (and Broadcast and Classic), main buttons like Update now had white writing on a white or yellow button. They now use dark writing.
+- Fixed: in the Glass, Wave, Fluent, Cross and Spotlight looks (and Broadcast and Classic), main buttons like Update now had white writing on a white or yellow button. They now use dark writing. Switches and the country chooser are fixed the same way.
 - Live TV can now group channels by topic (News, Sport, Kids…) with the new Groups button, sort the best-known channels of your countries first (Order › Importance, countries in Settings › Channels), and show a channel's regional and +1 versions as one line.
 - Fixed on TV: pressing Update now in Settings › Updates keeps you on the download instead of jumping back to the top of Settings. Thanks to u/CrazyDowntown5881 on Reddit for lots of suggestions and bug reports, now in Help and about › Credits.
 - Fixed: the picture size and zoom buttons now change the picture straight away, and the full-screen player on phones now fills the notch area too.

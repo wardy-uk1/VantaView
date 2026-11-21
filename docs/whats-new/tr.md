@@ -1,4 +1,4 @@
-- Düzeltildi: Glass, Wave, Fluent, Cross ve Spotlight görünümlerinde (ve Broadcast ile Classic'te) Şimdi güncelle gibi ana düğmelerde beyaz ya da sarı zemin üzerinde beyaz yazı vardı. Artık yazı koyu.
+- Düzeltildi: Glass, Wave, Fluent, Cross ve Spotlight görünümlerinde (ve Broadcast ile Classic'te) Şimdi güncelle gibi ana düğmelerde beyaz ya da sarı zemin üzerinde beyaz yazı vardı. Artık yazı koyu. Anahtarlar ve ülke seçici de aynı şekilde düzeltildi.
 - Canlı TV artık yeni Gruplar düğmesiyle kanalları konuya göre (Haber, Spor, Çocuk…) gruplayabilir, ülkelerinin en bilinen kanallarını öne alabilir (Sıra › Önem, ülkeler Ayarlar › Kanallar'da) ve bir kanalın bölgesel ve +1 sürümlerini tek satırda gösterebilir.
 - TV'de düzeltildi: Ayarlar › Güncellemeler'de Şimdi güncelle'ye basınca artık Ayarlar'ın en üstüne atlamak yerine indirmede kalırsın. Pek çok öneri ve hata bildirimi için Reddit'ten u/CrazyDowntown5881'e teşekkürler; artık Yardım ve hakkında › Katkıda bulunanlar'da.
 - Düzeltildi: görüntü boyutu ve yakınlaştırma düğmeleri artık görüntüyü hemen değiştiriyor, telefonlarda tam ekran oynatıcı artık çentik alanını da dolduruyor.

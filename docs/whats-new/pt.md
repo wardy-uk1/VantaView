@@ -1,4 +1,4 @@
-- Corrigido: nos visuais Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic), botões principais como Atualizar agora tinham texto branco em fundo branco ou amarelo. Agora o texto é escuro.
+- Corrigido: nos visuais Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic), botões principais como Atualizar agora tinham texto branco em fundo branco ou amarelo. Agora o texto é escuro. Os interruptores e o seletor de países foram corrigidos do mesmo jeito.
 - A TV ao vivo agora pode agrupar os canais por tema (Notícias, Esportes, Infantil…) com o novo botão Grupos, ordenar primeiro os canais mais conhecidos dos seus países (Ordem › Importância, países em Configurações › Canais) e mostrar as versões regionais e +1 de um canal em uma linha só.
 - Corrigido na TV: tocar em Atualizar agora em Configurações › Atualizações mantém você no download em vez de voltar ao topo das Configurações. Obrigado a u/CrazyDowntown5881 do Reddit por muitas sugestões e relatos de bugs, agora em Ajuda e sobre › Créditos.
 - Corrigido: os botões de tamanho e zoom agora mudam a imagem na hora, e o player em tela cheia nos celulares agora também preenche a área do notch.
