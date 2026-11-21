@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Live TV from a channel catalog (iptv-org's open database, downloaded when used): topic groups (Groups: topics), Order › Importance with your country order (Settings › Channels), and regional and +1 versions as one line
 - [x] Protected (ClearKey or Widevine) add-on streams, DASH included, read from the usual shapes add-ons use ("drm", "clearKeys", license_key); Sports TV also shows add-on rows of the "sports" and "events" types
 - [x] Jellyfin servers as a source (Sources › Jellyfin; username and password or Quick Connect): films and series on Movies and TV Series (with episodes), Live TV channels and guide in Live TV
 - [x] Add-on rows of Stremio's "other" type on Movies and TV Series (titles with several videos open like a series)

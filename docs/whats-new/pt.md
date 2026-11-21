@@ -1,3 +1,4 @@
+- A TV ao vivo agora pode agrupar os canais por tema (Notícias, Esportes, Infantil…) com o novo botão Grupos, ordenar primeiro os canais mais conhecidos dos seus países (Ordem › Importância, países em Configurações › Canais) e mostrar as versões regionais e +1 de um canal em uma linha só.
 - Corrigido na TV: tocar em Atualizar agora em Configurações › Atualizações mantém você no download em vez de voltar ao topo das Configurações. Obrigado a u/CrazyDowntown5881 do Reddit por muitas sugestões e relatos de bugs, agora em Ajuda e sobre › Créditos.
 - Corrigido: os botões de tamanho e zoom agora mudam a imagem na hora, e o player em tela cheia nos celulares agora também preenche a área do notch.
 - Complementos de esportes com fileiras "sports" ou "events" agora aparecem em TV esportiva, e streams protegidos (ClearKey) de complementos agora tocam, então as fontes criptografadas também funcionam.
@@ -5,4 +6,3 @@
 - Mais tamanhos de imagem no player: Ajustar, Esticar, Preencher tela, 16:9, 4:3, 21:9 e Original, além de Zoom até 200% que pode fixar o centro, o topo ou a base. Cada canal, filme e série lembra seu tamanho; o padrão fica em Configurações › Reprodução.
 - Entre no Stremio em Configurações › Stremio, com código QR ou e-mail: seus complementos, Biblioteca, Continuar assistindo e filmes vistos ficam sincronizados com sua conta, nos dois sentidos. Cada perfil pode usar sua própria conta.
 - Funciona melhor em TVs e sticks com 1 GB de memória: o modo pouca memória liga sozinho, com efeitos mais leves, imagens menores e buffer menor, e listas grandes não precisam mais caber na memória de uma vez. Mude em Configurações › Aparência › Memória.
-- O Smart Add agora lê uma captura ou foto da mensagem do provedor: escolha uma imagem (ou envie pela aba Captura do celular) e o VantaView preenche os dados para você conferir. A imagem é lida no seu dispositivo; nada é enviado.
