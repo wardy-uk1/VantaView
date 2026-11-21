@@ -50,7 +50,7 @@ enum class SettingsSection(val title: String, val summary: String, val keywords:
         "look style skin glass broadcast wave classic theme dark light black oled follow device accent colour color text size font sidebar hide loading screen splash ripple language screensaver ambient idle",
     ),
     SUBTITLES("Subtitles and audio", "Audio and subtitle languages, when subtitles show, their size and colour", "subtitle subtitles captions cc audio language track size yellow box"),
-    CHANNELS("Channels", "Merge the same channel from several sources, and show or hide channels in bulk", "channels hide show hidden visible bulk tick remove unwanted merge duplicate same sources backup combine"),
+    CHANNELS("Channels", "Merge the same channel, topics, importance and country order, and show or hide channels in bulk", "channels hide show hidden visible bulk tick remove unwanted merge duplicate same sources backup combine topic topics news sport importance country order regional versions plus1 catalog"),
     SOURCES("Sources and storage", "Refreshing playlists and the TV guide, free channels, and space used", "playlist refresh free tv channels countries storage space cache clear pictures guide epg update downloads speed test internet bandwidth"),
     WEATHER("Weather", "Weather on Home: on or off, °C or °F, and where", "weather temperature celsius fahrenheit location town city forecast"),
     TRAKT(

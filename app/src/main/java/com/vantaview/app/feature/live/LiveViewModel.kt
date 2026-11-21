@@ -47,10 +47,12 @@ sealed interface Filter {
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 /** Orders for the Live TV channel list. MINE is the order you set for favourites. */
 enum class ChannelSort(val label: String) {
-    NUMBER("Number"), AZ("A to Z"), ZA("Z to A"), RECENT("Recently starred"), MINE("My order");
+    NUMBER("Number"), IMPORTANCE("Importance"), AZ("A to Z"), ZA("Z to A"), RECENT("Recently starred"), MINE("My order");
 
-    fun apply(list: List<ChannelRow>, favourites: Boolean): List<ChannelRow> = when (this) {
+    /** [countries]: Settings › Channels › Country order, for Importance. */
+    fun apply(list: List<ChannelRow>, favourites: Boolean, countries: List<String> = emptyList()): List<ChannelRow> = when (this) {
         NUMBER -> list
+        IMPORTANCE -> com.vantaview.app.data.catalog.ChannelOrder.importance(list, countries)
         AZ -> list.sortedBy { it.channel.sortKey }
         ZA -> list.sortedByDescending { it.channel.sortKey }
         RECENT -> list.sortedWith(compareByDescending<ChannelRow> { it.isFav }.thenByDescending { it.favAt })
@@ -70,6 +72,8 @@ private data class Quad<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
 /** Live TV › "All playlists": a pretend playlist id, and the prefix of merged group ids (a group's name). */
 const val ALL_PLAYLISTS = -1L
 private const val NAME = "name:"
+/** Live TV › topic groups: a group id is "topic:<Topic>". */
+private const val TOPIC = "topic:"
 
 @HiltViewModel
 class LiveViewModel @Inject constructor(
@@ -96,7 +100,25 @@ class LiveViewModel @Inject constructor(
     val query = MutableStateFlow("")
     /** How the channel list is ordered (remembered on this device). */
     val sort = MutableStateFlow(ChannelSort.load(playback))
-    fun setSort(s: ChannelSort) { sort.value = s; s.save(playback) }
+    fun setSort(s: ChannelSort) { sort.value = s; s.save(playback); loadCatalog() }
+
+    // ---- Topic groups and Importance (the channel catalog) ----
+
+    /** Live TV groups by topic (News, Sport…) instead of the provider's groups. */
+    val byTopic = MutableStateFlow(com.vantaview.app.data.catalog.ChannelOrder.byTopic(playback))
+    fun setByTopic(on: Boolean) {
+        byTopic.value = on
+        com.vantaview.app.data.catalog.ChannelOrder.setByTopic(playback, on)
+        filter.value = Filter.All
+        loadCatalog()
+    }
+    val catalogState = com.vantaview.app.data.catalog.ChannelCatalog.state
+
+    private fun loadCatalog() {
+        if (com.vantaview.app.data.catalog.ChannelOrder.needsCatalog(playback, sort.value == ChannelSort.IMPORTANCE))
+            viewModelScope.launch { com.vantaview.app.data.catalog.ChannelCatalog.ensure() }
+    }
+    init { loadCatalog() }
 
     // ---- All playlists: channels from every playlist in one list (not on Kids profiles) ----
 
@@ -144,6 +166,42 @@ class LiveViewModel @Inject constructor(
             }
         }
 
+    /** The provider's group names, by "playlist|group id" (topics are guessed from them when the catalog doesn't know a channel). */
+    private val groupNames = combine(activeId, allIds) { id, ids -> id to ids }
+        .flatMapLatest { (id, ids) ->
+            when {
+                ids != null -> db.content().observeCategoriesIn(ids)
+                id == null -> flowOf(emptyList())
+                else -> db.content().observeCategories(id)
+            }
+        }
+        .map { cats -> cats.associate { "${it.providerId}|${it.remoteId}" to it.name } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    private fun topicOf(c: ChannelEntity, names: Map<String, String>) =
+        com.vantaview.app.data.catalog.ChannelOrder.topicOf(c, c.categoryRemoteId?.let { names["${c.providerId}|$it"] })
+
+    /** Topic groups present in the active playlist (or all of them), in the topics' order. */
+    private val topicGroups: StateFlow<List<CategoryEntity>> =
+        combine(byTopic, activeId, allIds) { on, id, ids -> Triple(on, id, ids) }
+            .flatMapLatest { (on, id, ids) ->
+                when {
+                    !on -> flowOf(emptyList())
+                    ids != null -> db.content().observeChannelsAll(ids, null, "", 0, 0)
+                    id == null -> flowOf(emptyList())
+                    else -> db.content().observeChannels(id, null, "", 0, 0)
+                }
+            }
+            .let { rows -> combine(rows, groupNames, com.vantaview.app.data.catalog.ChannelCatalog.version) { list, names, _ -> list to names } }
+            .map { (list, names) ->
+                val pid = list.firstOrNull()?.channel?.providerId ?: 0L
+                list.map { topicOf(it.channel, names) }.toSet().sortedBy { it.ordinal }.mapIndexed { i, t ->
+                    CategoryEntity(id = -(1000L + t.ordinal), providerId = if (list.any { it.channel.providerId != pid }) ALL_PLAYLISTS else pid, remoteId = TOPIC + t.name, name = t.label, position = i)
+                }
+            }
+            .flowOn(kotlinx.coroutines.Dispatchers.Default)
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
     /** Countries in the active playlist (re-read after each sync). */
     private val scan: StateFlow<CountryScan?> = active
         .distinctUntilChanged { a, b -> a?.id == b?.id && a?.lastSyncAt == b?.lastSyncAt }
@@ -186,7 +244,11 @@ class LiveViewModel @Inject constructor(
     }
 
     val categories: StateFlow<List<CategoryEntity>> =
-        combine(combine(allCategories, groupLayout) { c, _ -> c }, allowed, combine(scan, allIds) { s, ids -> if (ids != null) null else s }, chosen, parental.changes) { cats, allow, sc, pick, _ ->
+        combine(
+            combine(allCategories, groupLayout, topicGroups, byTopic, profile) { c, _, topics, on, p -> if (on && p?.isKids != true) topics else c },
+            allowed, combine(scan, allIds) { s, ids -> if (ids != null) null else s }, chosen, parental.changes,
+        ) { cats, allow, sc, pick, _ ->
+            if (cats.firstOrNull()?.remoteId?.startsWith(TOPIC) == true) return@combine applyLayout(cats)
             val kidsOk = when {
                 allow != null -> KidsFilter.categories(cats, allow)
                 parental.hiding -> cats.filter { !parental.isAdult(it) } // Settings › Parental control
@@ -223,7 +285,8 @@ class LiveViewModel @Inject constructor(
             .flatMapLatest { (t, sc, pick, ids) ->
                 val (id, f, q) = t
                 val fav = if (f is Filter.Favourites) 1 else 0
-                val cat = (f as? Filter.Category)?.remoteId
+                // A topic group is picked from all the channels below, not by a provider group.
+                val cat = (f as? Filter.Category)?.remoteId?.takeIf { !it.startsWith(TOPIC) }
                 val radio = if (f is Filter.Radio) 1 else 0
                 when {
                     ids != null -> db.content().observeChannelsAll(ids, cat?.removePrefix(NAME), q, fav, radio)
@@ -233,7 +296,14 @@ class LiveViewModel @Inject constructor(
                     else -> db.content().observeChannelsIn(id, cat, pick.toList(), q, fav, radio)
                 }
             }
-            .let { rows -> combine(rows, sort, filter) { list, so, f -> so.apply(list, f is Filter.Favourites) } }
+            .let { rows ->
+                combine(rows, sort, filter, groupNames, com.vantaview.app.data.catalog.ChannelCatalog.version) { list, so, f, names, _ ->
+                    val topic = (f as? Filter.Category)?.remoteId?.takeIf { it.startsWith(TOPIC) }?.removePrefix(TOPIC)
+                        ?.let { runCatching { com.vantaview.app.data.catalog.Topic.valueOf(it) }.getOrNull() }
+                    val shown = if (topic == null) list else list.filter { topicOf(it.channel, names) == topic }
+                    so.apply(shown, f is Filter.Favourites, com.vantaview.app.data.catalog.ChannelOrder.countries(playback))
+                }
+            }
             .let { rows ->
                 combine(rows, combine(allCategories, realAllCategories, allIds) { c, real, ids -> if (ids != null) real else c }, allowed, parental.changes) { list, cats, allow, _ ->
                     if (allow == null && cats.any { it.providerId != list.firstOrNull()?.channel?.providerId }) {
@@ -254,14 +324,17 @@ class LiveViewModel @Inject constructor(
             }
             // Settings › Channels: several sources of the same channel become one line.
             .let { rows ->
-                combine(rows, showingAll, providers) { list, all, provs ->
+                combine(rows, showingAll, providers, com.vantaview.app.data.catalog.ChannelCatalog.version) { list, all, provs, _ ->
                     val mode = com.vantaview.app.data.ChannelMerge.Mode.entries.firstOrNull { it.name == playback.getString("merge_channels") }
                         ?: com.vantaview.app.data.ChannelMerge.Mode.BOTH
+                    // Settings › Channels: regional and +1 versions on one line too.
+                    val versions = com.vantaview.app.data.catalog.ChannelOrder.collapseVersions(playback)
                     val r = com.vantaview.app.data.ChannelMerge.merge(
                         list,
-                        withinPlaylist = mode == com.vantaview.app.data.ChannelMerge.Mode.PLAYLIST || mode == com.vantaview.app.data.ChannelMerge.Mode.BOTH,
+                        withinPlaylist = versions || mode == com.vantaview.app.data.ChannelMerge.Mode.PLAYLIST || mode == com.vantaview.app.data.ChannelMerge.Mode.BOTH,
                         acrossPlaylists = all && (mode == com.vantaview.app.data.ChannelMerge.Mode.ACROSS || mode == com.vantaview.app.data.ChannelMerge.Mode.BOTH),
                         providerOrder = provs.map { it.id },
+                        versionKey = if (versions) { row -> com.vantaview.app.data.catalog.ChannelOrder.versionKey(row.channel) } else null,
                     )
                     com.vantaview.app.feature.player.ChannelSources.set(r.sources)
                     r.rows

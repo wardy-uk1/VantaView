@@ -36,6 +36,10 @@ Your playlist provider login is only ever sent to that provider.
 
 The QR code on Sources opens a page served by VantaView itself, on your home network. What you type or pick on your phone goes straight from the phone to your TV over your Wi-Fi, never through the internet. The page only answers its own secret address, and stops after 15 minutes or when you leave the page.
 
+## Channel catalog
+
+If you use topic groups, Importance order or channel versions in Live TV, VantaView downloads the public iptv-org channel list from iptv-org.github.io once a week. Nothing about you or your playlists is sent; channels are matched on your device.
+
 ## Jellyfin servers
 
 If you add a Jellyfin server, VantaView talks only to that server. Your password is sent to it once to sign in and is never kept; the sign-in it gives back is stored encrypted on the device.

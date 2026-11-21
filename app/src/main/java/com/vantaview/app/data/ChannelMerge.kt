@@ -49,7 +49,11 @@ object ChannelMerge {
      * Merges [rows] (in the order shown). [acrossPlaylists]/[withinPlaylist] say which pairs may merge. Each line keeps
      * its first place in the list, shows the best source, and is a favourite when any of its sources is.
      */
-    fun merge(rows: List<ChannelRow>, withinPlaylist: Boolean, acrossPlaylists: Boolean, providerOrder: List<Long>): Result {
+    fun merge(
+        rows: List<ChannelRow>, withinPlaylist: Boolean, acrossPlaylists: Boolean, providerOrder: List<Long>,
+        /** Settings › Channels › versions: also joins regional and +1 versions (same catalog channel). */
+        versionKey: ((ChannelRow) -> String?)? = null,
+    ): Result {
         if (rows.size < 2 || (!withinPlaylist && !acrossPlaylists)) return Result(rows, emptyMap())
         val parent = IntArray(rows.size) { it }
         fun find(i: Int): Int { var x = i; while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x] }; return x }
@@ -69,6 +73,7 @@ object ChannelMerge {
         val eligible = rows.indices.filter { !rows[it].channel.isRadio && !ChannelNames.isEventOnly(rows[it].channel.name) && !ChannelNames.isDivider(rows[it].channel.name) }
         join(eligible.filter { !rows[it].channel.epgChannelId.isNullOrBlank() }.groupBy { "id:" + rows[it].channel.epgChannelId!!.trim().lowercase() })
         join(eligible.map { it to nameKey(rows[it].channel.name) }.filter { it.second.length >= 2 }.groupBy({ it.second }, { it.first }))
+        if (versionKey != null) join(eligible.mapNotNull { i -> versionKey(rows[i])?.let { i to it } }.groupBy({ it.second }, { it.first }))
 
         val groups = rows.indices.groupBy { find(it) }
         if (groups.size == rows.size) return Result(rows, emptyMap())
@@ -78,7 +83,9 @@ object ChannelMerge {
         // Lines in the place of their first source.
         groups.values.sortedBy { it.min() }.forEach { members ->
             val best = members.sortedWith(
-                compareByDescending<Int> { quality(rows[it].channel.name) }
+                // The live version before a +1 one, then the best picture.
+                compareBy<Int> { if (com.vantaview.app.data.catalog.TimeShift.isShifted(rows[it].channel.name)) 1 else 0 }
+                    .thenByDescending { quality(rows[it].channel.name) }
                     .thenBy { order[rows[it].channel.providerId] ?: Int.MAX_VALUE }
                     .thenBy { it }
             )

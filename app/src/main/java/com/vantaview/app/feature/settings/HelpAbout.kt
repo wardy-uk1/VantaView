@@ -47,6 +47,7 @@ private val services = listOf(
     Credit("IntroDB", "Intro and end-credits times for Skip intro · introdb.app"),
     Credit("SkipDB", "Intro and end-credits times · skipdb.tv. Contains data from SkipDB, made available under the ODbL"),
     Credit("Cloudflare speed test", "The server the internet speed test downloads from · speed.cloudflare.com"),
+    Credit("iptv-org channel database", "Topics, Importance and channel versions in Live TV · github.com/iptv-org/database (public domain)"),
     Credit("Trakt", "Watchlist, history, Continue watching, recommendations and lists sync · trakt.tv. Not made or endorsed by Trakt"),
 )
 

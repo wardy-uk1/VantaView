@@ -115,6 +115,10 @@ interface ContentDao {
     )
     fun observeChannelsAll(providerIds: List<Long>, categoryName: String?, query: String, favOnly: Int, radio: Int): Flow<List<ChannelRow>>
 
+    /** Countries the channels were found to be from (for Settings › Channels › Country order). */
+    @Query("SELECT DISTINCT country FROM channel WHERE country IS NOT NULL AND country != 'OTHER'")
+    suspend fun channelCountries(): List<String>
+
     @Query("SELECT COUNT(*) FROM channel WHERE providerId IN (:providerIds) AND isRadio = 1")
     fun observeRadioCountIn(providerIds: List<Long>): Flow<Int>
 

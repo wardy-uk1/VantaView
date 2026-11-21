@@ -194,7 +194,14 @@ fun LiveScreen(
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 com.vantaview.app.ui.SearchToggle(query, { vm.query.value = it }, "Search channels or numbers", Modifier.weight(1f, fill = false))
                 if (query.isEmpty()) {
-                    FocusCard(onClick = { sortOpen = true }) { Text("Order: ${sort.label} ▾", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
+                    FocusCard(onClick = { sortOpen = true }) { Text(com.vantaview.app.ui.tr("Order: {0} ▾", com.vantaview.app.ui.tr(sort.label)), color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
+                    // Topic groups (News, Sport…) or the provider's own groups.
+                    if (!isKids) {
+                        val topics by vm.byTopic.collectAsStateWithLifecycle()
+                        FocusCard(onClick = { vm.setByTopic(!topics) }, selected = topics) {
+                            Text(if (topics) "Groups: topics" else "Groups: provider's", color = if (topics) Vanta.Cyan else Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false)
+                        }
+                    }
                     if (!isKids && !showingAll) FocusCard(onClick = { editGroups = true }) { Text("Groups ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (!isKids) FocusCard(onClick = { editChannels = true }) { Text("Channels ✎", color = Vanta.Text, fontSize = 14.sp, maxLines = 1, softWrap = false) }
                     if (filter == Filter.Favourites && channels.size > 1 && !isKids) {
@@ -202,6 +209,7 @@ fun LiveScreen(
                     }
                 }
             }
+            vm.catalogState.collectAsStateWithLifecycle().value?.let { Text(it, color = Vanta.TextDim, fontSize = 12.sp) }
             if (editChannels) ChannelVisibilityDialog(active?.id, onClose = { editChannels = false })
             if (editGroups) EditGroupsDialog(vm.groupsForEditing, vm.hiddenGroups(), onSave = { o, h -> vm.saveGroupLayout(o, h); editGroups = false }, onClose = { editGroups = false })
             if (sortOpen) SortDialog(sort, onPick = { vm.setSort(it); sortOpen = false }, onClose = { sortOpen = false })
@@ -396,7 +404,13 @@ private fun SortDialog(current: ChannelSort, onPick: (ChannelSort) -> Unit, onCl
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 ChannelSort.entries.forEach { s ->
                     FocusCard(onClick = { onPick(s) }, selected = s == current, modifier = Modifier.fillMaxWidth()) {
-                        Text(s.label + if (s == ChannelSort.MINE) " (favourites)" else "", color = if (s == current) Vanta.Cyan else Vanta.Text)
+                        Column {
+                            Text(s.label + if (s == ChannelSort.MINE) " (favourites)" else "", color = if (s == current) Vanta.Cyan else Vanta.Text)
+                            if (s == ChannelSort.IMPORTANCE) Text(
+                                "Your countries first (Settings › Channels), the best-known channels at the top, +1 versions last",
+                                color = Vanta.TextDim, fontSize = 12.sp,
+                            )
+                        }
                     }
                 }
             }

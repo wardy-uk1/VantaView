@@ -417,6 +417,7 @@ private fun ChannelsSection(playback: com.vantaview.app.data.PlaybackSettings) {
         }
         Text("Across playlists applies when Live TV shows All playlists. A Source button in the player lets you pick one yourself.", color = Vanta.TextDim, fontSize = 12.sp)
     }
+    CatalogSection(playback)
     Section("Show or hide channels") {
         Text(
             "Tick channels, or a whole group, then Hide or Show them all at once. Hidden channels are left out of Live TV, the TV Guide, search and channel up and down, and stay hidden when the playlist refreshes.",
