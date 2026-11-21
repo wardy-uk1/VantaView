@@ -1,3 +1,4 @@
+- Corretto: negli stili Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic) i pulsanti principali come Aggiorna ora avevano testo bianco su fondo bianco o giallo. Ora il testo è scuro.
 - TV in diretta ora può raggruppare i canali per argomento (Notizie, Sport, Bambini…) con il nuovo pulsante Gruppi, mettere prima i canali più noti dei tuoi paesi (Ordine › Importanza, paesi in Impostazioni › Canali) e mostrare le versioni regionali e +1 di un canale in una sola riga.
 - Corretto su TV: premendo Aggiorna ora in Impostazioni › Aggiornamenti resti sul download invece di tornare in cima alle Impostazioni. Grazie a u/CrazyDowntown5881 su Reddit per tanti suggerimenti e segnalazioni, ora in Aiuto e informazioni › Riconoscimenti.
 - Corretto: i pulsanti di dimensione e zoom ora cambiano subito l'immagine, e il lettore a schermo intero sui telefoni riempie anche la zona del notch.
@@ -5,4 +6,3 @@
 - Aggiungi un server Jellyfin in Sorgenti (nome utente e password, o Quick Connect): film e serie compaiono in Film e Serie TV, la TV in diretta e la guida in TV in diretta. Gli add-on con righe "other" (raccolte miste) ora compaiono anche in Film e Serie TV.
 - Più dimensioni dell'immagine nel lettore: Adatta, Allarga, Riempi schermo, 16:9, 4:3, 21:9 e Originale, più Zoom fino al 200% che può tenere il centro, l'alto o il basso. Ogni canale, film e serie ricorda la sua dimensione; quella predefinita è in Impostazioni › Riproduzione.
 - Accedi a Stremio in Impostazioni › Stremio, con un codice QR o la tua email: add-on, Libreria, Continua a guardare e film visti restano allineati con il tuo account, in entrambe le direzioni. Ogni profilo può usare il proprio account.
-- Funziona meglio su TV e chiavette con 1 GB di memoria: la modalità poca memoria si attiva da sola, con effetti più leggeri, immagini più piccole e un buffer ridotto, e le liste grandi non devono più stare tutte in memoria. Cambiala in Impostazioni › Aspetto › Memoria.

@@ -1,3 +1,4 @@
+- Düzeltildi: Glass, Wave, Fluent, Cross ve Spotlight görünümlerinde (ve Broadcast ile Classic'te) Şimdi güncelle gibi ana düğmelerde beyaz ya da sarı zemin üzerinde beyaz yazı vardı. Artık yazı koyu.
 - Canlı TV artık yeni Gruplar düğmesiyle kanalları konuya göre (Haber, Spor, Çocuk…) gruplayabilir, ülkelerinin en bilinen kanallarını öne alabilir (Sıra › Önem, ülkeler Ayarlar › Kanallar'da) ve bir kanalın bölgesel ve +1 sürümlerini tek satırda gösterebilir.
 - TV'de düzeltildi: Ayarlar › Güncellemeler'de Şimdi güncelle'ye basınca artık Ayarlar'ın en üstüne atlamak yerine indirmede kalırsın. Pek çok öneri ve hata bildirimi için Reddit'ten u/CrazyDowntown5881'e teşekkürler; artık Yardım ve hakkında › Katkıda bulunanlar'da.
 - Düzeltildi: görüntü boyutu ve yakınlaştırma düğmeleri artık görüntüyü hemen değiştiriyor, telefonlarda tam ekran oynatıcı artık çentik alanını da dolduruyor.
@@ -5,4 +6,3 @@
 - Kaynaklar'dan bir Jellyfin sunucusu ekle (kullanıcı adı ve şifre ya da Quick Connect): filmleri ve dizileri Filmler ve Diziler'de, canlı TV ve rehberi Canlı TV'de görünür. "other" satırları olan eklentiler (karışık koleksiyonlar) artık Filmler ve Diziler'de de görünür.
 - Oynatıcıda daha fazla görüntü boyutu: Sığdır, Uzat, Ekranı doldur, 16:9, 4:3, 21:9 ve Orijinal, ayrıca ortayı, üstü veya altı sabitleyebilen %200'e kadar Yakınlaştır. Her kanal, film ve dizi kendi boyutunu hatırlar; varsayılanı Ayarlar › Oynatma'dan seç.
 - Ayarlar › Stremio'dan QR kodu veya e-postanla Stremio'ya giriş yap: eklentilerin, Kütüphanen, İzlemeye devam et ve izlenen filmler hesabınla iki yönlü eşitlenir. Her profil kendi hesabını kullanabilir.
-- 1 GB belleğe sahip TV'lerde ve çubuklarda daha iyi çalışır: düşük bellek modu orada kendiliğinden açılır; daha hafif efektler, daha küçük görseller ve daha küçük arabellek sunar, büyük sağlayıcı listelerinin de artık belleğe tek seferde sığması gerekmez. Ayarlar › Görünüm › Bellek'ten değiştir.

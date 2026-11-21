@@ -1,3 +1,4 @@
+- Naprawiono: w wyglądach Glass, Wave, Fluent, Cross i Spotlight (oraz Broadcast i Classic) główne przyciski, np. Aktualizuj teraz, miały biały napis na białym lub żółtym tle. Teraz napis jest ciemny.
 - TV na żywo może teraz grupować kanały według tematów (Wiadomości, Sport, Dla dzieci…) nowym przyciskiem Grupy, stawiać najpierw najbardziej znane kanały twoich krajów (Kolejność › Ważność, kraje w Ustawienia › Kanały) i pokazywać regionalne wersje oraz +1 kanału w jednym wierszu.
 - Naprawiono na TV: przycisk Aktualizuj teraz w Ustawienia › Aktualizacje zostawia cię przy pobieraniu zamiast przeskakiwać na górę Ustawień. Dziękujemy u/CrazyDowntown5881 z Reddita za wiele sugestii i zgłoszeń błędów, teraz w Pomoc i informacje › Podziękowania.
 - Naprawiono: przyciski rozmiaru i powiększenia od razu zmieniają obraz, a odtwarzacz pełnoekranowy na telefonach wypełnia teraz także obszar wycięcia (notcha).
@@ -5,4 +6,3 @@
 - Dodaj serwer Jellyfin w Źródłach (nazwa użytkownika i hasło albo Quick Connect): filmy i seriale pojawią się w Filmy i Seriale, a TV na żywo i przewodnik w TV na żywo. Dodatki z wierszami "other" (mieszane kolekcje) pokazują je teraz też w Filmy i Seriale.
 - Więcej rozmiarów obrazu w odtwarzaczu: Dopasuj, Rozciągnij, Wypełnij ekran, 16:9, 4:3, 21:9 i Oryginał, a do tego Powiększenie do 200%, które trzyma środek, górę lub dół. Każdy kanał, film i serial pamięta swój rozmiar; domyślny ustawisz w Ustawienia › Odtwarzanie.
 - Zaloguj się do Stremio w Ustawienia › Stremio, kodem QR lub e-mailem: dodatki, Biblioteka, Kontynuuj oglądanie i obejrzane filmy będą synchronizowane z kontem w obie strony. Każdy profil może mieć własne konto.
-- Działa lepiej na telewizorach i przystawkach z 1 GB pamięci: tryb małej pamięci włącza się tam sam, z lżejszymi efektami, mniejszymi grafikami i mniejszym buforem, a duże listy dostawców nie muszą już mieścić się w pamięci naraz. Zmień w Ustawienia › Wygląd › Pamięć.

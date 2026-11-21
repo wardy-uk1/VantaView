@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
@@ -271,17 +272,20 @@ fun FocusCard(
 fun GradientButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     var focused by remember { mutableStateOf(false) }
     val shape = RoundedCornerShape(14.dp)
+    // Looks with a white or yellow accent (Glass, Wave, Broadcast…) get dark writing, so the label shows.
+    val lightFill = enabled && Vanta.Accent.luminance() > 0.45f
+    val ink = if (lightFill) Color(0xFF0A1028) else Color.White
     Box(
         modifier = modifier
             .onFocusChanged { focused = it.isFocused }
             .clip(shape)
             .background(if (enabled) Vanta.GradientBrush else Brush.linearGradient(listOf(Vanta.SurfaceHigh, Vanta.SurfaceHigh)))
-            .then(if (focused) Modifier.border(3.dp, Color.White, shape) else Modifier)
+            .then(if (focused) Modifier.border(3.dp, ink, shape) else Modifier)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 22.dp, vertical = 14.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, color = if (enabled) Color.White else Vanta.TextDim, fontWeight = FontWeight.Bold)
+        Text(text, color = if (enabled) ink else Vanta.TextDim, fontWeight = FontWeight.Bold)
     }
 }
 

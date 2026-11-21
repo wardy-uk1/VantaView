@@ -1,3 +1,4 @@
+- Corrigido: nos visuais Glass, Wave, Fluent, Cross e Spotlight (e Broadcast e Classic), botões principais como Atualizar agora tinham texto branco em fundo branco ou amarelo. Agora o texto é escuro.
 - A TV ao vivo agora pode agrupar os canais por tema (Notícias, Esportes, Infantil…) com o novo botão Grupos, ordenar primeiro os canais mais conhecidos dos seus países (Ordem › Importância, países em Configurações › Canais) e mostrar as versões regionais e +1 de um canal em uma linha só.
 - Corrigido na TV: tocar em Atualizar agora em Configurações › Atualizações mantém você no download em vez de voltar ao topo das Configurações. Obrigado a u/CrazyDowntown5881 do Reddit por muitas sugestões e relatos de bugs, agora em Ajuda e sobre › Créditos.
 - Corrigido: os botões de tamanho e zoom agora mudam a imagem na hora, e o player em tela cheia nos celulares agora também preenche a área do notch.
@@ -5,4 +6,3 @@
 - Adicione um servidor Jellyfin em Fontes (usuário e senha, ou Quick Connect): os filmes e séries aparecem em Filmes e Séries, e a TV ao vivo e o guia em TV ao vivo. Complementos com fileiras "other" (coleções mistas) agora também aparecem em Filmes e Séries.
 - Mais tamanhos de imagem no player: Ajustar, Esticar, Preencher tela, 16:9, 4:3, 21:9 e Original, além de Zoom até 200% que pode fixar o centro, o topo ou a base. Cada canal, filme e série lembra seu tamanho; o padrão fica em Configurações › Reprodução.
 - Entre no Stremio em Configurações › Stremio, com código QR ou e-mail: seus complementos, Biblioteca, Continuar assistindo e filmes vistos ficam sincronizados com sua conta, nos dois sentidos. Cada perfil pode usar sua própria conta.
-- Funciona melhor em TVs e sticks com 1 GB de memória: o modo pouca memória liga sozinho, com efeitos mais leves, imagens menores e buffer menor, e listas grandes não precisam mais caber na memória de uma vez. Mude em Configurações › Aparência › Memória.
