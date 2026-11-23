@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 import okhttp3.OkHttpClient
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -219,11 +221,48 @@ class AddonRepository @Inject constructor(
         return (mine + addonStreams(type, id)).distinctBy { it.key }
     }
 
+    /**
+     * Like [streams], but reported as results come in: each time an add-on answers, the list so far (best first)
+     * and whether every add-on has answered (or given up after [ADDON_WAIT_MS]). Slow add-ons never hold up the
+     * ones that answered quickly.
+     */
+    fun streamsAsTheyCome(type: String, id: String, title: String? = null, year: String? = null): kotlinx.coroutines.flow.Flow<Pair<List<AddonStream>, Boolean>> =
+        kotlinx.coroutines.flow.channelFlow {
+            if (portalVod.isPortalId(id)) { send(portalVod.streams(id) to true); return@channelFlow }
+            val first: List<AddonStream>
+            val addonId: String?
+            if (playlistVod.isPlaylistId(id)) {
+                first = runCatching { playlistVod.streams(id) }.getOrDefault(emptyList())
+                addonId = runCatching { playlistVod.addonIdFor(id) }.getOrNull()
+            } else {
+                first = runCatching { playlistVod.matches(playlists(), type, id, title, year) }.getOrDefault(emptyList())
+                addonId = id
+            }
+            val addons = if (addonId == null) emptyList() else enabled().withIndex().filter { it.value.manifest.serves("stream", type, addonId) }
+            val found = java.util.Collections.synchronizedList(ArrayList<AddonStream>())
+            val lock = kotlinx.coroutines.sync.Mutex()
+            var left = addons.size
+            fun snapshot() = first + AddonJson.rank(found.toList().distinctBy { it.key }).filter { s -> first.none { it.key == s.key } }
+            send(snapshot() to (left == 0))
+            addons.forEach { (order, a) ->
+                launch {
+                    val got = withTimeoutOrNull(ADDON_WAIT_MS) {
+                        json("${a.base}/stream/${enc(type)}/${enc(addonId!!)}.json", maxAgeMs = 0)
+                    }?.let { AddonJson.streams(it, a.manifest.name, order) }.orEmpty()
+                    lock.withLock {
+                        found += got
+                        left--
+                        send(snapshot() to (left == 0))
+                    }
+                }
+            }
+        }
+
     private suspend fun addonStreams(type: String, id: String): List<AddonStream> = coroutineScope {
         val addons = enabled()
         val jobs = addons.withIndex().filter { it.value.manifest.serves("stream", type, id) }.map { (order, a) ->
             async {
-                withTimeoutOrNull(25_000) {
+                withTimeoutOrNull(ADDON_WAIT_MS) {
                     json("${a.base}/stream/${enc(type)}/${enc(id)}.json", maxAgeMs = 0)
                 }?.let { AddonJson.streams(it, a.manifest.name, order) }.orEmpty()
             }
@@ -368,6 +407,9 @@ class AddonRepository @Inject constructor(
     }
 
     companion object {
+        /** How long one add-on gets to answer with streams (it used to be 25 seconds). */
+        const val ADDON_WAIT_MS = 12_000L
+
         /** The Sports TV page's type: it shows add-on rows of Stremio's "tv" and "channel" types. */
         const val TV = "tv"
         /** Stremio's "other" type (mixed titles some add-ons use) is shown on both Movies and TV Series. */

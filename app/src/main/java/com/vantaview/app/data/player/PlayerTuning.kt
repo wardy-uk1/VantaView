@@ -25,8 +25,9 @@ object PlayerTuning {
     fun renderers(context: Context, base: RenderersFactory? = null): RenderersFactory =
         ((base as? DefaultRenderersFactory) ?: DefaultRenderersFactory(context)).apply { setEnableDecoderFallback(true) }
 
-    fun builder(context: Context, base: RenderersFactory?, live: Boolean): ExoPlayer.Builder =
-        ExoPlayer.Builder(context, renderers(context, base)).apply {
+    /** [subtitleDelay]: the films and series player, where subtitles can be moved earlier or later (SubtitleDelay). */
+    fun builder(context: Context, base: RenderersFactory?, live: Boolean, subtitleDelay: Boolean = false): ExoPlayer.Builder =
+        ExoPlayer.Builder(context, renderers(context, base).let { if (subtitleDelay) SubtitleDelay.wrap(it) else it }).apply {
             if (live) setLivePlaybackSpeedControl(
                 DefaultLivePlaybackSpeedControl.Builder().setFallbackMinPlaybackSpeed(1f).setFallbackMaxPlaybackSpeed(1f).build()
             )

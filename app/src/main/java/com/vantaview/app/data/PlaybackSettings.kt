@@ -129,6 +129,21 @@ class PlaybackSettings @Inject constructor(
         set(v) { sp.edit().putString("buffer", v.name).apply() }
 
     /** Seconds the player controls stay on screen; 0 means they stay until hidden. */
+    /** Films and series: false = Play starts the best stream; true = Play shows the list of streams to pick from. */
+    var chooseStreams: Boolean
+        get() = sp.getBoolean("choose_streams", false)
+        set(v) { sp.edit().putBoolean("choose_streams", v).apply() }
+
+    /** Streams bigger than this (GB) are only tried after the others when picking by itself; 0 = no limit. */
+    var maxAutoGb: Int
+        get() = sp.getInt("max_auto_gb", 20)
+        set(v) { sp.edit().putInt("max_auto_gb", v).apply() }
+
+    /** Films and series open in this app instead of VantaView's player: a package name, "ask" (choose each time), or "" (VantaView). */
+    var externalPlayer: String
+        get() = sp.getString("external_player", "").orEmpty()
+        set(v) { sp.edit().putString("external_player", v).apply() }
+
     var controlsSeconds: Int
         get() = sp.getInt("controls_seconds", 5)
         set(v) { sp.edit().putInt("controls_seconds", v).apply() }

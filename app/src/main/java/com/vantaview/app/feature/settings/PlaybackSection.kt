@@ -44,6 +44,11 @@ fun PlaybackSection(s: PlaybackSettings) {
     var autoTrailers by remember { mutableStateOf(s.autoTrailers) }
     var trailerSound by remember { mutableStateOf(s.trailerSound) }
     var remindPlaying by remember { mutableStateOf(s.remindersWhilePlaying) }
+    var chooseStreams by remember { mutableStateOf(s.chooseStreams) }
+    var maxAutoGb by remember { mutableStateOf(s.maxAutoGb) }
+    var external by remember { mutableStateOf(s.externalPlayer) }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val players = remember { com.vantaview.app.feature.player.videoPlayerApps(context) }
 
     Section("Buffer size") {
         Choices(BufferSize.entries, buffer, { it.label }) { buffer = it; s.buffer = it }
@@ -67,6 +72,28 @@ fun PlaybackSection(s: PlaybackSettings) {
             autoTrailers = it; s.autoTrailers = it
         }
         if (autoTrailers) Toggle("Trailers with sound", "Off starts them muted; you can unmute on the page.", trailerSound) { trailerSound = it; s.trailerSound = it }
+        Text("When you press Play", color = Vanta.Text)
+        Choices(listOf(false, true), chooseStreams, { if (it) com.vantaview.app.ui.tr("Show me the streams") else com.vantaview.app.ui.tr("Play the best stream") }) {
+            chooseStreams = it; s.chooseStreams = it
+        }
+        Text(
+            if (chooseStreams) "The list opens straight away and fills in as each add-on answers. Nothing plays until you pick one."
+            else "Starts as soon as all your add-ons have answered, or a few seconds after the first good stream is found. A stream that hasn't started after 15 seconds is skipped.",
+            color = Vanta.TextDim, fontSize = 13.sp,
+        )
+        if (!chooseStreams) {
+            Text("Leave very big files until last", color = Vanta.Text)
+            Text("Huge files are slow to start and to skip through, so smaller copies are tried first.", color = Vanta.TextDim, fontSize = 13.sp)
+            Choices(listOf(5, 10, 20, 40, 0), maxAutoGb, { if (it == 0) com.vantaview.app.ui.tr("No limit") else com.vantaview.app.ui.tr("Over {0} GB", it) }) { maxAutoGb = it; s.maxAutoGb = it }
+        }
+        Text("Play films and series in", color = Vanta.Text)
+        Text("Another player app (like VLC or MX Player) gets the stream, its subtitles and where you got to. Live TV and torrents stay in VantaView.", color = Vanta.TextDim, fontSize = 13.sp)
+        Choices(listOf("", "ask") + players.map { it.first }, external, { k ->
+            when (k) { "" -> "VantaView"; "ask" -> com.vantaview.app.ui.tr("Ask each time"); else -> players.firstOrNull { it.first == k }?.second ?: k }
+        }) { external = it; s.externalPlayer = it }
+        if (external.isNotEmpty() && external != "ask" && players.none { it.first == external }) {
+            Text("That app isn't installed any more, so you'll be asked each time.", color = Vanta.TextDim, fontSize = 13.sp)
+        }
         Text("Try streams up to this quality first", color = Vanta.Text)
         Text("Bigger streams are still tried if nothing else plays. A speed test can set this for you (Settings › Sources).", color = Vanta.TextDim, fontSize = 13.sp)
         Choices(listOf(0, 2160, 1080, 720, 480), maxQuality, { if (it == 0) com.vantaview.app.ui.tr("Best") else "${it}p" }) { maxQuality = it; s.maxQuality = it }

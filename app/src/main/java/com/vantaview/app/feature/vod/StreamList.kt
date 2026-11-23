@@ -3,6 +3,10 @@ package com.vantaview.app.feature.vod
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +55,8 @@ fun StreamListDialog(
     current: Int?,
     onPick: (Int) -> Unit,
     onDismiss: () -> Unit,
+    /** Some add-ons haven't answered yet; their streams are added when they do. */
+    loading: Boolean = false,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -58,6 +64,12 @@ fun StreamListDialog(
         title = { Text(title, color = Vanta.Text) },
         text = {
             LazyColumn(Modifier.heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (loading) item(key = "loading") {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        androidx.compose.material3.CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
+                        Text(if (streams.isEmpty()) "Looking for streams…" else "Looking in more add-ons…", color = Vanta.TextDim, fontSize = 13.sp)
+                    }
+                }
                 itemsIndexed(streams) { i, s ->
                     FocusCard(onClick = { onPick(i) }, selected = i == current, modifier = Modifier.fillMaxWidth()) {
                         Column {

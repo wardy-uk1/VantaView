@@ -17,9 +17,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 /** A stream list waiting for the user to pick one ("Choose stream"). */
+/** Playing by itself: how long to wait for slow add-ons once something playable has been found. */
+private const val QUICK_START_MS = 6_000L
+
 data class StreamChoice(
     val title: String,
     val subtitle: String?,
@@ -27,6 +31,8 @@ data class StreamChoice(
     val season: Int? = null,
     val episode: Int? = null,
     val video: Video? = null,
+    /** Still waiting for some add-ons: more streams may be added to the list. */
+    val loading: Boolean = false,
 )
 
 data class DetailsUi(
@@ -144,7 +150,7 @@ class DetailsViewModel @Inject constructor(
         return if (p.finished) videos.drop(i + 1).firstOrNull { it.season > 0 } else videos[i]
     }
 
-    fun dismissChoice() = _ui.update { it.copy(choice = null) }
+    fun dismissChoice() { if (_ui.value.choice?.loading == true) findJob?.cancel(); _ui.update { it.copy(choice = null) } }
 
     /** Opens a "More like this" title: TMDB titles are opened by their IMDb id, which add-ons use. */
     fun openSimilar(m: com.vantaview.app.data.addon.MetaPreview, go: (com.vantaview.app.data.addon.MetaPreview) -> Unit) {
@@ -197,11 +203,30 @@ class DetailsViewModel @Inject constructor(
         _ui.update { it.copy(finding = streamId, message = null, messageFor = video?.id, webLinks = emptyList()) }
         findJob = viewModelScope.launch {
             val hasSource = repo.hasStreamSource(type, streamId)
-            val raw = if (hasSource) runCatching { repo.streams(type, streamId, title, _ui.value.meta?.year) }.getOrDefault(emptyList()) else emptyList()
-            // Torrent results only stay when a debrid account is connected; cached ones are moved up.
-            val streams = runCatching { debrid.annotate(raw, playback.playTorrents) }.getOrDefault(raw.filter { !it.isTorrent })
             val season = video?.season?.takeIf { it > 0 }
             val episode = video?.episode?.takeIf { video.season > 0 }
+            // Settings › Playback › When you press Play: the list of streams, or the best one straight away.
+            val list = choose || playback.chooseStreams
+            var raw: List<AddonStream> = emptyList()
+            var streams: List<AddonStream> = emptyList()
+            if (hasSource) {
+                // Results arrive add-on by add-on. The list shows them as they come; playing by itself starts once
+                // every add-on has answered, or after a few seconds when something playable has been found.
+                val quick = kotlinx.coroutines.flow.flow { emit(false); kotlinx.coroutines.delay(QUICK_START_MS); emit(true) }
+                runCatching {
+                    kotlinx.coroutines.flow.combine(repo.streamsAsTheyCome(type, streamId, title, _ui.value.meta?.year), quick) { (found, done), late ->
+                        Triple(found, done, late)
+                    }.first { (found, done, late) ->
+                        raw = found
+                        // Torrent results only stay when a debrid account is connected; cached ones are moved up.
+                        streams = runCatching { debrid.annotate(found, playback.playTorrents) }.getOrDefault(found.filter { !it.isTorrent })
+                        if (list && (streams.isNotEmpty() || done)) {
+                            _ui.update { it.copy(finding = null, choice = StreamChoice(title, subtitle, streams, season, episode, video, loading = !done)) }
+                        }
+                        done || (!list && late && streams.isNotEmpty())
+                    }
+                }
+            }
             when {
                 !hasSource || (raw.isEmpty() && !repo.hasAddonStreams(type, streamId)) -> _ui.update {
                     it.copy(finding = null, message = "None of your add-ons supply streams for this. Add a stream add-on on the Sources page.")
@@ -219,10 +244,13 @@ class DetailsViewModel @Inject constructor(
                         )
                     }
                 }
-                choose -> _ui.update { it.copy(finding = null, choice = StreamChoice(title, subtitle, streams, season, episode, video)) }
+                list -> _ui.update { it.copy(finding = null, choice = StreamChoice(title, subtitle, streams, season, episode, video, loading = false)) }
                 else -> {
-                    // Settings: streams that fit the connection are tried first (the bigger ones are still there after).
+                    // Settings: streams that fit the connection are tried first (the bigger ones are still there after),
+                    // and very big files (Settings › Playback) after the rest: they're slow to start and to skip through.
+                    val limit = playback.maxAutoGb.toLong() * 1_073_741_824L
                     val ordered = com.vantaview.app.data.ConnectionTuning.preferFitting(streams, playback.maxQuality) { it.quality }
+                        .let { l -> if (limit <= 0) l else l.sortedBy { s -> if ((s.sizeBytes ?: 0L) > limit) 1 else 0 } }
                     session.current = request(ordered, 0, video, subtitle, chosen = false)
                     _ui.update { it.copy(finding = null) }
                     _play.send(Unit)

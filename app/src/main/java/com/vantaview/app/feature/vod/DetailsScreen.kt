@@ -270,7 +270,7 @@ fun DetailsScreen(
     ui.choice?.let { c ->
         StreamListDialog(
             title = listOfNotNull(c.title, c.subtitle).joinToString(" · "),
-            streams = c.streams, current = null, onPick = vm::pick, onDismiss = vm::dismissChoice,
+            streams = c.streams, current = null, onPick = vm::pick, onDismiss = vm::dismissChoice, loading = c.loading,
         )
     }
 }

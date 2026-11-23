@@ -147,6 +147,7 @@ This file is ticked off in the same commit that finishes a feature.
 
 ## Built that wasn't on the original list
 
+- [x] Stream picking for films and series: "When you press Play" (play the best stream, or show the list as add-ons answer), a 15-second start limit before trying the next stream, very big files tried last, another player app (VLC, MX Player…) for films and series, and a Subtitle timing button (+/−) in the player
 - [x] Live TV from a channel catalog (iptv-org's open database, downloaded when used): topic groups (Groups: topics), Order › Importance with your country order (Settings › Channels), and regional and +1 versions as one line
 - [x] Protected (ClearKey or Widevine) add-on streams, DASH included, read from the usual shapes add-ons use ("drm", "clearKeys", license_key); Sports TV also shows add-on rows of the "sports" and "events" types
 - [x] Jellyfin servers as a source (Sources › Jellyfin; username and password or Quick Connect): films and series on Movies and TV Series (with episodes), Live TV channels and guide in Live TV

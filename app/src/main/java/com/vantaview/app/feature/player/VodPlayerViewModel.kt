@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -73,7 +74,7 @@ class VodPlayerViewModel @Inject constructor(
     val ai: com.vantaview.app.data.aisubs.AiSubtitleEngine? =
         if (aiSubs.active) com.vantaview.app.data.aisubs.AiSubtitleEngine(aiSubs) else null
 
-    val player: ExoPlayer = com.vantaview.app.data.player.PlayerTuning.builder(context, ai?.renderers(context), live = false)
+    val player: ExoPlayer = com.vantaview.app.data.player.PlayerTuning.builder(context, ai?.renderers(context), live = false, subtitleDelay = true)
         .setLoadControl(settings.loadControl())
         .setSeekBackIncrementMs(10_000)
         .setSeekForwardIncrementMs(10_000)
@@ -156,6 +157,8 @@ class VodPlayerViewModel @Inject constructor(
     private var subsJob: kotlinx.coroutines.Deferred<List<com.vantaview.app.data.addon.AddonSubtitle>>? = null
 
     init {
+        // Each film starts with subtitles in step.
+        com.vantaview.app.data.player.SubtitleDelay.delayMs = 0L
         player.addListener(listener)
         TrackPrefs.apply(player, settings)
         ai?.start()
@@ -425,13 +428,73 @@ class VodPlayerViewModel @Inject constructor(
     var currentUrl: String? = null; private set
     var currentHeaders: Map<String, String> = emptyMap(); private set
 
+    /** A film or episode to hand to another player app (Settings › Playback › Play films and series in). */
+    data class External(val url: String, val headers: Map<String, String>, val title: String, val subtitles: List<String>, val positionMs: Long)
+    private val _external = kotlinx.coroutines.flow.MutableSharedFlow<External>(extraBufferCapacity = 1)
+    val external: kotlinx.coroutines.flow.SharedFlow<External> = _external
+    /** Set when the other app couldn't be opened: play here instead. */
+    private var playHere = false
+
+    /** The other player couldn't be opened: play in VantaView after all. */
+    fun externalFailed() {
+        playHere = true
+        _ui.update { it.copy(notice = "That player couldn't be opened, so it plays here") }
+        playIndex(_ui.value.index, request?.startPositionMs ?: 0L, explicit = true)
+    }
+
+    private var startWatch: kotlinx.coroutines.Job? = null
+
     private fun playUrl(url: String, headers: Map<String, String>, positionMs: Long) {
         currentUrl = url
         currentHeaders = headers
+        val local = com.vantaview.app.data.torrent.TorrentEngine.isLocal(url)
+        // Settings › Playback: another player app. (Torrents VantaView plays itself stay here: they stop when it closes.)
+        if (settings.externalPlayer.isNotEmpty() && !playHere && !local) {
+            viewModelScope.launch {
+                val subs = kotlinx.coroutines.withTimeoutOrNull(4_000) { subsJob?.await() }.orEmpty()
+                val title = listOfNotNull(_ui.value.title, _ui.value.subtitle).joinToString(" · ")
+                _external.emit(External(url, headers, title, subs.map { it.url }, positionMs))
+            }
+            return
+        }
         viewModelScope.launch {
             // Add-on subtitles join the stream when they've arrived (waiting a few seconds at most).
             val subs = kotlinx.coroutines.withTimeoutOrNull(4_000) { subsJob?.await() }.orEmpty()
             if (currentUrl == url) prepareUrl(url, headers, positionMs, subs)
+        }
+        // A link that hasn't started after 15 seconds is treated as broken (when VantaView picked it), instead of
+        // waiting the network's full time-out before trying the next.
+        val index = _ui.value.index
+        val picked = request?.chosen == true && index == request?.startIndex
+        startWatch?.cancel()
+        if (!local && !picked) startWatch = viewModelScope.launch {
+            delay(15_000)
+            if (!startedOk && currentUrl == url && _ui.value.index == index) {
+                player.stop()
+                failOrNext(index, explicit = false, reason = "That stream took too long to start", failed = "None of the streams started. Try another one.")
+            }
+        }
+    }
+
+    // ---- Subtitle delay ----
+
+    private val _subtitleDelay = kotlinx.coroutines.flow.MutableStateFlow(0L)
+    /** How much later (+) or earlier (-) subtitles show, in milliseconds. */
+    val subtitleDelay: kotlinx.coroutines.flow.StateFlow<Long> = _subtitleDelay
+    private var delaySeek: kotlinx.coroutines.Job? = null
+
+    fun shiftSubtitles(byMs: Long) = setSubtitleDelay(_subtitleDelay.value + byMs)
+
+    fun setSubtitleDelay(ms: Long) {
+        val old = _subtitleDelay.value
+        val v = ms.coerceIn(-60_000L, 60_000L)
+        _subtitleDelay.value = v
+        com.vantaview.app.data.player.SubtitleDelay.delayMs = v
+        // Showing subtitles later means going back over ones already shown: a quick re-seek (once the presses stop)
+        // brings them back in.
+        if (v > old) {
+            delaySeek?.cancel()
+            delaySeek = viewModelScope.launch { delay(1_200); if (startedOk) player.seekTo(player.currentPosition) }
         }
     }
 
@@ -439,7 +502,9 @@ class VodPlayerViewModel @Inject constructor(
         val ua = headers.entries.firstOrNull { it.key.equals("User-Agent", true) }?.value ?: "VantaView/${BuildConfig.VERSION_NAME}"
         // A torrent may pause while pieces arrive, so its local address gets a long wait before giving up.
         val client = if (com.vantaview.app.data.torrent.TorrentEngine.isLocal(url))
-            okHttp.newBuilder().readTimeout(3, java.util.concurrent.TimeUnit.MINUTES).build() else okHttp
+            okHttp.newBuilder().readTimeout(3, java.util.concurrent.TimeUnit.MINUTES).build()
+        // A link whose server doesn't answer is given up on sooner, so the next one is tried quickly.
+        else okHttp.newBuilder().connectTimeout(8, java.util.concurrent.TimeUnit.SECONDS).build()
         val http = OkHttpDataSource.Factory(client)
             .setUserAgent(ua)
             .setDefaultRequestProperties(com.vantaview.app.data.player.Drm.httpHeaders(headers).filterKeys { !it.equals("User-Agent", true) })
@@ -472,6 +537,7 @@ class VodPlayerViewModel @Inject constructor(
     }
 
     override fun onCleared() {
+        com.vantaview.app.data.player.SubtitleDelay.delayMs = 0L
         saveProgress()
         if (player.playbackState != Player.STATE_ENDED) scrobble("stop")
         resolveJob?.cancel()

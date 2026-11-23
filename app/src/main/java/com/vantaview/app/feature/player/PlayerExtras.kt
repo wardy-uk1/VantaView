@@ -63,6 +63,46 @@ fun SleepWatcher(player: Player, onSlept: () -> Unit) {
     }
 }
 
+/**
+ * Settings › Playback › Play films and series in: opens [url] in [pkg] (or lets the viewer choose when [pkg] is
+ * "ask" or isn't installed), with the title, where to start, the add-on subtitles and the stream's headers, in
+ * the ways VLC, MX Player and mpv read them. Returns false when no player could be opened.
+ */
+fun openInPlayer(context: Context, pkg: String, url: String, title: String, headers: Map<String, String>, positionMs: Long, subtitles: List<String>): Boolean {
+    val i = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(Uri.parse(url), "video/*")
+        putExtra("title", title)
+        // Where to start: VLC reads a Long, MX Player an Int (both milliseconds).
+        if (positionMs > 0) {
+            if (pkg.startsWith("org.videolan")) putExtra("position", positionMs) else putExtra("position", positionMs.toInt())
+        }
+        if (headers.isNotEmpty()) putExtra("headers", headers.flatMap { listOf(it.key, it.value) }.toTypedArray())
+        if (subtitles.isNotEmpty()) {
+            putExtra("subtitles_location", subtitles.first()) // VLC
+            putExtra("subs", subtitles.map { Uri.parse(it) }.toTypedArray()) // MX Player
+            putExtra("subs.enable", arrayOf(Uri.parse(subtitles.first())))
+        }
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    if (pkg != "ask") {
+        val direct = Intent(i).setPackage(pkg)
+        if (runCatching { context.startActivity(direct) }.isSuccess) return true
+    }
+    return runCatching { context.startActivity(Intent.createChooser(i, "Open with").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }.isSuccess
+}
+
+/** Video player apps on this device that can open a web address (for Settings › Playback), as (package, name). */
+fun videoPlayerApps(context: Context): List<Pair<String, String>> {
+    val pm = context.packageManager
+    val probe = Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse("https://example.com/video.mp4"), "video/*")
+    @Suppress("DEPRECATION")
+    return runCatching { pm.queryIntentActivities(probe, 0) }.getOrDefault(emptyList())
+        .map { it.activityInfo.packageName to it.loadLabel(pm).toString() }
+        .filter { it.first != context.packageName }
+        .distinctBy { it.first }
+        .sortedBy { it.second.lowercase() }
+}
+
 /** Opens a stream in another installed player (VLC, MX Player…), passing its headers where the player supports them. */
 fun openExternally(context: Context, url: String, title: String, headers: Map<String, String>): Boolean {
     val i = Intent(Intent.ACTION_VIEW).apply {

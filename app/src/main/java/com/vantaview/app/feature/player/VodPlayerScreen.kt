@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -73,6 +74,15 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
     var controls by remember { mutableStateOf(true) }
     var picking by remember { mutableStateOf(false) }
     var speedOpen by remember { mutableStateOf(false) }
+    var delayOpen by remember { mutableStateOf(false) }
+    val subDelay by vm.subtitleDelay.collectAsStateWithLifecycle()
+    // Settings › Playback › Play films and series in: once the link is ready it goes to the other app, and this closes.
+    LaunchedEffect(Unit) {
+        vm.external.collect { e ->
+            val ok = openInPlayer(context, vm.settings.externalPlayer, e.url, e.title, e.headers, e.positionMs, e.subtitles)
+            if (ok) onBack() else vm.externalFailed()
+        }
+    }
     var moreOpen by remember { mutableStateOf(false) }
     var showInfo by remember { mutableStateOf(false) }
     SleepWatcher(vm.player) { vm.pause() }
@@ -114,6 +124,10 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     TrackPrefs.style(this, vm.settings)
                     // Settings › Playback: how long the controls stay (0 = until hidden).
                     controllerShowTimeoutMs = vm.settings.controlsSeconds.let { if (it <= 0) 0 else it * 1000 }
+                    // No staged hiding: Media3 normally takes the bottom buttons away first (leaving just the time bar)
+                    // and only says the controls are hidden a couple of seconds later, so the top row stayed on screen
+                    // well after the bottom ones had gone. Now everything comes and goes together.
+                    setAnimationEnabled(false)
                     setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { v -> controls = v == android.view.View.VISIBLE })
                     player = vm.player
                     PictureSize.attach(this) { vm.picture.value }
@@ -182,6 +196,9 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     FocusCard(onClick = vm::cycleZoom) { Text(com.vantaview.app.ui.tr("Zoom {0}%", picture.zoom), color = Vanta.Text, maxLines = 1) }
                     if (picture.zoom > 100) FocusCard(onClick = vm::cyclePos) { Text(com.vantaview.app.ui.tr("Hold: {0}", com.vantaview.app.ui.tr(picture.pos.label)), color = Vanta.Text, maxLines = 1) }
                     FocusCard(onClick = { speedOpen = true }) { Text(if (ui.speed == 1f) "Speed" else "${ui.speed}×", color = Vanta.Text, maxLines = 1) }
+                    FocusCard(onClick = { delayOpen = true }) {
+                        Text(if (subDelay == 0L) com.vantaview.app.ui.tr("Subtitle timing") else com.vantaview.app.ui.tr("Subtitles {0}", delayLabel(subDelay)), color = Vanta.Text, maxLines = 1)
+                    }
                     FocusCard(onClick = { moreOpen = true }) { Text("⋯ More", color = Vanta.Text, maxLines = 1) }
                     if (ui.streams.size > 1) {
                         val cur = ui.streams.getOrNull(ui.index)
@@ -197,6 +214,16 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
             }
             Column(
                 Modifier.fillMaxWidth()
+                    // Using the top row counts as using the controls: the hiding countdown starts again for both.
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent(androidx.compose.ui.input.pointer.PointerEventPass.Initial)
+                                if (controls) playerView?.showController()
+                            }
+                        }
+                    }
+                    .onPreviewKeyEvent { if (controls) playerView?.showController(); false }
                     .background(Brush.verticalGradient(listOf(Color(0xCC000000), Color.Transparent)))
                     .windowInsetsPadding(WindowInsets.displayCutout)
                     .padding(horizontal = if (compact) 12.dp else 20.dp, vertical = if (compact) 8.dp else 14.dp),
@@ -289,6 +316,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
         onOpenElsewhere = vm.currentUrl?.let { u -> { vm.pause(); openExternally(context, u, ui.title, vm.currentHeaders); Unit } },
     )
     if (speedOpen) SpeedDialog(ui.speed, onPick = { vm.setSpeed(it); speedOpen = false }, onClose = { speedOpen = false })
+    if (delayOpen) SubtitleDelayDialog(subDelay, onShift = vm::shiftSubtitles, onReset = { vm.setSubtitleDelay(0) }, onClose = { delayOpen = false })
     if (episodesOpen) {
         val eps by vm.episodes.collectAsStateWithLifecycle()
         EpisodesDialog(eps, vm.currentVideoId, onPick = { episodesOpen = false; vm.playEpisode(it) }, onClose = { episodesOpen = false })
@@ -321,6 +349,39 @@ private fun SpeedDialog(current: Float, onPick: (Float) -> Unit, onClose: () -> 
             }
         },
         confirmButton = { androidx.compose.material3.TextButton(onClick = onClose) { Text("Close") } },
+    )
+}
+
+private fun delayLabel(ms: Long): String {
+    val s = kotlin.math.abs(ms) / 1000.0
+    val n = if (ms % 1000 == 0L) "${s.toLong()}" else String.format(java.util.Locale.ROOT, "%.1f", s)
+    return (if (ms > 0) "+" else "−") + n + " s"
+}
+
+/** Subtitles out of step: move them later (+) or earlier (−), half a second or 5 seconds at a time. */
+@Composable
+private fun SubtitleDelayDialog(current: Long, onShift: (Long) -> Unit, onReset: () -> Unit, onClose: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onClose, containerColor = Vanta.DialogBg,
+        title = { Text("Subtitle timing", color = Vanta.Text) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    if (current == 0L) com.vantaview.app.ui.tr("In step with the video") else delayLabel(current),
+                    color = Vanta.Cyan, fontSize = 22.sp, fontWeight = FontWeight.Bold,
+                )
+                Text("Subtitles too early? Press +. Too late? Press −.", color = Vanta.TextDim, fontSize = 13.sp)
+                androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(-5_000L, -500L, 500L, 5_000L).forEach { d ->
+                        FocusCard(onClick = { onShift(d) }) {
+                            Text((if (d > 0) "+" else "−") + (if (kotlin.math.abs(d) >= 1000) "${kotlin.math.abs(d) / 1000}" else "0.5") + " s", color = Vanta.Text)
+                        }
+                    }
+                    if (current != 0L) FocusCard(onClick = onReset) { Text("Reset", color = Vanta.Text) }
+                }
+            }
+        },
+        confirmButton = { androidx.compose.material3.TextButton(onClick = onClose) { Text("Done") } },
     )
 }
 
