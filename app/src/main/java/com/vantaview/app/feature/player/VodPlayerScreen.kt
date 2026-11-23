@@ -359,7 +359,7 @@ private fun delayLabel(ms: Long): String {
 }
 
 /** Subtitles out of step: move them later (+) or earlier (−), half a second or 5 seconds at a time. */
-@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@kotlin.OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun SubtitleDelayDialog(current: Long, onShift: (Long) -> Unit, onReset: () -> Unit, onClose: () -> Unit) {
     androidx.compose.material3.AlertDialog(
