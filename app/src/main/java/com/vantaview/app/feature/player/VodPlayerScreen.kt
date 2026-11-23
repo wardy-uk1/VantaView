@@ -127,7 +127,7 @@ fun VodPlayerScreen(onBack: () -> Unit, vm: VodPlayerViewModel = hiltViewModel()
                     // No staged hiding: Media3 normally takes the bottom buttons away first (leaving just the time bar)
                     // and only says the controls are hidden a couple of seconds later, so the top row stayed on screen
                     // well after the bottom ones had gone. Now everything comes and goes together.
-                    setAnimationEnabled(false)
+                    findViewById<androidx.media3.ui.PlayerControlView>(androidx.media3.ui.R.id.exo_controller)?.setAnimationEnabled(false)
                     setControllerVisibilityListener(PlayerView.ControllerVisibilityListener { v -> controls = v == android.view.View.VISIBLE })
                     player = vm.player
                     PictureSize.attach(this) { vm.picture.value }
@@ -359,6 +359,7 @@ private fun delayLabel(ms: Long): String {
 }
 
 /** Subtitles out of step: move them later (+) or earlier (−), half a second or 5 seconds at a time. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 private fun SubtitleDelayDialog(current: Long, onShift: (Long) -> Unit, onReset: () -> Unit, onClose: () -> Unit) {
     androidx.compose.material3.AlertDialog(
