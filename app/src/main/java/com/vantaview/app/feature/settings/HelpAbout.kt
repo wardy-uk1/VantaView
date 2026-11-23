@@ -54,6 +54,7 @@ private val services = listOf(
 /** People who helped shape VantaView with ideas and bug reports. */
 private val community = listOf(
     Credit("u/CrazyDowntown5881 (Reddit)", "Quite a few suggestions and bug reports"),
+    Credit("u/Turbulent-Invite2673 (Reddit)", "Picture sizes, full screen past the notch, player controls, stream choice, external players and subtitle timing"),
 )
 
 /** Open-source libraries VantaView is built with, and their licences. */
