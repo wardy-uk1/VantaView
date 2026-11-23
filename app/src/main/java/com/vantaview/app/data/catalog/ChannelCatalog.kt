@@ -59,7 +59,7 @@ object ChannelCatalog {
     val size: Int get() = if (::appContext.isInitialized) prefs.getInt("count", 0) else 0
 
     /** Loads the catalog (downloading it first when it's missing or a week old, or [force]). Safe to call often. */
-    suspend fun ensure(force: Boolean = false) = withContext(Dispatchers.IO) {
+    suspend fun ensure(force: Boolean = false) = withContext(com.vantaview.app.data.Background.dispatcher) {
         if (!::appContext.isInitialized) return@withContext
         lock.withLock {
             val stale = !file.exists() || System.currentTimeMillis() - updatedAt > WEEK

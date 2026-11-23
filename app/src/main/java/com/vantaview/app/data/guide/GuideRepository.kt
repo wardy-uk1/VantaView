@@ -81,7 +81,8 @@ class GuideRepository @Inject constructor(
     fun refresh(p: ProviderEntity) {
         if (_states.value[p.id] is GuideState.Loading) return
         setState(p.id, GuideState.Loading("Loading the TV guide"))
-        scope.launch(Dispatchers.IO) {
+        // Low priority: a channel playing meanwhile comes first.
+        scope.launch(com.vantaview.app.data.Background.dispatcher) {
             try {
                 val n = load(p)
                 sp.edit().putLong("at_${p.id}", System.currentTimeMillis()).putInt("n_${p.id}", n).apply()

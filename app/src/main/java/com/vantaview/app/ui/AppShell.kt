@@ -101,7 +101,9 @@ fun AppShell(
     // Kids profiles can't open Sources.
     val sections = Section.entries.filter { !(profile?.isKids == true && (it == Section.SOURCES || it == Section.SETTINGS)) }
     BoxWithConstraints(Modifier.fillMaxSize().background(Vanta.Bg).then(if (edgeToEdge) Modifier else Modifier.safeDrawingPadding())) {
-        LookBackground(Vanta.Look)
+        // Not behind the players: an animated background (Wave, Cross) would otherwise be redrawn up to 120 times a
+        // second underneath the video, taking processor and graphics time from it on phones.
+        if (!edgeToEdge) LookBackground(Vanta.Look)
         val wide = maxWidth >= 720.dp
         // Broadcast and Classic put the sections in a bar across the top on TVs and wide screens.
         // Console looks draw their own menu on Home (a dashboard), so the sidebar and bar step aside there.

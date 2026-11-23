@@ -380,7 +380,8 @@ class ProviderRepository @Inject constructor(
     fun sync(id: Long) {
         if (_syncStates.value[id] is SyncState.Running) return
         setState(id, SyncState.Running("Connecting"))
-        scope.launch(Dispatchers.IO) {
+        // Low priority: a channel playing meanwhile comes first.
+        scope.launch(com.vantaview.app.data.Background.dispatcher) {
             val provider = db.providers().get(id) ?: return@launch
             try {
                 val done = when (provider.kind) {
